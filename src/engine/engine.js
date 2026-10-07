@@ -14,6 +14,9 @@ export const STARTING_HAND = { first: 4, second: 5 };
 // RULES.md, Promotion: one per turn unless a Field Spell allows more.
 export const PROMOTIONS_PER_TURN = 1;
 
+// RULES.md: a hit that lands always deals at least 1 Damage Counter, whatever the Defense Grade.
+export const MIN_COUNTERS = 1;
+
 // Moves the top card of a player's Draw Pile into their hand.
 // Returns the card, or null if the pile is empty.
 export function drawCard(game, playerIndex) {
@@ -72,7 +75,7 @@ export function formationStats(game, playerIndex) {
 // What the active player's Formation attack would do right now, so the UI can
 // show it before the click and the attack itself uses exactly the same numbers.
 // Placeholders (RULES.md): an opponent with no complete Formation has 0 Defense
-// and 0 Defense Grade, and a hit can be reduced to 0 counters but not below.
+// and 0 Defense Grade. RULES.md: a hit that lands always deals at least 1 counter.
 export function attackPreview(game, playerIndex = game.activePlayer) {
   const mine = formationStats(game, playerIndex);
   const theirs = formationStats(game, 1 - playerIndex);
@@ -80,7 +83,7 @@ export function attackPreview(game, playerIndex = game.activePlayer) {
   const attack = mine?.complete ? mine.attack : 0;
   const defense = guarded ? theirs.defense : 0;
   const hits = !!mine?.complete && attack >= defense;
-  const counters = hits ? Math.max(0, mine.damageGrade - (guarded ? theirs.defenseGrade : 0)) : 0;
+  const counters = hits ? Math.max(MIN_COUNTERS, mine.damageGrade - (guarded ? theirs.defenseGrade : 0)) : 0;
   return { attack, defense, hits, counters, mine, theirs: guarded ? theirs : null };
 }
 

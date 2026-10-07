@@ -138,12 +138,12 @@ test("a hit deals the attacker's Damage Grade minus the defender's Defense Grade
   assert.equal(game.players[1].damage, 2);
 });
 
-test("Defense Grade can take a hit down to 0 counters, not below (placeholder)", () => {
+test("a hit that lands always deals at least 1 counter, whatever the Defense Grade", () => {
   const game = battleReady([600, 500], [500, 500]);
   game.players[1].formationZone.defenseGrade = 2;
-  assert.deepEqual([attackPreview(game).hits, attackPreview(game).counters], [true, 0]);
+  assert.deepEqual([attackPreview(game).hits, attackPreview(game).counters], [true, 1]);
   attack(game);
-  assert.equal(game.players[1].damage, 0);
+  assert.equal(game.players[1].damage, 1);
 });
 
 test("an incomplete Formation gives no Defense Grade (placeholder)", () => {
