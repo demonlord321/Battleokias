@@ -26,7 +26,9 @@ Written up from Dyllan's notes. Open questions are marked **(?)**.
 Shown alongside each player's **Hand** (the zone where drawn cards go).
 - **Player Name**
 - **Defense Points (DP)**
-  - **(?)** Starting DP? Is reducing the opponent to 0 DP the win condition?
+  - Starting DP: **1000** (placeholder until the damage formula is designed).
+  - **(?)** Damage formula: Dyllan has one in mind, to be written up.
+  - **(?)** Is reducing the opponent to 0 DP the win condition?
 - **Energy:** the currency for playing higher-level cards.
   - Works like Hearthstone mana. Max Energy starts at **1** and rises by **1** at the
     start of each of your turns, up to a cap of **10**.
