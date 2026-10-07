@@ -53,9 +53,9 @@ test("needs a shared Signet, a unit, one Equipment per unit, a Preparation Phase
   assert.match(checkAction(game, { type: "equip", player: 0, card: lastCard(game), slot: 2 }), /costs 1 Energy/);
   game.players[0].energy = 5;
   applyAction(game, { type: "nextPhase", player: 0 });
-  assert.equal(checkAction(game, { type: "equip", player: 0, card: lastCard(game), slot: 2 }), null); // Phase II is fine
-  applyAction(game, { type: "nextPhase", player: 0 });
   assert.match(checkAction(game, { type: "equip", player: 0, card: lastCard(game), slot: 2 }), /Preparation Phase/);
+  applyAction(game, { type: "nextPhase", player: 0 });
+  assert.equal(checkAction(game, { type: "equip", player: 0, card: lastCard(game), slot: 2 }), null); // Phase II is fine
 });
 
 test("boosts count toward the Formation, before it adds up and scales", () => {

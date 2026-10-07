@@ -29,6 +29,7 @@ test("each player gets four Special Deck slots, shuffled, with empty ones as nul
 test("the player going first skips the Special draw on turn 1 (placeholder)", () => {
   const game = start();
   next(game);
+  next(game);
   assert.equal(game.phase, "prep2");
   assert.equal(game.pending, null);
 });
@@ -41,6 +42,7 @@ test("Phase II starts with a Special draw you must make, from a deck that still 
   assert.equal(game.activePlayer, 1);
   const p = game.players[1];
   const hand = p.hand.length;
+  next(game);
   next(game);
   assert.equal(game.phase, "prep2");
   assert.deepEqual(game.pending, { type: "specialDraw", player: 1, decks: [0] });
@@ -64,13 +66,13 @@ test("Gear set in Phase II waits until your next Phase I, and gives nothing on t
   const p = game.players[1];
   p.ups[0] = unit();
   next(game);
+  next(game);
   applyAction(game, { type: "specialDraw", player: 1, deck: 0 });
   assert.equal(applyAction(game, { type: "equip", player: 1, card: p.hand.length - 1, slot: 0 }).ok, true);
   assert.equal(p.ups[0].equipment.readyNextTurn, true);
   assert.deepEqual(unitStats(game, 1, 0), { attack: 500, defense: 500 });
   assert.match(checkAction(game, { type: "summon", player: 1, card: 0, slot: 1 }), /Preparation Phase I/);
-  next(game);
-  next(game); // player 1's turn: the Gear isn't on yet
+  next(game); // End Phase, then player 1's turn: the Gear isn't on yet
   assert.equal(game.activePlayer, 0);
   assert.deepEqual(unitStats(game, 1, 0), { attack: 500, defense: 500 });
   applyAction(game, { type: "endTurn", player: 0 }); // player 2's turn 2, Phase I
@@ -89,6 +91,7 @@ test("Gear equipped in Phase I works straight away, and a waiting Gear goes to t
   applyAction(game, { type: "equip", player: 0, card: p.hand.length - 1, slot: 0 });
   assert.deepEqual(unitStats(game, 0, 0), { attack: 750, defense: 750 });
   next(game);
+  next(game);
   p.hand.push(gear());
   applyAction(game, { type: "equip", player: 0, card: p.hand.length - 1, slot: 1 });
   assert.deepEqual(unitStats(game, 0, 1), { attack: 500, defense: 500 });
@@ -98,10 +101,8 @@ test("Gear equipped in Phase I works straight away, and a waiting Gear goes to t
 
 test("no Special draw when every Special Deck is empty", () => {
   const game = newGame({ seed: 7, decks: [deckOf(), deckOf()], specialDecks: [[], [{ type: "spell", cards: [] }]], startingPlayer: 0 });
-  next(game);
-  next(game);
-  next(game);
-  next(game);
+  for (let i = 0; i < 5; i++) next(game);
+  assert.equal(game.activePlayer, 1);
   assert.equal(game.phase, "prep2");
   assert.equal(game.pending, null);
 });

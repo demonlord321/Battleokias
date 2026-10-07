@@ -35,7 +35,7 @@ export function createGame({ seed = Date.now(), players }) {
     turn: 0, // goes to 1 when the first turn starts
     startingPlayer: 0, // who won the coin flip
     activePlayer: 0, // index into players
-    phase: "setup", // "setup", then each turn: "draw" -> "prep1" -> "prep2" -> "battle"; "over" once someone wins
+    phase: "setup", // "setup", then each turn: "start" -> "draw" -> "prep1" -> "battle" -> "prep2" -> "end"; "over" once someone wins
     players,
     winner: null, // index of the winning player, or null while the game runs
     pending: null, // a choice someone must make before play goes on, e.g. { type: "chooseLoss", player, slots }

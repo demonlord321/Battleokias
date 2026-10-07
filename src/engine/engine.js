@@ -220,7 +220,7 @@ export function spendEnergy(player, amount) {
   return true;
 }
 
-// Starts the active player's turn: refill Energy, Draw Phase (draw 1), then Preparation Phase I.
+// Starts the active player's turn: refill Energy, then the Start Phase, Draw Phase (draw 1) and Preparation Phase I.
 function startTurn(game) {
   if (game.activePlayer === game.startingPlayer) game.turn += 1;
   const p = game.players[game.activePlayer];
@@ -229,8 +229,17 @@ function startTurn(game) {
   // and your Formation can attack once per Battle Phase (placeholder).
   game.promotionsLeft = PROMOTIONS_PER_TURN;
   game.formationAttacked = false;
-  game.phase = "draw";
   game.log.push(`Turn ${game.turn}: ${p.name}'s turn.`);
+  // Start Phase (RULES.md): activate set Spells or Traps. None exist yet, so it passes on its own.
+  game.phase = "start";
+  if (hasSetCardsToActivate(game, game.activePlayer)) return;
+  startDraw(game);
+}
+
+// Draw Phase (draw 1 from the main deck), then straight into Preparation Phase I.
+function startDraw(game) {
+  const p = game.players[game.activePlayer];
+  game.phase = "draw";
   // RULES.md placeholder: a player who can't draw in their Draw Phase loses.
   if (!drawCard(game, game.activePlayer)) return win(game, 1 - game.activePlayer, `${p.name} couldn't draw.`);
   game.phase = "prep1";
@@ -240,6 +249,20 @@ function startTurn(game) {
   }
   for (const student of academyOf(game, game.activePlayer)?.enrolled ?? []) student.due = student.ready <= game.turn;
   nextGraduation(game);
+}
+
+// Whether a player has set Spells or Traps they could activate right now (Start and
+// End Phases, and later on the opponent's turn). There are none yet; when there are,
+// the Start and End Phases will wait for that player instead of passing on their own.
+function hasSetCardsToActivate(game, playerIndex) {
+  return false;
+}
+
+// End Phase (RULES.md): activate set cards if needed, then the opponent's turn begins.
+function startEnd(game) {
+  game.phase = "end";
+  if (hasSetCardsToActivate(game, game.activePlayer)) return;
+  passTurn(game);
 }
 
 // Phases where Equipment can be equipped (RULES.md: in Phase II you can only set cards;
@@ -278,18 +301,23 @@ const ACTIONS = {
     },
   },
 
-  // Preparation Phase I goes to Preparation Phase II, then the Battle Phase; the Battle Phase ends the turn.
+  // RULES.md turn order: Start, Draw, Preparation I, Battle, Preparation II, End, then the
+  // opponent's turn. Start and Draw run on their own, and so does End while there's nothing to activate.
   nextPhase: {
     check(game, action) {
-      if (!["prep1", "prep2", "battle"].includes(game.phase)) return "There's no next phase right now.";
+      if (!["start", "prep1", "battle", "prep2", "end"].includes(game.phase)) return "There's no next phase right now.";
       return null;
     },
     apply(game, action) {
-      if (game.phase === "prep1") {
-        startPrep2(game);
-      } else if (game.phase === "prep2") {
+      if (game.phase === "start") {
+        startDraw(game);
+      } else if (game.phase === "prep1") {
         game.phase = "battle";
         game.log.push(`${game.players[game.activePlayer].name} goes to battle.`);
+      } else if (game.phase === "battle") {
+        startPrep2(game);
+      } else if (game.phase === "prep2") {
+        startEnd(game);
       } else {
         passTurn(game);
       }

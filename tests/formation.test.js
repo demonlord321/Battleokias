@@ -60,7 +60,6 @@ function battleReady(myStats, theirStats) {
     [0, 1, 2].forEach((slot) => place(game, 1, slot, unit(1, theirStats[0], theirStats[1])));
   }
   applyAction(game, { type: "nextPhase", player: 0 });
-  applyAction(game, { type: "nextPhase", player: 0 }); // Phase II, then Battle
   return game;
 }
 const attack = (game) => applyAction(game, { type: "attack", player: game.activePlayer });
@@ -69,7 +68,6 @@ test("you need a complete Formation, in the Battle Phase, to attack", () => {
   const game = start();
   assert.match(checkAction(game, { type: "attack", player: 0 }), /Battle Phase/);
   applyAction(game, { type: "nextPhase", player: 0 });
-  applyAction(game, { type: "nextPhase", player: 0 }); // Phase II, then Battle
   assert.match(checkAction(game, { type: "attack", player: 0 }), /need a Formation set/);
   game.players[0].formationZone = frontal();
   place(game, 0, 0, unit(1, 500, 500));

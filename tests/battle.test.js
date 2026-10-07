@@ -49,14 +49,14 @@ test("summon is refused with a reason when it isn't allowed", () => {
   assert.match(checkAction(game, { type: "summon", player: 0, card: 0, slot: 1 }), /Preparation Phase I/);
 });
 
-test("nextPhase goes Preparation Phase I, then Phase II, then Battle, then the other player's turn", () => {
+test("nextPhase goes Preparation Phase I, Battle, Preparation Phase II, End, then the other player's turn", () => {
   const game = start();
   assert.equal(game.phase, "prep1");
   act(game, { type: "nextPhase" });
-  assert.equal(game.phase, "prep2");
-  act(game, { type: "nextPhase" });
   assert.equal(game.phase, "battle");
   act(game, { type: "nextPhase" });
+  assert.equal(game.phase, "prep2");
+  act(game, { type: "nextPhase" }); // the End Phase passes on its own while there's nothing set to activate
   assert.equal(game.activePlayer, 1);
   assert.equal(game.phase, "prep1");
 });
