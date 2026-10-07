@@ -84,14 +84,16 @@ export function buildBoard(container) {
 }
 
 const ENERGY_CAP = 10; // RULES.md: max Energy grows by 1 a turn up to 10
+const DAMAGE_LIMIT = 10; // RULES.md: 10 Damage Counters and you lose
 
-// Player stats panel that sits beside each hand: Name, Defense Points, Energy.
+// Player stats panel that sits beside each hand: Name, Damage Counters, Energy.
 function buildStats(cls) {
   const el = document.createElement("div");
   el.className = `stats ${cls}`;
   el.innerHTML = `
     <div class="stats-name"></div>
-    <div class="stat stat-dp"><span class="stat-icon" aria-hidden="true">&#x1F6E1;</span><span class="stat-label">Defense</span><span class="stat-value"></span></div>
+    <div class="stat stat-dmg"><span class="stat-icon" aria-hidden="true">&#x1F494;</span><span class="stat-label">Damage</span><span class="stat-value"></span></div>
+    <div class="damage-pips" title="Damage Counters: 10 and you lose">${'<span class="dpip"></span>'.repeat(DAMAGE_LIMIT)}</div>
     <div class="stat stat-energy"><span class="stat-icon" aria-hidden="true">&#x26A1;</span><span class="stat-label">Energy</span><span class="stat-value"></span></div>
     <div class="energy-pips">${'<span class="pip"></span>'.repeat(ENERGY_CAP)}</div>`;
   return el;
@@ -99,8 +101,11 @@ function buildStats(cls) {
 
 function renderStats(el, p, active) {
   el.querySelector(".stats-name").textContent = p.name;
-  // The engine doesn't track these yet (starting values come from RULES.md), so show a dash.
-  el.querySelector(".stat-dp .stat-value").textContent = p.defense ?? "–";
+  // Damage Counters (RULES.md): start at 0, lose at 10. Reads p.damage.
+  const dmg = p.damage ?? 0;
+  el.querySelector(".stat-dmg .stat-value").textContent = `${dmg} / ${DAMAGE_LIMIT}`;
+  el.querySelectorAll(".dpip").forEach((pip, i) => pip.classList.toggle("is-hit", i < dmg));
+  el.classList.toggle("is-danger", dmg >= DAMAGE_LIMIT - 2);
   // Energy shows as "current / max", plus 10 pips: lit = available, outlined = spent
   // this turn (refills next turn), dark = not unlocked yet.
   const hasMax = typeof p.maxEnergy === "number";
@@ -124,7 +129,7 @@ function fillSlot(slot, card) {
 // Formation Zone: outline the Unit Position Slots the set Formation draws from, and show
 // its live total (RULES.md: Frontal Assault sums Attack and Defense of the units in its slots;
 // units elsewhere don't count). Until every slot is filled it shows how many are still missing.
-function renderFormation(side, p) {
+function renderFormation(side, p, ui = {}) {
   const f = p.formationZone ?? null;
   const slots = f && Array.isArray(f.slots) ? f.slots : [];
   p.ups.forEach((_, i) => {
@@ -133,6 +138,7 @@ function renderFormation(side, p) {
     el.classList.toggle("formation-gap", slots.includes(i) && !p.ups[i]);
   });
   const zone = getSlot(side, "formation");
+  zone.classList.toggle("is-legal", side === 0 && !!ui.formationReady);
   zone.querySelector(".formation-total")?.remove();
   if (!slots.length) return;
   const units = slots.map((i) => p.ups[i]).filter(Boolean);
@@ -182,7 +188,7 @@ export function renderBoard(game, viewer = 0, ui = {}) {
       slot.classList.toggle("is-target", side === 1 && !!ui.targets?.has(i));
       slot.classList.toggle("is-exhausted", !!card && side === 0 && ui.phase === "battle" && !ui.attackers?.has(i));
     });
-    renderFormation(side, p);
+    renderFormation(side, p, ui);
     p.specialZones.forEach((card, i) => fillSlot(getSlot(side, "sdz", i), card));
     fillSlot(getSlot(side, "fez"), p.fieldEffect);
     fillSlot(getSlot(side, "formation"), p.formationZone ?? null);

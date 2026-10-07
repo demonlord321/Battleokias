@@ -87,6 +87,7 @@ const legal = (action) => checkAction(game, action) === null;
 // (one Grade up, for the difference in Grade; see RULES.md).
 const canPlay = (card, slot) =>
   legal({ type: "summon", player: me(), card, slot }) || legal({ type: "promote", player: me(), card, slot });
+const canSetFormation = (card) => legal({ type: "setFormation", player: me(), card });
 
 // Which button the phase control is: the engine's nextPhase if it has one, else End Turn.
 function phaseAction() {
@@ -109,9 +110,10 @@ function render() {
   // Hand cards that could be summoned somewhere right now.
   ui.playable = new Set();
   p.hand.forEach((_, card) => {
-    if (p.ups.some((_, slot) => canPlay(card, slot))) ui.playable.add(card);
+    if (canSetFormation(card) || p.ups.some((_, slot) => canPlay(card, slot))) ui.playable.add(card);
   });
   // Slots the selected card can go to.
+  ui.formationReady = selectedHand !== null && canSetFormation(selectedHand);
   if (selectedHand !== null) {
     ui.legalSlots = new Set();
     p.ups.forEach((_, slot) => {
@@ -157,7 +159,9 @@ function showWin() {
   const winner = game.players[game.winner];
   const loser = game.players[1 - game.winner];
   $("#win-title").textContent = `${winner.name} wins!`;
-  $("#win-detail").textContent = `${loser.name}'s Defense fell to ${Math.max(0, loser.defense ?? 0)} on turn ${game.turn}.`;
+  // The engine logs "<name> wins: <why>"; show the why.
+  const line = [...game.log].reverse().find((l) => l.startsWith(`${winner.name} wins:`));
+  $("#win-detail").textContent = line ? line.slice(winner.name.length + 6).trim() : `${loser.name} took ${loser.damage ?? 10} Damage Counters on turn ${game.turn}.`;
   winScreen.hidden = false;
   $("#rematch-btn").focus();
 }
@@ -187,8 +191,11 @@ function onHandClick({ index }) {
   selectedHand = selectedHand === index ? null : index;
   if (selectedHand !== null) {
     const p = game.players[me()];
-    const anywhere = p.ups.some((_, slot) => canPlay(index, slot));
-    if (!anywhere) {
+    const anywhere = canSetFormation(index) || p.ups.some((_, slot) => canPlay(index, slot));
+    if (!anywhere && p.hand[index]?.type === "formation") {
+      toast(checkAction(game, { type: "setFormation", player: me(), card: index }) ?? "Can't set that now.");
+      selectedHand = null;
+    } else if (!anywhere) {
       // Ask the engine why, using the first empty slot, so the reason is useful.
       const empty = p.ups.findIndex((u) => !u);
       toast(checkAction(game, { type: "summon", player: me(), card: index, slot: Math.max(0, empty) }) ?? "Can't play that now.");
@@ -200,7 +207,12 @@ function onHandClick({ index }) {
 
 function onSlotClick({ owner, zone, index }) {
   if (curtain.hidden === false || game.winner !== null) return;
-  if (owner !== 0 || zone !== "ups") return; // only your own unit slots do anything for now
+  if (owner !== 0) return; // only your own side does anything for now
+  if (zone === "formation") {
+    if (selectedHand !== null) act({ type: "setFormation", player: me(), card: selectedHand });
+    return;
+  }
+  if (zone !== "ups") return;
   const unit = game.players[me()].ups[index];
   if (selectedHand !== null && !unit) {
     act({ type: "summon", player: me(), card: selectedHand, slot: index });

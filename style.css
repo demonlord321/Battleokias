@@ -416,7 +416,6 @@ html, body {
 .stat-icon { width: 1.2em; text-align: center; }
 .stat-label { flex: 1; color: var(--text-dim); text-transform: uppercase; font-size: 0.8em; letter-spacing: 0.08em; }
 .stat-value { font-weight: bold; min-width: 2ch; text-align: right; }
-.stat-dp .stat-value { color: #8fd3ff; }
 .stat-energy .stat-value { color: #ffd66b; }
 
 .energy-pips { display: flex; gap: 3px; margin-top: 0.3rem; }
@@ -646,3 +645,9 @@ html, body {
 .formation-total .stat-def { color: #8fd0ff; }
 .formation-total.is-incomplete { color: #b9b4d6; border-style: dashed; }
 .formation-total.is-ready { box-shadow: 0 0 8px rgba(142, 160, 255, 0.7); }
+/* Damage Counters: 10 pips, red when hit; the panel warns at 8+. */
+.damage-pips { display: flex; gap: 3px; margin: 0.2rem 0 0.35rem; }
+.dpip { width: 9px; height: 9px; border-radius: 2px; transform: rotate(45deg); border: 1px solid rgba(255, 110, 110, 0.45); }
+.dpip.is-hit { background: #e0484f; border-color: #ff8a8a; box-shadow: 0 0 6px rgba(224, 72, 79, 0.7); }
+.stat-dmg .stat-value { color: #ff9a9a; }
+.stats.is-danger { border-color: #e0484f; box-shadow: 0 0 12px rgba(224, 72, 79, 0.5); }
