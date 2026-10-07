@@ -106,6 +106,21 @@
     "image": "images/fld-001.png"
   },
   {
+    "id": "EQP-001",
+    "name": "Practice Gear",
+    "type": "equipment",
+    "signets": [
+      "arms"
+    ],
+    "cost": 1,
+    "boost": {
+      "attackPercent": 25,
+      "defensePercent": 25
+    },
+    "text": "Equip to an Arms unit. The equipped unit gets +25% Attack and Defense, rounded down.",
+    "image": "images/eqp-001.png"
+  },
+  {
     "id": "ARM-001",
     "name": "Iron Recruit",
     "type": "unit",
