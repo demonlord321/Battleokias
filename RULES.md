@@ -302,8 +302,8 @@ Open questions (placeholders in brackets):
 - *"Drazel does not conform to slaying the weak."*
 - **+500 Attack** (no Defense bonus).
 - **Effect:** while Drazel holds his Katana, when your Formation's attack lands, the defender loses the unit in their Formation with the **highest Attack + Defense**, instead of their lowest-Grade unit.
+- **Drazel must be in your attacking Formation** for the Katana's effect to work (confirmed by Dyllan).
 - Placeholders until Dyllan decides:
-  - Drazel has to be in your attacking Formation's slots for the effect to work.
   - Attack + Defense uses each unit's current stats, Equipment included. On a tie, the defender picks, as with the normal rule.
   - Signets Arms and Mercenary, the same as Drazel; normal Equipment cost (1 Energy); Special Deck only like all Equipment; no Grade limit.
 - Specialised Equipment is a new idea: Equipment that names the one unit it can go on.
