@@ -8,8 +8,9 @@ Written up from Dyllan's notes. Open questions are marked **(?)**.
 3. The opponent draws **5** cards.
 
 ## Turn structure
-1. **Draw Phase:** the active player draws 1 card.
-   - **(?)** Does the starting player also draw in their very first Draw Phase (ending up with 5)?
+1. **Draw Phase:** the active player draws 1 card. This includes the starting
+   player's very first turn, so the starting player begins their first main phase
+   with **5** cards, and the opponent begins their first turn with **6**.
 2. _(next phases to come)_
 
 ## Still to define
