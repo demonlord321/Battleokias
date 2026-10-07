@@ -37,10 +37,13 @@ export function formationPattern(slots) {
 
 function signetIcons(signets = []) {
   return signets
-    .map((id) => {
+    .map((id, i) => {
+      // The first Signet sets the promotion line; any after it are sub-Signets, drawn smaller.
+      const cls = i === 0 ? "signet" : "signet is-sub";
+      const role = i === 0 ? " (promotion line)" : " (sub-Signet)";
       const sg = SIGNETS[String(id).toLowerCase()];
-      if (!sg) return `<span class="signet" title="${esc(id)}">?</span>`;
-      return `<span class="signet" title="${sg.label}" style="--signet-color:${sg.color}">${sg.symbol}</span>`;
+      if (!sg) return `<span class="${cls}" title="${esc(id)}${role}">?</span>`;
+      return `<span class="${cls}" title="${sg.label}${role}" style="--signet-color:${sg.color}">${sg.symbol}</span>`;
     })
     .join("");
 }

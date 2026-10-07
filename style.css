@@ -766,3 +766,5 @@ html, body {
 .card-class { color: #ffd98a; font-weight: bold; }
 .card-flavor { display: none; font-size: 0.68em; line-height: 1.2; font-style: italic; opacity: 0.85; margin-top: 2px; }
 .hand-player .card-face:hover .card-flavor { display: block; }
+/* Sub-Signets (every Signet after the first) sit smaller and dimmer than the promotion-line Signet. */
+.signet.is-sub { transform: scale(0.75); opacity: 0.75; }
