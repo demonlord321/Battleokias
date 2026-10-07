@@ -66,7 +66,17 @@ A Unit card shows:
 - **Grade** (top right of the card): the unit's Energy cost and its rarity in one number.
 
 Open questions:
-- **(?)** Does Grade N cost exactly N Energy? What is the Grade range (Energy caps at 10)?
+- A Grade N unit costs **N Energy** to summon normally.
+- **(?)** What is the Grade range (Energy caps at 10)?
+
+### Promotion
+- Instead of summoning normally, you can **promote** a unit already on the field by playing a
+  higher-Grade unit from your hand **on top of it**.
+- Promotion costs the **difference** in Grade. For example, a Grade 2 played on a Grade 1 costs **1 Energy** instead of 2.
+- **(?)** Must the new unit be exactly one Grade higher, or can you skip (Grade 1 to Grade 3 for 2 Energy)?
+- **(?)** Can any higher-Grade unit promote any lower one, or must they be related (same Signet, same unit line or name)?
+- **(?)** What happens to the card underneath: does it stay in a stack under the new unit, go to the Grave, or give a bonus?
+- **(?)** Can a promoted unit attack on the turn it is promoted if the unit beneath was already on the field?
 - **(?)** How does Grade map to rarity names, if any (e.g. Common, Rare, Legendary)?
 - **(?)** What triggers a Formation Effect (a pattern of units in the 3x3 grid, adjacency, same Signet)?
 - **(?)** How does the Formation card type relate to a unit's Formation Effect?
