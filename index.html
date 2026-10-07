@@ -22,6 +22,7 @@
       <p class="subtitle">A trading card game</p>
       <nav class="menu-buttons">
         <button id="new-game-btn" class="menu-btn">New Game</button>
+        <button id="tutorial-btn" class="menu-btn">Tutorial</button>
         <!-- Load Game, Settings and Quit come later -->
       </nav>
     </div>
@@ -37,6 +38,22 @@
     <!-- The board goes here (Milestone 2). Empty for now. -->
     <main id="board" class="board">
       <p class="board-placeholder">The board will go here.</p>
+    </main>
+  </section>
+
+  <section id="tutorial-screen" class="screen">
+    <header class="game-bar">
+      <button id="tutorial-back-btn" class="small-btn">&larr; Menu</button>
+      <span class="game-bar-title">Tutorial</span>
+      <span class="hint">Esc: back to menu</span>
+    </header>
+    <!-- Guided tutorial match goes here (Milestone 2.5), steps from data/tutorial.json. -->
+    <main class="tutorial-panel">
+      <div class="tutorial-card">
+        <h2>How to play</h2>
+        <p>A guided match that teaches the rules one step at a time is on its way.</p>
+        <p class="tutorial-soon">It will cover the resource, playing a card, attacking and ending your turn, then finish with a short free game.</p>
+      </div>
     </main>
   </section>
 

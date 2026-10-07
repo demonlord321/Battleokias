@@ -178,3 +178,34 @@ html, body {
   border-radius: 14px;
 }
 .board-placeholder { color: var(--text-dim); font-size: 1.1rem; letter-spacing: 0.1em; }
+
+/* ---------- Tutorial screen ---------- */
+#tutorial-screen {
+  flex-direction: column;
+  background: radial-gradient(ellipse at center, #2a2350, #0f0b1f 75%);
+}
+.tutorial-panel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.2rem;
+}
+.tutorial-card {
+  max-width: 520px;
+  padding: 2rem 2.4rem;
+  text-align: center;
+  background: rgba(20, 15, 40, 0.75);
+  border: 2px solid var(--gold-dim);
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+.tutorial-card h2 {
+  margin: 0 0 1rem;
+  font-family: Georgia, serif;
+  color: var(--gold);
+  letter-spacing: 0.05em;
+}
+.tutorial-card p { line-height: 1.5; margin: 0 0 0.9rem; }
+.tutorial-card p:last-child { margin-bottom: 0; }
+.tutorial-soon { color: var(--text-dim); font-size: 0.95rem; }

@@ -20,8 +20,9 @@ npx serve .                     # or this, if you have Node
 | `style.css` | all the styling |
 | `src/main.js` | entry point: sets up the screens, starts on the menu |
 | `src/screens.js` | tiny screen switcher (`registerScreen`, `showScreen`) |
-| `src/screens/menu.js` | main menu: title + New Game |
+| `src/screens/menu.js` | main menu: title, New Game, Tutorial (arrow keys move between buttons) |
 | `src/screens/game.js` | game screen: empty board for now, Esc returns to the menu |
+| `src/screens/tutorial.js` | tutorial screen: placeholder until the guided match (Milestone 2.5) |
 | `src/engine/` | rules engine (plain JS, no graphics); run its tests with `npm test` |
 
 ## Adding a screen
