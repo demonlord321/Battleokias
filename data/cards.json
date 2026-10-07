@@ -71,19 +71,19 @@
       "magic",
       "alchemy"
     ],
-    "cost": 0,
+    "cost": 1,
     "slots": [
+      0,
       1,
-      3,
-      4,
-      5
+      2,
+      4
     ],
     "combine": "scaled",
     "attackMultiplier": 1.5,
     "defenseDivisor": 1.5,
     "damageGrade": 2,
     "defenseGrade": 0,
-    "text": "Needs units in the front-centre slot and all three middle-row slots. Attack is the sum of their Attack times 1.5, and Defense is the sum of their Defense divided by 1.5, rounded down.",
+    "text": "Needs units in all three front-row slots and the middle-centre slot. Attack is the sum of their Attack times 1.5, and Defense is the sum of their Defense divided by 1.5, rounded down.",
     "image": "images/frm-002.png"
   },
   {
