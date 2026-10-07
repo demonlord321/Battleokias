@@ -24,7 +24,7 @@ Each turn runs through six phases, shown on screen with their short names:
 - The Draw Phase includes the starting player's very first turn, so the starting player begins their first Preparation Phase I with **5** cards, and the opponent begins with **6**.
 - **(?)** Is there a limit on how many units can be summoned per turn? (Only Energy limits it for now.)
 - **(?)** Are Spells and Traps set face-down until activated? (Yes.)
-- **(?)** Can Spells and Traps be activated during your opponent's turn too, or only in your own Start and End Phases?
+- **Set Spells and Traps** are activated in your own Start and End Phases. They can also be used **during your opponent's turn** if the card says that's its purpose (confirmed by Dyllan).
 
 ## Still to define
 - ~~Win condition~~ (10 Damage Counters, see Player stats)
