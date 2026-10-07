@@ -174,7 +174,8 @@ export const PHASE_NAMES = {
 //   legalSlots:   Set of ups indexes (viewer's side) the selected card can go to
 //   attackers:    optional Set of ups indexes that can attack (unused since Formation attacks)
 //   formationCanAttack: the viewer's Formation can attack now (Formation Zone glows)
-//   targets:      Set of ups indexes (other side) that can be targeted
+//   targets:      Set of ups indexes (other side) the attack would destroy
+//   lossSlots:    Set of ups indexes (viewer's side) the defender can choose to lose
 //   promoteSlots: Set of ups indexes (viewer's side) the selected card can promote
 export function renderBoard(game, viewer = 0, ui = {}) {
   game.players.forEach((p, owner) => {
@@ -191,6 +192,7 @@ export function renderBoard(game, viewer = 0, ui = {}) {
       else delete slot.dataset.stack;
       slot.classList.toggle("can-attack", side === 0 && !!ui.attackers?.has(i));
       slot.classList.toggle("is-target", side === 1 && !!ui.targets?.has(i));
+      slot.classList.toggle("choose-loss", side === 0 && !!ui.lossSlots?.has(i));
       slot.classList.toggle("is-exhausted", !!card && side === 0 && ui.phase === "battle" && !!ui.attackers && !ui.attackers.has(i));
     });
     renderFormation(side, p, ui);

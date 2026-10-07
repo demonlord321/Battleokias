@@ -672,3 +672,13 @@ html, body {
 }
 /* Inactive Formation: card dimmed until the missing slot is filled. */
 .slot.is-inactive .card { filter: grayscale(0.7) brightness(0.65); }
+/* Opponent units the attack would destroy. */
+.slot.is-target { border-color: #e0484f; box-shadow: 0 0 12px rgba(224, 72, 79, 0.75); }
+.slot.is-target::before {
+  content: "\2620"; position: absolute; top: -0.6em; right: -0.4em; z-index: 3; font-size: 0.85em;
+  width: 1.4em; height: 1.4em; display: grid; place-items: center; border-radius: 50%;
+  background: #e0484f; color: #fff; box-shadow: 0 0 6px #e0484f;
+}
+/* Defender picking which tied unit to lose. */
+.slot.choose-loss { border-color: #e0484f; cursor: pointer; animation: loss-pulse 0.8s ease-in-out infinite alternate; }
+@keyframes loss-pulse { from { box-shadow: 0 0 4px rgba(224, 72, 79, 0.4); } to { box-shadow: 0 0 20px rgba(224, 72, 79, 0.9); } }

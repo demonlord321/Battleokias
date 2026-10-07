@@ -68,7 +68,7 @@ function toast(message) {
 
 // Sends an action to the engine. Shows the engine's reason if it says no.
 function act(action) {
-  const prevActive = game.activePlayer;
+  const prevActor = me();
   const result = applyAction(game, action);
   if (!result.ok) {
     toast(result.reason);
@@ -76,12 +76,15 @@ function act(action) {
   }
   selectedHand = null;
   if (game.winner !== null) return render(), showWin(), true;
-  if (game.activePlayer !== prevActive) showCurtain();
+  if (me() !== prevActor) showCurtain(); // turn passed, or the defender has to choose a loss
   render();
   return true;
 }
 
-const me = () => game.activePlayer;
+// Whoever has to act right now: normally the active player, but when the engine is waiting
+// on a choice (game.pending, e.g. the defender picking which tied unit to lose) it's them.
+const me = () => game.pending?.player ?? game.activePlayer;
+const choosingLoss = () => game.pending?.type === "chooseLoss";
 const legal = (action) => checkAction(game, action) === null;
 // A hand card can go to a slot by a normal summon, or by promoting the unit already there
 // (one Grade up, for the difference in Grade; see RULES.md).
@@ -127,12 +130,19 @@ function render() {
   // RULES.md: in the Battle Phase your whole Formation attacks (its Attack vs their
   // Formation Defense), so there's one Attack button rather than per-unit attacks.
   ui.formationCanAttack = legal({ type: "attack", player: me() });
+  // Opponent units the attack would destroy (several = tied lowest Grade; they'll pick).
+  if (ui.formationCanAttack) {
+    const pv = attackPreview(game, me());
+    if (pv.hits && pv.destroys?.length) ui.targets = new Set(pv.destroys);
+  }
+  // The defender choosing which tied unit goes to the Grave.
+  if (choosingLoss()) ui.lossSlots = new Set(game.pending.slots);
 
   renderBoard(game, viewer, ui);
 
   const pa = phaseAction();
   phaseBtn.textContent = phaseLabel(pa);
-  phaseBtn.disabled = game.winner !== null;
+  phaseBtn.disabled = game.winner !== null || choosingLoss();
   renderAttackButton(ui.formationCanAttack);
 
   logEl.innerHTML = game.log
@@ -143,7 +153,7 @@ function render() {
 
 // "⚔ Attack 2500 vs 🛡 2000": shown in the Battle Phase; says up front whether it hits.
 function renderAttackButton(canAttack) {
-  const inBattle = game.phase === "battle" && game.winner === null;
+  const inBattle = game.phase === "battle" && game.winner === null && !choosingLoss();
   attackBtn.hidden = !inBattle;
   if (!inBattle) return;
   // The engine's own preview, so the button always matches what the attack will do.
@@ -158,7 +168,12 @@ function renderAttackButton(canAttack) {
 
 function showCurtain() {
   curtain.hidden = false;
-  $("#curtain-title").textContent = `${game.players[me()].name}'s turn`;
+  $("#curtain-title").textContent = choosingLoss()
+    ? `${game.players[me()].name}: choose a unit to lose`
+    : `${game.players[me()].name}'s turn`;
+  $("#curtain-text").textContent = choosingLoss()
+    ? "Your Formation was hit and your lowest-Grade units are tied. Pass the device, then pick which one goes to the Grave."
+    : "Pass the device, then press start. The other player's hand stays hidden.";
   $("#curtain-btn").textContent = `I'm ${game.players[me()].name}, start`;
   $("#curtain-btn").focus();
 }
@@ -202,6 +217,7 @@ async function startGame() {
 
 function onHandClick({ index }) {
   if (curtain.hidden === false || game.winner !== null) return;
+  if (choosingLoss()) return toast("Pick one of the glowing units to send to the Grave.");
   selectedHand = selectedHand === index ? null : index;
   if (selectedHand !== null) {
     const p = game.players[me()];
@@ -222,6 +238,11 @@ function onHandClick({ index }) {
 function onSlotClick({ owner, zone, index }) {
   if (curtain.hidden === false || game.winner !== null) return;
   if (owner !== 0) return; // only your own side does anything for now
+  if (choosingLoss()) {
+    if (zone === "ups" && game.pending.slots.includes(index)) act({ type: "chooseLoss", player: me(), slot: index });
+    else toast("Pick one of the glowing units to send to the Grave.");
+    return;
+  }
   if (zone === "formation") {
     if (selectedHand !== null) act({ type: "setFormation", player: me(), card: selectedHand });
     else if (game.phase === "battle") act({ type: "attack", player: me() });
