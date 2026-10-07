@@ -58,8 +58,11 @@ export function renderCard(card, faceUp = true) {
   el.dataset.cardId = card?.id ?? "";
   const isUnit = card?.type === "unit";
   if (isUnit) el.classList.add("is-unit");
+  // Named units (Grade 4 and up) carry a Class and flavour text.
+  const named = isUnit && (card?.class || card?.flavor);
+  if (named) el.classList.add("is-named");
   if (card?.image) el.style.setProperty("--card-image", `url("${encodeURI(card.image)}")`);
-  el.title = card?.name ?? "";
+  el.title = [card?.name ?? "", named && card.class ? `Class: ${card.class}` : "", named && card.flavor ? `\u201c${card.flavor}\u201d` : ""].filter(Boolean).join("\n");
   el.innerHTML = `
     <div class="card-top">
       <span class="card-signets">${signetIcons(card?.signets)}</span>
@@ -67,9 +70,10 @@ export function renderCard(card, faceUp = true) {
     </div>
     <div class="card-name">${esc(card?.name ?? "Card")}</div>
     <div class="card-art">${card?.type === "formation" && Array.isArray(card.slots) ? formationPattern(card.slots) : ""}</div>
-    <div class="card-type">${esc(type.label)}</div>
+    <div class="card-type">${esc(type.label)}${named && card.class ? ` <span class="card-class">\u00b7 ${esc(card.class)}</span>` : ""}</div>
     ${isUnit && card?.formation ? `<div class="card-formation"><b>Formation:</b> ${esc(card.formation)}</div>` : ""}
     <div class="card-text">${esc(card?.text)}</div>
+    ${named && card.flavor ? `<div class="card-flavor">${esc(card.flavor)}</div>` : ""}
     ${card?.type === "formation" ? `<div class="card-stats formation-grades">
       <span class="stat-dmg-grade" title="Damage Grade: Damage Counters dealt when this Formation's attack lands">&#x1F4A5; ${esc(card?.damageGrade ?? 1)}</span>
       <span class="stat-def-grade" title="Defense Grade: taken off the attacker's Damage Grade">&#x1F6E1; ${esc(card?.defenseGrade ?? 0)}</span>
