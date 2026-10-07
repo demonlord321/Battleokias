@@ -123,8 +123,9 @@
       "attack": 250,
       "defense": 250
     },
-    "text": "Equip to an Arms unit. The equipped unit gets +250 Attack and +250 Defense.",
-    "image": "images/eqp-001.png"
+    "text": "Equip to an Arms unit of Grade 1 to 3. The equipped unit gets +250 Attack and +250 Defense. If the unit is promoted to Grade 4 or higher, put this card in the Grave.",
+    "image": "images/eqp-001.png",
+    "maxGrade": 3
   },
   {
     "id": "ARM-001",
