@@ -48,4 +48,5 @@ Open questions:
 - **(?)** Where are spells and traps set: in the UPS grid or elsewhere?
 - **(?)** Does a unit's row or column in the UPS affect attacking or being attacked?
 
+## Still to define (continued)
 - Deck size and card limits
