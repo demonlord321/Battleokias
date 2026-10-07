@@ -2,7 +2,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { createRng, shuffle } from "../src/engine/rng.js";
-import { newGame, applyAction, legalActions, spendEnergy } from "../src/engine/engine.js";
+import { newGame, applyAction, checkAction, legalActions, spendEnergy } from "../src/engine/engine.js";
 
 const deck = (prefix, n = 40) => Array.from({ length: n }, (_, i) => ({ id: `${prefix}${i}` }));
 const start = (opts = {}) => newGame({ seed: 1, decks: [deck("a"), deck("b")], ...opts });
@@ -50,10 +50,11 @@ test("each player has a 3x3 grid, 4 Special Deck Zones, a Field Effect Zone and 
   assert.equal(p.formationZone, null);
 });
 
-test("drawing from an empty pile doesn't crash", () => {
+test("a player who can't draw in their Draw Phase loses (placeholder)", () => {
   const game = newGame({ seed: 1, decks: [deck("a", 4), deck("b", 5)], startingPlayer: 0 });
   assert.equal(game.players[0].hand.length, 4);
-  assert.match(game.log.at(-1), /no cards left/);
+  assert.equal(game.winner, 1);
+  assert.equal(game.phase, "over");
 });
 
 test("illegal actions are refused with a reason", () => {

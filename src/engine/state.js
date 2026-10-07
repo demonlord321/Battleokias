@@ -32,7 +32,7 @@ export function createGame({ seed = Date.now(), players }) {
     turn: 0, // goes to 1 when the first turn starts
     startingPlayer: 0, // who won the coin flip
     activePlayer: 0, // index into players
-    phase: "setup", // "setup", then each turn: "draw" -> "prep1" -> ...
+    phase: "setup", // "setup", then each turn: "draw" -> "prep1" -> "battle"; "over" once someone wins
     players,
     winner: null, // index of the winning player, or null while the game runs
     log: [], // human-readable history, shown in the game log later
