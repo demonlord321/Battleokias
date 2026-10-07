@@ -54,7 +54,7 @@ Uses the placeholder rules in `RULES.md`; Dyllan refines them as we play.
 - [x] Practice Gear works on Grades 1 to 3 only (`8c5a9b2`, `4ca0cc3`): it can't be equipped to Grade 4+, and it goes to the Grave when its unit is promoted to Grade 4+, Developer
 - [x] Drazel copies the total Defense (`9e1a126`) (Equipment included) when the unit's Equipment stays on through promotion, without counting its Defense bonus twice, Developer
 - [x] Drazel's Katana (`5b6d5c6`, `d3f58b0`, `94a0461`) (specialised Equipment, Drazel only): +500 Attack; while Drazel holds it and is in the attacking Formation, a landed hit destroys the defender's unit with the highest Attack + Defense instead of the lowest Grade; a way for Equipment to name the one unit it can go on, Developer + Mapmaker
-- [ ] Katana balance: cost 2 and 1 per deck are on main (`3f892ce`, `218fff5`); 72% vs the test deck when mixed with 14 Gears, about 79% alone in its Special Deck. Next options: Katana goes to the Grave after its first special kill (Advisor), or a minimum Special Deck size (Planner). Dyllan to choose
+- [ ] Katana: Dyllan removed the cost 2 and 1-per-deck limits (back to cost 1, 3 copies), Developer. Re-check its win rate once decks are 60 cards and other Special Deck types exist, Advisor. Parked ideas: breaks after its first special kill; minimum Special Deck size
 - [ ] Vanguard Charge still wins over 90%; Dyllan to revisit (Frontal Assault Defense Grade 1 got it to about 43%)
 - [ ] Named units (Grade 4+): flavour text and Class fields in `data/cards.json`, shown on the card face, Developer + Mapmaker (waiting on Dyllan's first named units and Class list)
 - [ ] Dyllan playtests and replaces placeholder rules, Planner updates `RULES.md`

@@ -307,7 +307,7 @@ Open questions (placeholders in brackets):
 - Placeholders until Dyllan decides:
   - Attack + Defense uses each unit's current stats, Equipment included. On a tie, the defender picks, as with the normal rule.
   - Signets Arms and Mercenary, the same as Drazel; Special Deck only like all Equipment; no Grade limit.
-- **Cost 2 Energy** and **only 1 copy per deck** (confirmed by Dyllan, for testing). At 3 copies and cost 1 it won 79% of sims. Making the destroy need Drazel's Attack to beat the target's Defense was turned down, since Dyllan thinks it would swing balance too far the other way.
+- **Cost 1 Energy** and up to **3 copies**, like other Equipment (Dyllan, after testing). It wins about 72 to 79% of sims for now. Cost 2 and a 1-per-deck limit were tried and **removed**: Dyllan expects the odds to drop once decks are full size and other Special Deck types exist, since players may not pick Equipment. Making the destroy need Drazel's Attack to beat the target's Defense was turned down, since Dyllan thinks it would swing balance too far the other way.
 - Specialised Equipment is a new idea: Equipment that names the one unit it can go on.
 
 ## Placeholder rules for the first Arms vs Arms test game
