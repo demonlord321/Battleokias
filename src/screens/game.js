@@ -75,6 +75,7 @@ function act(action) {
     return false;
   }
   selectedHand = null;
+  gradCard = null;
   if (game.winner !== null) return render(), showWin(), true;
   if (me() !== prevActor) showCurtain(); // turn passed, or the defender has to choose a loss
   render();
@@ -85,12 +86,17 @@ function act(action) {
 // on a choice (game.pending, e.g. the defender picking which tied unit to lose) it's them.
 const me = () => game.pending?.player ?? game.activePlayer;
 const choosingLoss = () => game.pending?.type === "chooseLoss";
+const graduating = () => game.pending?.type === "graduate";
+let gradCard = null; // Grade 3 picked in the graduation panel (its card id)
 const legal = (action) => checkAction(game, action) === null;
 // A hand card can go to a slot by a normal summon, or by promoting the unit already there
 // (one Grade up, for the difference in Grade; see RULES.md).
 const canPlay = (card, slot) =>
   legal({ type: "summon", player: me(), card, slot }) || legal({ type: "promote", player: me(), card, slot });
 const canSetFormation = (card) => legal({ type: "setFormation", player: me(), card });
+// Field Effect Zone: play a Field Spell there, or enroll a unit in the Academy that's there.
+const fezAction = (card) =>
+  [{ type: "setField", player: me(), card }, { type: "enroll", player: me(), card }].find(legal) ?? null;
 
 // Which button the phase control is: the engine's nextPhase if it has one, else End Turn.
 function phaseAction() {
@@ -113,10 +119,11 @@ function render() {
   // Hand cards that could be summoned somewhere right now.
   ui.playable = new Set();
   p.hand.forEach((_, card) => {
-    if (canSetFormation(card) || p.ups.some((_, slot) => canPlay(card, slot))) ui.playable.add(card);
+    if (canSetFormation(card) || fezAction(card) || p.ups.some((_, slot) => canPlay(card, slot))) ui.playable.add(card);
   });
   // Slots the selected card can go to.
   ui.formationReady = selectedHand !== null && canSetFormation(selectedHand);
+  ui.fezReady = selectedHand !== null && !!fezAction(selectedHand);
   if (selectedHand !== null) {
     ui.legalSlots = new Set();
     p.ups.forEach((_, slot) => {
@@ -137,12 +144,15 @@ function render() {
   }
   // The defender choosing which tied unit goes to the Grave.
   if (choosingLoss()) ui.lossSlots = new Set(game.pending.slots);
+  // Graduation: once a Grade 3 is picked in the panel, its possible slots glow.
+  if (graduating() && gradCard) ui.legalSlots = new Set(game.pending.slots);
+  renderGradPanel();
 
   renderBoard(game, viewer, ui);
 
   const pa = phaseAction();
   phaseBtn.textContent = phaseLabel(pa);
-  phaseBtn.disabled = game.winner !== null || choosingLoss();
+  phaseBtn.disabled = game.winner !== null || !!game.pending;
   renderAttackButton(ui.formationCanAttack);
 
   logEl.innerHTML = game.log
@@ -153,7 +163,7 @@ function render() {
 
 // "⚔ Attack 2500 vs 🛡 2000": shown in the Battle Phase; says up front whether it hits.
 function renderAttackButton(canAttack) {
-  const inBattle = game.phase === "battle" && game.winner === null && !choosingLoss();
+  const inBattle = game.phase === "battle" && game.winner === null && !game.pending;
   attackBtn.hidden = !inBattle;
   if (!inBattle) return;
   // The engine's own preview, so the button always matches what the attack will do.
@@ -164,6 +174,33 @@ function renderAttackButton(canAttack) {
   attackBtn.innerHTML = canAttack
     ? `&#x2694; Attack <small>${atk} vs &#x1F6E1; ${theirDef}${hits ? (counters ? ` · hits for ${counters}` : " · lands, 0 counters") : " · blocked"}</small>`
     : `&#x2694; Attack <small>${checkAction(game, { type: "attack", player: me() }) ?? ""}</small>`;
+}
+
+// Graduation panel (Arms Academy): pick which Grade 3 comes out, from hand or deck,
+// then click a glowing empty slot. Engine: game.pending = { type: "graduate", cards, slots }.
+function renderGradPanel() {
+  let panel = $("#grad-panel");
+  if (!graduating() || curtain.hidden === false) return panel?.remove();
+  if (!panel) {
+    panel = document.createElement("div");
+    panel.id = "grad-panel";
+    panel.className = "grad-panel";
+    panel.addEventListener("click", (e) => {
+      const b = e.target.closest("[data-grad-id]");
+      if (!b) return;
+      gradCard = gradCard === b.dataset.gradId ? null : b.dataset.gradId;
+      render();
+    });
+    $("#game-screen").append(panel);
+  }
+  const p = game.players[me()];
+  const student = p.fieldEffect?.enrolled?.find((e) => e.card.id === game.pending.student)?.card;
+  panel.innerHTML = `
+    <div class="grad-title">&#x1F393; ${student?.name ?? "A student"} graduates from ${p.fieldEffect?.name ?? "the Academy"}</div>
+    <div class="grad-sub">${gradCard ? "Now click a glowing empty slot." : "Pick the Grade 3 that comes out (free):"}</div>
+    <div class="grad-options">${game.pending.cards
+      .map((c) => `<button class="grad-option${gradCard === c.id ? " is-selected" : ""}" data-grad-id="${c.id}">${c.name}<small>from your ${c.from}</small></button>`)
+      .join("")}</div>`;
 }
 
 function showCurtain() {
@@ -218,12 +255,16 @@ async function startGame() {
 function onHandClick({ index }) {
   if (curtain.hidden === false || game.winner !== null) return;
   if (choosingLoss()) return toast("Pick one of the glowing units to send to the Grave.");
+  if (graduating()) return toast("Pick a Grade 3 in the Academy panel first.");
   selectedHand = selectedHand === index ? null : index;
   if (selectedHand !== null) {
     const p = game.players[me()];
-    const anywhere = canSetFormation(index) || p.ups.some((_, slot) => canPlay(index, slot));
+    const anywhere = canSetFormation(index) || !!fezAction(index) || p.ups.some((_, slot) => canPlay(index, slot));
     if (!anywhere && p.hand[index]?.type === "formation") {
       toast(checkAction(game, { type: "setFormation", player: me(), card: index }) ?? "Can't set that now.");
+      selectedHand = null;
+    } else if (!anywhere && p.hand[index]?.type === "field_spell") {
+      toast(checkAction(game, { type: "setField", player: me(), card: index }) ?? "Can't play that now.");
       selectedHand = null;
     } else if (!anywhere) {
       // Ask the engine why, using the first empty slot, so the reason is useful.
@@ -238,6 +279,18 @@ function onHandClick({ index }) {
 function onSlotClick({ owner, zone, index }) {
   if (curtain.hidden === false || game.winner !== null) return;
   if (owner !== 0) return; // only your own side does anything for now
+  if (graduating()) {
+    if (!gradCard) toast("Pick a Grade 3 in the Academy panel first.");
+    else if (zone === "ups") act({ type: "graduate", player: me(), card: gradCard, slot: index });
+    return;
+  }
+  if (zone === "fez") {
+    if (selectedHand === null) return;
+    const action = fezAction(selectedHand);
+    if (action) act(action);
+    else toast(checkAction(game, { type: game.players[me()].fieldEffect?.academy ? "enroll" : "setField", player: me(), card: selectedHand }) ?? "Can't play that there.");
+    return;
+  }
   if (choosingLoss()) {
     if (zone === "ups" && game.pending.slots.includes(index)) act({ type: "chooseLoss", player: me(), slot: index });
     else toast("Pick one of the glowing units to send to the Grave.");
@@ -278,7 +331,7 @@ const dropAction = (from, el) => {
 };
 
 function onPointerDown(e) {
-  if (e.button !== 0 || curtain.hidden === false || game.winner !== null || choosingLoss()) return;
+  if (e.button !== 0 || curtain.hidden === false || game.winner !== null || game.pending) return;
   const slot = e.target.closest('.slot[data-owner="0"][data-zone="ups"].is-filled');
   if (!slot) return;
   const from = +slot.dataset.index;

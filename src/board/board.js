@@ -157,6 +157,26 @@ function renderFormation(side, p, ui = {}) {
   zone.append(total);
 }
 
+// Field Effect Zone: glows when the selected hand card can go there (a Field Spell, or a
+// unit to enroll), and lists Academy students with how many turns until they graduate.
+function renderAcademy(side, p, game, ui) {
+  const zone = getSlot(side, "fez");
+  zone.classList.toggle("is-legal", side === 0 && !!ui.fezReady);
+  zone.querySelector(".academy-list")?.remove();
+  const enrolled = p.fieldEffect?.enrolled ?? [];
+  if (!enrolled.length) return;
+  const list = document.createElement("div");
+  list.className = "academy-list";
+  list.innerHTML = enrolled
+    .map((e) => {
+      const left = e.ready - game.turn;
+      const when = left <= 0 ? "ready" : `${left} turn${left > 1 ? "s" : ""}`;
+      return `<div class="academy-student${left <= 0 ? " is-ready" : ""}" title="${e.card.name}: graduates on turn ${e.ready}">&#x1F393; ${e.card.name} · ${when}</div>`;
+    })
+    .join("");
+  zone.append(list);
+}
+
 export const PHASE_NAMES = {
   setup: "Setup",
   draw: "Draw Phase",
@@ -198,6 +218,7 @@ export function renderBoard(game, viewer = 0, ui = {}) {
     renderFormation(side, p, ui);
     p.specialZones.forEach((card, i) => fillSlot(getSlot(side, "sdz", i), card));
     fillSlot(getSlot(side, "fez"), p.fieldEffect);
+    renderAcademy(side, p, game, ui);
     fillSlot(getSlot(side, "formation"), p.formationZone ?? null);
     const hand = els.hands[side];
     hand.innerHTML = "";

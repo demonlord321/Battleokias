@@ -693,3 +693,30 @@ html, body {
 .slot.drop-ok.drop-retire { border-color: #e0484f; }
 .slot.drop-hover { background: rgba(125, 255, 176, 0.18); box-shadow: 0 0 16px rgba(125, 255, 176, 0.7); }
 .slot.drop-retire.drop-hover { background: rgba(224, 72, 79, 0.2); box-shadow: 0 0 16px rgba(224, 72, 79, 0.8); }
+/* Academy students under the Field Effect Zone. */
+/* Beside the zone, on the outer side (left for you, right for the mirrored opponent). */
+.academy-list {
+  position: absolute; right: 100%; top: 50%; transform: translateY(-50%); margin-right: 6px; z-index: 3;
+  display: flex; flex-direction: column; gap: 2px; align-items: flex-end; pointer-events: none;
+}
+.half-opponent .academy-list { right: auto; left: 100%; margin: 0 0 0 6px; align-items: flex-start; }
+.academy-student {
+  white-space: nowrap; font-size: 0.58em; font-weight: bold; padding: 1px 6px; border-radius: 8px;
+  background: rgba(15, 12, 35, 0.92); border: 1px solid #2e8f9a; color: #9fe6ee;
+}
+.academy-student.is-ready { border-color: #7dffb0; color: #7dffb0; box-shadow: 0 0 8px rgba(125, 255, 176, 0.6); }
+/* Graduation picker. */
+.grad-panel {
+  position: absolute; left: 50%; top: 46%; transform: translate(-50%, -50%); z-index: 20;
+  min-width: 300px; max-width: 520px; padding: 1rem 1.2rem; border-radius: 12px; text-align: center;
+  background: rgba(18, 14, 40, 0.96); border: 2px solid #2e8f9a; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+}
+.grad-title { font-weight: bold; color: #9fe6ee; margin-bottom: 0.25rem; }
+.grad-sub { font-size: 0.85rem; color: #b9b4d6; margin-bottom: 0.6rem; }
+.grad-options { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; }
+.grad-option {
+  font: inherit; font-size: 0.9rem; padding: 0.45rem 0.8rem; border-radius: 8px; cursor: pointer;
+  color: #f4ecd8; background: #2a2350; border: 1px solid #6e678c;
+}
+.grad-option small { display: block; font-size: 0.7rem; color: #b9b4d6; }
+.grad-option.is-selected { border-color: #7dffb0; box-shadow: 0 0 10px rgba(125, 255, 176, 0.6); }
