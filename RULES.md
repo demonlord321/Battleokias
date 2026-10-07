@@ -37,6 +37,15 @@ Deck rule:
 Open questions:
 - **(?)** How does a Signet shape its Units (stats, abilities, play style)?
 
+## Deck building (confirmed by Dyllan)
+The game simulates medieval warfare: your units are your army, and armies need numbers.
+- A deck is **60 cards**, all carrying the deck's Signet.
+- **Units have no copy limit.**
+- **Every other card** (Spells, Field Spells, Traps, Formations and so on) is limited to **3 copies**.
+- **Starter unit spread:** 15 Grade 1, 10 Grade 2 and 10 Grade 3 units.
+- **(?)** Is that spread a deck-building rule (minimums, or exact numbers), or just how the starter and test decks are built?
+- **(?)** What fills the other 25 cards? With 3 Frontal Assault and 3 Arms Academy, 19 slots are still open.
+
 ## Card types
 | Type | What it does | Where it goes |
 |---|---|---|
@@ -171,7 +180,7 @@ Open questions:
 
 ## Placeholder rules for the first Arms vs Arms test game
 These are **temporary** so a units-only game can be played and tuned. Dyllan will replace them.
-- **Deck:** 30 cards, up to 3 copies of a card (placeholder).
+- **Deck:** see **Deck building** (60 cards).
 - **Summoning (Preparation Phase I):** play a Unit from hand into any empty Unit Position Slot by paying its Energy cost. No limit per turn beyond Energy.
 - **Summoning sickness:** a unit can't attack on the turn it was summoned.
 - **Battle Phase (after Preparation Phase I):** each of your units may attack once.
@@ -237,4 +246,4 @@ Open questions:
 - **(?)** Where are spells and traps set: in the UPS grid or elsewhere?
 
 ## Still to define (continued)
-- Deck size and card limits
+- ~~Deck size and card limits~~ (see Deck building)

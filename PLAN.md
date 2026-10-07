@@ -18,7 +18,7 @@ Mapmaker (game board and screens), Advisor (balance reviews), Planner (plan and 
 - [x] Resource system (Energy, Hearthstone-style)
 - [ ] Turn phases (Draw, Preparation I, Battle done; anything after Battle still to come)
 - [x] Card types and board zones
-- [ ] Deck size, starting hand, card limits
+- [x] Deck size, starting hand, card limits (60 cards; units unlimited, other cards max 3)
 - [ ] Paper playtest with 15 to 20 cards (Advisor's suggestion)
 
 ## Milestone 1: Headless rules engine (Developer)
