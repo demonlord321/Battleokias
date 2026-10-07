@@ -51,9 +51,9 @@ export function renderCard(card, faceUp = true) {
   el.innerHTML = `
     <div class="card-top">
       <span class="card-signets">${signetIcons(card?.signets)}</span>
-      <span class="card-name">${esc(card?.name ?? "Card")}</span>
       ${card?.cost != null ? `<span class="card-cost" title="Energy cost">${esc(card.cost)}</span>` : ""}
     </div>
+    <div class="card-name">${esc(card?.name ?? "Card")}</div>
     <div class="card-art"></div>
     <div class="card-type">${esc(type.label)}${card?.level ? ` <span class="card-level">${"★".repeat(card.level)}</span>` : ""}</div>
     ${isUnit && card?.formation ? `<div class="card-formation"><b>Formation:</b> ${esc(card.formation)}</div>` : ""}

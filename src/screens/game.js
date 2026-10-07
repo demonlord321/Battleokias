@@ -2,17 +2,43 @@ import { registerScreen, showScreen } from "../screens.js";
 import { newGame } from "../engine/engine.js";
 import { buildBoard, renderBoard } from "../board/board.js";
 
-// Placeholder cards until cards.json exists (Milestone 1). One of each type so the frames show.
-const SAMPLE = [
-  { name: "Goblin Scout", type: "unit", signets: ["arms", "alchemy"], cost: 1, level: 1, attack: 300, defense: 200, formation: "Placeholder until formations are designed.", text: "A quick little raider." },
-  { name: "Ember Bolt", type: "spell", signets: ["magic"], cost: 2, text: "Deal damage to a unit." },
-  { name: "Mire of Ash", type: "field", signets: ["alchemy"], cost: 3, text: "Affects the whole field." },
-  { name: "Snare Pit", type: "trap", signets: ["arms"], cost: 1, text: "Activate on your opponent's turn." },
-  { name: "Iron Gauntlet", type: "equipment", signets: ["arms"], cost: 2, text: "Equip to a unit." },
-  { name: "Kias Idol", type: "artifact", signets: ["magic"], cost: 4, text: "A relic of power." },
-];
-function sampleDeck(prefix) {
-  return Array.from({ length: 40 }, (_, i) => ({ ...SAMPLE[i % SAMPLE.length], id: `${prefix}${i}` }));
+// Cards come from data/cards.json, the master list Dyllan edits.
+let cardsPromise = null;
+function loadCards() {
+  cardsPromise ??= fetch("data/cards.json").then((r) => {
+    if (!r.ok) throw new Error(`Couldn't load data/cards.json (${r.status})`);
+    return r.json();
+  });
+  return cardsPromise;
+}
+
+// Decks are single-Signet (RULES.md): take every card carrying the Signet and
+// repeat them up to DECK_SIZE. Each copy gets its own instance id ("ARM-001#3")
+// while cardId keeps pointing at the catalogue entry.
+// DECK_SIZE is a placeholder until RULES.md sets deck size and copy limits;
+// the real decks will come from the deck builder.
+const DECK_SIZE = 40;
+function buildDeck(cards, signet) {
+  const pool = cards.filter((c) => c.signets?.includes(signet));
+  if (!pool.length) throw new Error(`No cards in data/cards.json carry the "${signet}" Signet.`);
+  return Array.from({ length: DECK_SIZE }, (_, i) => {
+    const c = pool[i % pool.length];
+    return { ...c, cardId: c.id, id: `${c.id}#${Math.floor(i / pool.length) + 1}` };
+  });
+}
+
+// For now you play School of Arms against School of Magic.
+const PLAYER_SIGNET = "arms";
+const OPPONENT_SIGNET = "magic";
+
+function showError(board, message) {
+  let el = board.querySelector(".board-error");
+  if (!el) {
+    el = document.createElement("div");
+    el.className = "board-error";
+    board.append(el);
+  }
+  el.textContent = message;
 }
 
 export function setupGame() {
@@ -24,10 +50,19 @@ export function setupGame() {
 
   registerScreen("game", {
     el: "#game-screen",
-    onShow: () => {
-      // The engine flips the coin, deals 4 and 5, and runs the first Draw Phase.
-      const game = newGame({ decks: [sampleDeck("p"), sampleDeck("o")], names: ["You", "Opponent"] });
-      renderBoard(game);
+    onShow: async () => {
+      try {
+        const cards = await loadCards();
+        // The engine flips the coin, deals 4 and 5, and runs the first Draw Phase.
+        const game = newGame({
+          decks: [buildDeck(cards, PLAYER_SIGNET), buildDeck(cards, OPPONENT_SIGNET)],
+          names: ["You", "Opponent"],
+        });
+        renderBoard(game);
+      } catch (err) {
+        console.error(err);
+        showError(board, err.message);
+      }
     },
     onKey: (e) => {
       if (e.key === "Escape") showScreen("menu");

@@ -433,9 +433,11 @@ html, body {
 
 /* Unit cards: the unit image is the whole background, with text panels on top. */
 .card-face.is-unit {
+  /* image on top of a colour wash, so a missing image still looks like a card */
   background:
     linear-gradient(rgba(0,0,0,0.05), rgba(0,0,0,0.55)),
-    var(--card-image, radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--type-color) 70%, #fff), var(--type-color) 45%, #2a1d10));
+    var(--card-image, none),
+    radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--type-color) 70%, #fff), var(--type-color) 45%, #2a1d10);
   background-size: cover;
   background-position: center;
   color: #fff;
@@ -485,3 +487,20 @@ html, body {
   border: 1px solid rgba(255, 255, 255, 0.6);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
+
+.board-error {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 1rem 1.4rem;
+  border-radius: 10px;
+  background: rgba(60, 10, 10, 0.92);
+  border: 2px solid var(--ember);
+  color: #fff;
+  z-index: 10;
+}
+
+/* Signets left and cost right on the top row, the name gets its own full-width line. */
+.card-top { justify-content: space-between; }
+.card-top .card-cost { margin-left: auto; }
+.card-face .card-name { flex: none; text-align: center; font-size: 0.95em; }
