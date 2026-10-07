@@ -121,6 +121,32 @@ function fillSlot(slot, card) {
   if (card) slot.prepend(cardEl(card, !card.faceDown));
 }
 
+// Formation Zone: outline the Unit Position Slots the set Formation draws from, and show
+// its live total (RULES.md: Frontal Assault sums Attack and Defense of the units in its slots;
+// units elsewhere don't count). Until every slot is filled it shows how many are still missing.
+function renderFormation(side, p) {
+  const f = p.formationZone ?? null;
+  const slots = f && Array.isArray(f.slots) ? f.slots : [];
+  p.ups.forEach((_, i) => {
+    const el = getSlot(side, "ups", i);
+    el.classList.toggle("in-formation", slots.includes(i));
+    el.classList.toggle("formation-gap", slots.includes(i) && !p.ups[i]);
+  });
+  const zone = getSlot(side, "formation");
+  zone.querySelector(".formation-total")?.remove();
+  if (!slots.length) return;
+  const units = slots.map((i) => p.ups[i]).filter(Boolean);
+  const missing = slots.length - units.length;
+  const atk = units.reduce((n, u) => n + (u.attack ?? 0), 0);
+  const def = units.reduce((n, u) => n + (u.defense ?? 0), 0);
+  const total = document.createElement("div");
+  total.className = "formation-total" + (missing ? " is-incomplete" : " is-ready");
+  total.innerHTML = missing
+    ? `<span>${missing} slot${missing > 1 ? "s" : ""} empty</span>`
+    : `<span class="stat-atk">&#x2694; ${atk}</span><span class="stat-def">&#x1F6E1; ${def}</span>`;
+  zone.append(total);
+}
+
 export const PHASE_NAMES = {
   setup: "Setup",
   draw: "Draw Phase",
@@ -156,6 +182,7 @@ export function renderBoard(game, viewer = 0, ui = {}) {
       slot.classList.toggle("is-target", side === 1 && !!ui.targets?.has(i));
       slot.classList.toggle("is-exhausted", !!card && side === 0 && ui.phase === "battle" && !ui.attackers?.has(i));
     });
+    renderFormation(side, p);
     p.specialZones.forEach((card, i) => fillSlot(getSlot(side, "sdz", i), card));
     fillSlot(getSlot(side, "fez"), p.fieldEffect);
     fillSlot(getSlot(side, "formation"), p.formationZone ?? null);

@@ -6,7 +6,8 @@
 export const CARD_TYPES = {
   unit:      { label: "Unit",        color: "#c9a35a" },
   spell:     { label: "Spell",       color: "#3fa37a" },
-  field:     { label: "Field Spell", color: "#2e8f9a" },
+  field_spell: { label: "Field Spell", color: "#2e8f9a" },
+  field:     { label: "Field Spell", color: "#2e8f9a" }, // older name, kept so old data still renders
   trap:      { label: "Trap",        color: "#b0457a" },
   equipment: { label: "Equipment",   color: "#7f8fa3" },
   artifact:  { label: "Artifact",    color: "#d07f2c" },
@@ -23,6 +24,15 @@ export const SIGNETS = {
 };
 
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+
+// Formation cards (RULES.md): `slots` lists the Unit Position Slots the Formation needs,
+// as ups indexes on the owner's side (row*3+col, row 0 = front row). Frontal Assault is [0,1,2].
+// Drawn as a mini 3x3 with the front row at the top, the way the owner sees their grid.
+export function formationPattern(slots) {
+  const set = new Set(slots);
+  const cells = Array.from({ length: 9 }, (_, i) => `<span class="fp-cell${set.has(i) ? " is-on" : ""}"></span>`).join("");
+  return `<div class="formation-pattern" title="Needs units in the highlighted slots (front row at the top)">${cells}</div>`;
+}
 
 function signetIcons(signets = []) {
   return signets
@@ -52,10 +62,10 @@ export function renderCard(card, faceUp = true) {
   el.innerHTML = `
     <div class="card-top">
       <span class="card-signets">${signetIcons(card?.signets)}</span>
-      ${grade != null ? `<span class="card-cost card-grade" data-grade="${esc(Math.min(grade, 6))}" title="Grade ${esc(grade)}: costs ${esc(grade)} Energy">${esc(grade)}</span>` : ""}
+      ${grade != null ? `<span class="card-cost card-grade" data-grade="${esc(Math.min(grade, 6))}" title="${isUnit ? `Grade ${esc(grade)}: costs ${esc(grade)} Energy` : `Costs ${esc(grade)} Energy`}">${esc(grade)}</span>` : ""}
     </div>
     <div class="card-name">${esc(card?.name ?? "Card")}</div>
-    <div class="card-art"></div>
+    <div class="card-art">${card?.type === "formation" && Array.isArray(card.slots) ? formationPattern(card.slots) : ""}</div>
     <div class="card-type">${esc(type.label)}</div>
     ${isUnit && card?.formation ? `<div class="card-formation"><b>Formation:</b> ${esc(card.formation)}</div>` : ""}
     <div class="card-text">${esc(card?.text)}</div>
