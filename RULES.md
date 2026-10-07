@@ -91,6 +91,7 @@ Open questions (placeholders in brackets):
 - **(?)** Are Special Decks shuffled, or do you pick the card you want? (Shuffled.)
 - **(?)** Does the player going first get a Special Deck draw on their first turn? (No.)
 - **(?)** Is there a hand limit, now that you draw 2 cards a turn? (No limit yet.)
+- **(?)** Is there a minimum size for a Special Deck? A Special Deck holding a single card guarantees you draw it at your first Phase II (the one-Katana Special Deck won 79% of sims). (No minimum yet.)
 
 ## Card types
 | Type | What it does | Where it goes |
