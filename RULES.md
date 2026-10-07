@@ -18,7 +18,7 @@ Written up from Dyllan's notes. Open questions are marked **(?)**.
 4. _(further phases to come)_
 
 ## Still to define
-- Win condition
+- ~~Win condition~~ (10 Damage Counters, see Player stats)
 - Resource system
 - Board zones: see **Field layout** below
 
@@ -107,11 +107,19 @@ You can only attack if you have a Formation set.
 - **Formation Defense** = the sum of the three front-row units' Defense.
 - Example: three Students of Arms make 1500 Attack and 1500 Defense. Three Graduates of Arms make 6000 Attack and 4500 Defense.
 
+Built as `FRM-001` (all three Signets, `"slots": [0,1,2]`, `"combine": "sum"`).
+
+### Formation battle (confirmed by Dyllan)
+- In the Battle Phase, your **Formation Attack** is compared with the opponent's **Formation Defense**.
+- If your Attack is **greater than or equal to** their Defense, the attack goes through and the opponent gains a **Damage Counter**.
+- If your Attack is lower, the attack fails.
+
 Open questions:
-- **(?)** What does the Formation attack: the opponent's Formation, their units, or their Defense Points? What happens if the opponent has no Formation?
-- **(?)** How is damage worked out? For example, attacker's Formation Attack minus the defender's Formation Defense, with the rest going to Defense Points.
-- **(?)** How many times can a Formation attack per Battle Phase?
-- **(?)** Does playing a Formation card cost Energy? Can you swap it for another Formation?
+- **(?)** Is it always **1** Damage Counter per successful attack, or can a big gap give more?
+- **(?)** If the opponent has no Formation (or it's broken), does your attack go through automatically?
+- **(?)** Does a failed attack do anything to the attacker, and are any units destroyed in a Formation battle?
+- **(?)** How many times can a Formation attack per Battle Phase? (Placeholder: once.)
+- **(?)** Does playing a Formation card cost Energy? Can you swap it for another Formation? (Placeholders built: 0 Energy, and the old one goes to the Grave.)
 - **(?)** If a unit in the pattern is destroyed or leaves its slot, does the Formation break until the slot is filled again?
 - **(?)** Do units that just arrived count toward the Formation on the turn they're summoned or promoted?
 
@@ -125,21 +133,21 @@ These are **temporary** so a units-only game can be played and tuned. Dyllan wil
   - **(?)** Does "Formation set" mean a Formation card in your Formation Zone, your units arranged in a pattern on the grid, or both?
   - **(?)** Which units can attack: only those that are part of the Formation, or all of them once a Formation is set?
   - **(?)** Is a Formation set in Preparation Phase I, and does it cost Energy?
-  - Until this is defined, the test game keeps the placeholder rule that any unit can attack. Win conditions are not final yet.
+  - Superseded: attacks are now Formation vs Formation (see **Formation battle**). The column rule below is the old stand-in.
   - A unit attacks down its **column**. It hits the nearest enemy unit in that column (front row first).
   - Unit vs unit: if Attack is greater than the target's Defense, the target is destroyed and goes to the Grave. Otherwise nothing happens.
   - If the column is empty, the attack hits the opponent's Defense Points directly for the unit's Attack value.
 - **End Phase:** pass the turn.
-- **Win:** reduce the opponent to 0 Defense Points (placeholder until the damage formula).
+- **Win:** see **Damage Counters**. A player with 10 Damage Counters loses.
 - **Empty Draw Pile:** placeholder is that a player who can't draw loses.
 
 ## Player stats
 Shown alongside each player's **Hand** (the zone where drawn cards go).
 - **Player Name**
-- **Defense Points (DP)**
-  - Starting DP: **1000** (placeholder until the damage formula is designed).
-  - **(?)** Damage formula: Dyllan has one in mind, to be written up.
-  - **(?)** Is reducing the opponent to 0 DP the win condition?
+- **Damage Counters** (replace Defense Points, confirmed by Dyllan)
+  - Each player starts at **0** Damage Counters and the maximum is **10**.
+  - You gain one when an opponent's Formation attack goes through.
+  - **Reaching 10 Damage Counters means you lose.**
 - **Energy:** the currency for playing higher-level cards.
   - Works like Hearthstone mana. Max Energy starts at **1** and rises by **1** at the
     start of each of your turns, up to a cap of **10**.
