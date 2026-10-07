@@ -720,3 +720,10 @@ html, body {
 }
 .grad-option small { display: block; font-size: 0.7rem; color: #b9b4d6; }
 .grad-option.is-selected { border-color: #7dffb0; box-shadow: 0 0 10px rgba(125, 255, 176, 0.6); }
+/* "Formation from deck" button: same spot as the Attack button (that one only shows in battle). */
+.deckform-btn { background: linear-gradient(#3aa6b0, #1f6a73); border-color: #9fe6ee; }
+.deckform-btn[hidden] { display: none; }
+.grad-close {
+  margin-top: 0.7rem; font: inherit; font-size: 0.8rem; padding: 0.25rem 0.8rem; border-radius: 6px; cursor: pointer;
+  color: #b9b4d6; background: transparent; border: 1px solid #6e678c;
+}

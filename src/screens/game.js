@@ -1,5 +1,5 @@
 import { registerScreen, showScreen } from "../screens.js";
-import { newGame, applyAction, checkAction, attackPreview } from "../engine/engine.js";
+import { newGame, applyAction, checkAction, attackPreview, legalActions } from "../engine/engine.js";
 import { buildBoard, renderBoard, PHASE_NAMES } from "../board/board.js";
 
 // ---------- Cards and decks ----------
@@ -58,7 +58,7 @@ const NAMES = ["Player 1", "Player 2"];
 let game = null;
 let viewer = 0; // whose side is at the bottom; follows the active player
 let selectedHand = null; // hand index picked to summon
-let board, phaseBtn, attackBtn, logEl, toastEl, curtain, winScreen;
+let board, phaseBtn, attackBtn, deckFormBtn, logEl, toastEl, curtain, winScreen;
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -79,6 +79,7 @@ function act(action) {
   }
   selectedHand = null;
   gradCard = null;
+  deckFormOpen = false;
   if (game.winner !== null) return render(), showWin(), true;
   if (me() !== prevActor) showCurtain(); // turn passed, or the defender has to choose a loss
   render();
@@ -157,6 +158,7 @@ function render() {
   phaseBtn.textContent = phaseLabel(pa);
   phaseBtn.disabled = game.winner !== null || !!game.pending;
   renderAttackButton(ui.formationCanAttack);
+  renderDeckFormation();
 
   logEl.innerHTML = game.log
     .slice(-9)
@@ -177,6 +179,45 @@ function renderAttackButton(canAttack) {
   attackBtn.innerHTML = canAttack
     ? `&#x2694; Attack <small>${atk} vs &#x1F6E1; ${theirDef}${hits ? (counters ? ` · hits for ${counters}` : " · lands, 0 counters") : " · blocked"}</small>`
     : `&#x2694; Attack <small>${checkAction(game, { type: "attack", player: me() }) ?? ""}</small>`;
+}
+
+// No Formation by round three: summon one straight from the deck (engine action deckFormation).
+// The button appears only while the engine allows it; it opens a picker of the deck's Formations.
+let deckFormOpen = false;
+const deckFormChoices = () =>
+  game.pending || game.winner !== null ? [] : legalActions(game).filter((a) => a.type === "deckFormation" && a.player === me());
+function renderDeckFormation() {
+  const choices = deckFormChoices();
+  deckFormBtn.hidden = !choices.length;
+  deckFormBtn.innerHTML = `&#x1F4DC; Formation from deck <small>No Formation yet: take one from your deck</small>`;
+  let panel = $("#deckform-panel");
+  if (!choices.length || !deckFormOpen || curtain.hidden === false) {
+    if (!choices.length) deckFormOpen = false;
+    return panel?.remove();
+  }
+  if (!panel) {
+    panel = document.createElement("div");
+    panel.id = "deckform-panel";
+    panel.className = "grad-panel";
+    panel.addEventListener("click", (e) => {
+      if (e.target.closest("[data-close]")) return (deckFormOpen = false), render();
+      const b = e.target.closest("[data-card]");
+      if (b) act({ type: "deckFormation", player: me(), card: b.dataset.card });
+    });
+    $("#game-screen").append(panel);
+  }
+  const deck = game.players[me()].deck;
+  panel.innerHTML = `
+    <div class="grad-title">&#x1F4DC; Summon a Formation from your deck</div>
+    <div class="grad-sub">It goes straight into your Formation Zone, then your deck is shuffled.</div>
+    <div class="grad-options">${choices
+      .map((a) => {
+        const c = deck.find((x) => x.id === a.card);
+        const cost = c?.cost ?? 0;
+        return `<button class="grad-option" data-card="${a.card}">${c?.name ?? a.card}<small>${cost ? `costs ${cost} Energy` : "free"}</small></button>`;
+      })
+      .join("")}</div>
+    <button class="grad-close" data-close>Cancel</button>`;
 }
 
 // Graduation panel (Arms Academy): pick which Grade 3 comes out, from hand or deck,
@@ -387,6 +428,8 @@ export function setupGame() {
   phaseBtn = $("#phase-btn");
   attackBtn = $("#attack-btn");
   attackBtn.addEventListener("click", () => act({ type: "attack", player: me() }));
+  deckFormBtn = $("#deckform-btn");
+  deckFormBtn.addEventListener("click", () => ((deckFormOpen = !deckFormOpen), render()));
   logEl = $("#game-log");
   toastEl = $("#toast");
   curtain = $("#curtain");
