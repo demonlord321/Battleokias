@@ -118,10 +118,10 @@ Built as `FRM-001` (all three Signets, `"slots": [0,1,2]`, `"combine": "sum"`).
 Every Formation card has two extra numbers:
 - **Damage Grade:** how many Damage Counters the Formation deals when its attack goes through. Damage Grade 1 deals 1 counter, and Damage Grade 3 deals 3.
 - **Defense Grade:** most Formations have **0 or 1**. It is subtracted from the incoming Formation's Damage Grade.
-- **Counters dealt** = attacker's Damage Grade minus defender's Defense Grade.
+- **Counters dealt** = attacker's Damage Grade minus defender's Defense Grade, with a minimum of 1.
   - Example: a Damage Grade 3 attack into a Defense Grade 1 Formation deals 2 counters.
 - **(?)** Frontal Assault's Damage Grade and Defense Grade. Placeholder: 1 and 0.
-- **(?)** Can the result drop below 1, so a hit deals no counters (e.g. Damage Grade 1 into Defense Grade 1)? Placeholder: it can drop to 0, never below.
+- **A landed hit always deals at least 1 Damage Counter** (confirmed by Dyllan). Example: Damage Grade 1 into Defense Grade 1 still deals 1.
 - **(?)** Does an incomplete Formation still give its Defense Grade? Placeholder: no, so it counts as Defense Grade 0.
 
 Open questions:
