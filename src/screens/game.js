@@ -10,7 +10,6 @@ const SAMPLE = [
   { name: "Snare Pit", type: "trap", cost: 1, text: "Activate on your opponent's turn." },
   { name: "Iron Gauntlet", type: "equipment", cost: 2, text: "Equip to a unit." },
   { name: "Kias Idol", type: "artifact", cost: 4, text: "A relic of power." },
-  { name: "Cave Troll", type: "monster", cost: 5, level: 3, text: "A hulking brute." },
 ];
 function sampleDeck(prefix) {
   return Array.from({ length: 40 }, (_, i) => ({ ...SAMPLE[i % SAMPLE.length], id: `${prefix}${i}` }));
