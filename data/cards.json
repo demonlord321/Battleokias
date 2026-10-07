@@ -114,10 +114,10 @@
     ],
     "cost": 1,
     "boost": {
-      "attackPercent": 25,
-      "defensePercent": 25
+      "attack": 500,
+      "defense": 500
     },
-    "text": "Equip to an Arms unit. The equipped unit gets +25% Attack and Defense, rounded down.",
+    "text": "Equip to an Arms unit. The equipped unit gets +500 Attack and +500 Defense.",
     "image": "images/eqp-001.png"
   },
   {
