@@ -176,9 +176,6 @@ These are **temporary** so a units-only game can be played and tuned. Dyllan wil
 - **Summoning sickness:** a unit can't attack on the turn it was summoned.
 - **Battle Phase (after Preparation Phase I):** each of your units may attack once.
   - **Confirmed by Dyllan:** the turn order is Draw Phase, then Preparation Phase I, then Battle Phase. In the Battle Phase you can **only attack if you have a Formation set**.
-  - **(?)** Does "Formation set" mean a Formation card in your Formation Zone, your units arranged in a pattern on the grid, or both?
-  - **(?)** Which units can attack: only those that are part of the Formation, or all of them once a Formation is set?
-  - **(?)** Is a Formation set in Preparation Phase I, and does it cost Energy?
   - Superseded: attacks are now Formation vs Formation (see **Formation battle**). The column rule below is the old stand-in.
   - A unit attacks down its **column**. It hits the nearest enemy unit in that column (front row first).
   - Unit vs unit: if Attack is greater than the target's Defense, the target is destroyed and goes to the Grave. Otherwise nothing happens.
@@ -199,7 +196,6 @@ Shown alongside each player's **Hand** (the zone where drawn cards go).
     start of each of your turns, up to a cap of **10**.
   - At the start of your turn, Energy refills to your current max. Unspent Energy does
     not carry over beyond that.
-  - **(?)** Do lower-level cards cost nothing, and what does each level cost?
 
 ## Empty Draw Pile
 - **(?)** What happens when a player must draw from an empty Draw Pile (lose, take damage, reshuffle the Grave)?
@@ -239,7 +235,6 @@ Open questions:
 - **(?)** What goes in the Special Deck Zones, and how are they used?
 - **(?)** What goes in the Field Effect Zone? One field card at a time?
 - **(?)** Where are spells and traps set: in the UPS grid or elsewhere?
-- **(?)** Does a unit's row or column in the UPS affect attacking or being attacked?
 
 ## Still to define (continued)
 - Deck size and card limits
