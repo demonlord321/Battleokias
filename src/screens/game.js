@@ -7,16 +7,6 @@ function sampleDeck(prefix) {
   return Array.from({ length: 40 }, (_, i) => ({ id: `${prefix}${i}`, name: `Card ${i + 1}` }));
 }
 
-// Opening hands per RULES.md: the starting player goes into turn 1 with 5 cards
-// (4 + their first draw), the opponent with 6 (5 + their first draw).
-// The engine doesn't deal yet, so the board deals here for the preview.
-// TODO: replace with the engine's start-of-game actions once Developer adds them.
-function previewDeal(game) {
-  const deal = (p, n) => { for (let i = 0; i < n; i++) p.hand.push(p.deck.pop()); };
-  deal(game.players[game.activePlayer], 5);
-  deal(game.players[1 - game.activePlayer], 6);
-}
-
 export function setupGame() {
   const board = document.querySelector("#board");
   buildBoard(board);
@@ -27,8 +17,8 @@ export function setupGame() {
   registerScreen("game", {
     el: "#game-screen",
     onShow: () => {
+      // The engine flips the coin, deals 4 and 5, and runs the first Draw Phase.
       const game = newGame({ decks: [sampleDeck("p"), sampleDeck("o")], names: ["You", "Opponent"] });
-      previewDeal(game);
       renderBoard(game);
     },
     onKey: (e) => {
