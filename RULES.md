@@ -85,7 +85,7 @@ These three form a promotion line (Student to Apprentice to Graduate). Under the
 - Promotion costs the **difference** in Grade. For example, a Grade 2 played on a Grade 1 costs **1 Energy** instead of 2.
 - Promotion is **exactly one Grade** up: any Grade 2 promotes any Grade 1, any Grade 3 promotes any Grade 2, and so on. No skipping.
   The units don't need to be related.
-- **(?) Promotions per turn:** Dyllan has now said there is no restriction on how many promotions you do. Earlier the rule was one per turn, with Field Spells allowing more. Waiting for him to confirm which one applies.
+- **One promotion per turn** normally. Some Field Spells lift this (see Arms Academy).
 - Placeholder until Dyllan decides: the card underneath stays stacked beneath the new unit and both go to the Grave when the unit is destroyed.
 - First-player edge: with Formations and unit destruction in (`58d4e06`), bot games show the first player winning 49%, so no extra fix is needed for now.
 - Placeholder until Dyllan decides: a promoted unit can attack this turn if the unit beneath was already on the field at the start of the turn.
@@ -165,7 +165,7 @@ A Field Spell goes in the **Field Effect Zone (FEZ)** and stays there, giving an
 - You choose that Graduate of Arms **from your hand** or **from your deck**. If you take it from your deck, **reshuffle** the deck afterwards.
 
 Open questions:
-- The Academy does not affect any other promotion.
+- **Second effect:** while Arms Academy is in play, you can promote **any number** of your units with the **Arms Signet** each turn, as long as you have the Energy. (The normal limit is one promotion per turn.)
 - Placeholder: if there's no empty slot or no Graduate of Arms to pick, the student stays in the Academy and tries again next turn. Playing a new Field Spell sends the old one and its students to the Grave.
 - The arriving Graduate can attack that turn if it's placed in your Formation (confirmed by Dyllan).
 
