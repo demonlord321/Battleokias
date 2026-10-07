@@ -20,12 +20,13 @@ function instance(card, n) {
   return { ...card, cardId: card.id, id: `${card.id}#${n}` };
 }
 
-// RULES.md placeholder: 30-card decks, up to 3 copies of a card, single Signet.
-const DECK_SIZE = 30;
-const MAX_COPIES = 3;
+// RULES.md deck rules: 60-card decks, any number of copies of a unit, up to 3 of anything else.
+const DECK_SIZE = 60;
+const MAX_COPIES = 3; // non-unit cards only
 
-// If data/decks.json has a deck list for this Signet (an array of card ids), use it.
-// Otherwise build one: every card carrying the Signet, up to 3 copies each, to 30 cards.
+// If data/decks.json has a deck list for this Signet (an array of card ids), use it as is.
+// Otherwise build one from every card carrying the Signet: 3 of each non-unit card,
+// then units round-robin until the deck reaches 60.
 function buildDeck(cards, decks, signet) {
   const byId = Object.fromEntries(cards.map((c) => [c.id, c]));
   const list = decks?.[signet];
@@ -39,10 +40,12 @@ function buildDeck(cards, decks, signet) {
   }
   const pool = cards.filter((c) => c.signets?.includes(signet));
   if (!pool.length) throw new Error(`No cards in data/cards.json carry the "${signet}" Signet.`);
+  const units = pool.filter((c) => c.type === "unit");
   const deck = [];
-  for (let copy = 1; copy <= MAX_COPIES && deck.length < DECK_SIZE; copy++) {
-    for (const c of pool) if (deck.length < DECK_SIZE) deck.push(instance(c, copy));
-  }
+  for (const c of pool.filter((c) => c.type !== "unit"))
+    for (let copy = 1; copy <= MAX_COPIES && deck.length < DECK_SIZE; copy++) deck.push(instance(c, copy));
+  for (let copy = 1; units.length && deck.length < DECK_SIZE; copy++)
+    for (const c of units) if (deck.length < DECK_SIZE) deck.push(instance(c, copy));
   return deck;
 }
 
