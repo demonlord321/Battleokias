@@ -28,10 +28,13 @@ Starting Signets:
 2. **School of Magic**
 3. **School of Alchemy**
 
+Deck rule:
+- A deck is built around **one Signet**. Every card in the deck must carry that Signet.
+- A card can belong to **more than one** Signet, so it can appear in decks of any of them.
+- The card's Signet symbol(s) sit in the **top left** corner of the card.
+
 Open questions:
-- **(?)** Is a deck limited to one Signet, or can it mix?
 - **(?)** How does a Signet shape its Units (stats, abilities, play style)?
-- **(?)** Are there neutral cards any deck can use?
 
 ## Card types
 | Type | What it does | Where it goes |
@@ -63,7 +66,7 @@ A Unit card shows:
 Open questions:
 - **(?)** What triggers a Formation Effect (a pattern of units in the 3x3 grid, adjacency, same Signet)?
 - **(?)** How does the Formation card type relate to a unit's Formation Effect?
-- **(?)** Do Units also carry a Signet, an Energy cost and a level on the card?
+- **(?)** Do Units also show an Energy cost and a level on the card?
 
 ## Player stats
 Shown alongside each player's **Hand** (the zone where drawn cards go).
