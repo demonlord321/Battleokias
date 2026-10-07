@@ -98,6 +98,11 @@ These are **temporary** so a units-only game can be played and tuned. Dyllan wil
 - **Summoning (Preparation Phase I):** play a Unit from hand into any empty Unit Position Slot by paying its Energy cost. No limit per turn beyond Energy.
 - **Summoning sickness:** a unit can't attack on the turn it was summoned.
 - **Battle Phase (after Preparation Phase I):** each of your units may attack once.
+  - **Confirmed by Dyllan:** the turn order is Draw Phase, then Preparation Phase I, then Battle Phase. In the Battle Phase you can **only attack if you have a Formation set**.
+  - **(?)** Does "Formation set" mean a Formation card in your Formation Zone, your units arranged in a pattern on the grid, or both?
+  - **(?)** Which units can attack: only those that are part of the Formation, or all of them once a Formation is set?
+  - **(?)** Is a Formation set in Preparation Phase I, and does it cost Energy?
+  - Until this is defined, the test game keeps the placeholder rule that any unit can attack. Win conditions are not final yet.
   - A unit attacks down its **column**. It hits the nearest enemy unit in that column (front row first).
   - Unit vs unit: if Attack is greater than the target's Defense, the target is destroyed and goes to the Grave. Otherwise nothing happens.
   - If the column is empty, the attack hits the opponent's Defense Points directly for the unit's Attack value.
