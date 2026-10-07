@@ -38,15 +38,15 @@ function win(game, playerIndex, why) {
   game.log.push(`${game.players[playerIndex].name} wins: ${why}`);
 }
 
-// Removes a unit from the field. It and any cards stacked under it go to the Grave.
+// Removes a unit from the field. It, any cards stacked under it and its Equipment go to the Grave.
 // Nothing destroys units yet; spells and effects will use this.
 export function destroyUnit(game, playerIndex, slot, message = null) {
   const p = game.players[playerIndex];
   const unit = p.ups[slot];
   if (!unit) return null;
-  const { under = [], ...card } = unit;
+  const { under = [], equipment = null, ...card } = unit;
   p.ups[slot] = null;
-  p.graveyard.push(...under, card);
+  p.graveyard.push(...under, card, ...(equipment ? [equipment] : []));
   game.log.push(message ?? `${unit.name} goes to the Grave.`);
   return unit;
 }
@@ -60,6 +60,19 @@ export function cardCost(card) {
   return card.grade ?? card.cost ?? 0;
 }
 
+// A unit's Attack and Defense with its Equipment (RULES.md, Equipment). A boost
+// like Practice Gear's { attackPercent: 25, defensePercent: 25 } adds that share
+// of the unit's own numbers, rounded down. Returns null for an empty slot.
+export function unitStats(game, playerIndex, slot) {
+  const unit = game.players[playerIndex].ups[slot];
+  if (!unit) return null;
+  const boost = unit.equipment?.boost ?? {};
+  return {
+    attack: Math.floor((unit.attack * (100 + (boost.attackPercent ?? 0))) / 100),
+    defense: Math.floor((unit.defense * (100 + (boost.defensePercent ?? 0))) / 100),
+  };
+}
+
 // A player's set Formation, added up (RULES.md, Formations). Only the units in
 // the Formation's own slots count. Frontal Assault ("sum") adds their Attack and
 // Defense. Returns null if no Formation is set.
@@ -67,7 +80,8 @@ export function formationStats(game, playerIndex) {
   const p = game.players[playerIndex];
   const f = p.formationZone;
   if (!f) return null;
-  const units = f.slots.map((slot) => p.ups[slot]).filter(Boolean);
+  // Each unit's Equipment boost is applied and rounded down first, then the Formation adds them up.
+  const units = f.slots.filter((slot) => p.ups[slot]).map((slot) => unitStats(game, playerIndex, slot));
   const missing = f.slots.length - units.length;
   let attack = units.reduce((total, u) => total + u.attack, 0);
   let defense = units.reduce((total, u) => total + u.defense, 0);
@@ -307,8 +321,9 @@ const ACTIONS = {
       spendEnergy(p, card.grade - base.grade);
       // Promotions a Field Spell makes unlimited don't use up the normal one.
       if (!unlimitedPromotion(game, game.activePlayer, base)) game.promotionsLeft -= 1;
-      const { under = [], ...baseCard } = base;
-      p.ups[action.slot] = { ...card, under: [...under, baseCard] };
+      // Placeholder: Equipment stays on the unit through a promotion.
+      const { under = [], equipment, ...baseCard } = base;
+      p.ups[action.slot] = { ...card, under: [...under, baseCard], ...(equipment ? { equipment } : {}) };
       game.log.push(`${p.name} promotes ${base.name} to ${card.name}.`);
     },
   },
@@ -370,6 +385,34 @@ const ACTIONS = {
       if (p.formationZone) p.graveyard.push(p.formationZone);
       p.formationZone = card;
       game.log.push(`${p.name} sets the Formation ${card.name}.`);
+    },
+  },
+
+  // { type: "equip", player, card, slot }: put an Equipment card from hand onto your
+  // unit in that slot during Preparation Phase I, paying its cost. The unit must share
+  // one of its Signets. Placeholders until Dyllan decides: one Equipment per unit,
+  // it stays on through promotion, and goes to the Grave with its unit.
+  equip: {
+    check(game, action) {
+      const p = game.players[game.activePlayer];
+      if (game.phase !== "prep1") return "You can only equip in Preparation Phase I.";
+      const i = handIndex(p, action.card);
+      if (i < 0) return "That card isn't in your hand.";
+      const card = p.hand[i];
+      if (card.type !== "equipment") return "That isn't an Equipment card.";
+      const unit = isSlot(p, action.slot) ? p.ups[action.slot] : null;
+      if (!unit) return "There's no unit there to equip.";
+      if (!(card.signets ?? []).some((s) => (unit.signets ?? []).includes(s))) return `${card.name} can only go on a unit with the same Signet.`;
+      if (unit.equipment) return `${unit.name} already has ${unit.equipment.name}.`;
+      if (cardCost(card) > p.energy) return `${card.name} costs ${cardCost(card)} Energy and you have ${p.energy}.`;
+      return null;
+    },
+    apply(game, action) {
+      const p = game.players[game.activePlayer];
+      const [card] = p.hand.splice(handIndex(p, action.card), 1);
+      spendEnergy(p, cardCost(card));
+      p.ups[action.slot].equipment = card;
+      game.log.push(`${p.name} equips ${p.ups[action.slot].name} with ${card.name}.`);
     },
   },
 
@@ -605,6 +648,7 @@ export function legalActions(game) {
     p.ups.forEach((_, slot) => {
       candidates.push({ type: "summon", player, card: i, slot });
       candidates.push({ type: "promote", player, card: i, slot });
+      candidates.push({ type: "equip", player, card: i, slot });
     });
   });
   candidates.push({ type: "attack", player });

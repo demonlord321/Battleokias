@@ -81,6 +81,15 @@ export function checkCards(cards) {
         problems.push(`${where}: unknown combine "${card.combine}". Use one of: ${COMBINE_RULES.join(", ")}.`);
       }
     }
+    if (card.type === "equipment" && "boost" in card) {
+      // An Equipment boost (Practice Gear): { attackPercent, defensePercent }, whole numbers.
+      const b = card.boost;
+      if (typeOf(b) !== "object") problems.push(`${where}: "boost" should be an object in { }.`);
+      else for (const [k, v] of Object.entries(b)) {
+        if (!["attackPercent", "defensePercent"].includes(k)) problems.push(`${where}: unknown boost "${k}". Use attackPercent or defensePercent.`);
+        else if (!Number.isInteger(v)) problems.push(`${where}: boost.${k} should be a whole number.`);
+      }
+    }
     if (card.type === "field_spell" && "unlimitedPromotions" in card && !SIGNETS.includes(card.unlimitedPromotions)) {
       problems.push(`${where}: unlimitedPromotions should be one of: ${SIGNETS.join(", ")}.`);
     }
