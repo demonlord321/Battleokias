@@ -2,6 +2,8 @@
 
 Written up from Dyllan's notes. Open questions are marked **(?)**. Rules are refined as we go, and balance is tuned as cards are added.
 
+**Balance approach (Dyllan):** deck building is most of the battle in a TCG. Exact mirror matches (both players with identical decks) are not a fair way to judge balance. Test with different deck builds from the same card pool instead.
+
 ## Setup
 1. A coin flip decides who goes first.
 2. The starting player draws **4** cards.
@@ -217,8 +219,8 @@ Open questions (placeholders in brackets):
 - **(?)** Which phase can you equip in? (Preparation Phase I.)
 
 ### Equipment: Practice Gear (School of Arms)
-- **Effect:** the equipped Arms unit gets **+500 Attack and +500 Defense** (a flat bonus, confirmed by Dyllan).
-- Example: a Student of Arms goes from 500/500 to 1000/1000, and an Apprentice from 1500/1000 to 2000/1500.
+- **Effect:** the equipped Arms unit gets **+250 Attack and +250 Defense** (a flat bonus, confirmed by Dyllan).
+- Example: a Student of Arms goes from 500/500 to 750/750, and an Apprentice from 1500/1000 to 1750/1250.
 
 ## Placeholder rules for the first Arms vs Arms test game
 These are **temporary** so a units-only game can be played and tuned. Dyllan will replace them.
