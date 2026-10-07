@@ -168,16 +168,141 @@ html, body {
 }
 .small-btn:hover { border-color: var(--gold); }
 
+/* ---------- Board ----------
+   --h is the height of one slot; everything scales from it so the board
+   fits the window. Cards are 5:7. */
 .board {
+  --h: clamp(52px, calc((100vh - 110px) / 9.6), 120px);
+  --w: calc(var(--h) * 5 / 7);
+  --gap: calc(var(--h) * 0.1);
   flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.table {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--gap) * 1.5);
+  margin: auto 0;
+}
+
+.half {
+  display: grid;
+  grid-template-columns: repeat(5, var(--w));
+  grid-template-rows: repeat(4, var(--h));
+  gap: var(--gap);
+}
+/* a little breathing room between the grid and the piles / FEZ */
+.half-player { column-gap: var(--gap); }
+
+.slot {
+  position: relative;
+  border-radius: 7px;
+  border: 2px solid rgba(242, 196, 90, 0.28);
+  background: rgba(0, 0, 0, 0.22);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 1.2rem;
-  border: 2px dashed rgba(242, 196, 90, 0.3);
-  border-radius: 14px;
+  cursor: pointer;
+  transition: border-color 0.12s, box-shadow 0.12s, background 0.12s;
 }
-.board-placeholder { color: var(--text-dim); font-size: 1.1rem; letter-spacing: 0.1em; }
+.slot:hover {
+  border-color: var(--gold);
+  box-shadow: 0 0 12px rgba(242, 196, 90, 0.35);
+}
+.slot-ups { background: rgba(10, 30, 22, 0.55); }
+.slot-sdz { border-color: rgba(111, 91, 216, 0.6); background: rgba(40, 30, 90, 0.35); }
+.slot-fez { border-color: rgba(224, 98, 58, 0.6); background: rgba(90, 35, 20, 0.35); }
+.slot-grave { border-style: dashed; }
+.slot-draw {
+  border-color: var(--gold-dim);
+  background: repeating-linear-gradient(45deg, #2a2050 0 6px, #221a42 6px 12px);
+}
+.half-opponent .slot { cursor: default; }
+
+.slot-label {
+  position: absolute;
+  bottom: 3px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: calc(var(--h) * 0.13);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  pointer-events: none;
+}
+.pile-count {
+  font-family: Georgia, serif;
+  font-size: calc(var(--h) * 0.3);
+  color: var(--gold);
+  text-shadow: 0 1px 3px #000;
+}
+
+.centre-line {
+  width: calc(var(--w) * 7);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(242, 196, 90, 0.55), transparent);
+  position: relative;
+}
+.turn-banner {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  padding: 0.15rem 0.9rem;
+  border-radius: 999px;
+  font-size: calc(var(--h) * 0.17);
+  letter-spacing: 0.08em;
+  color: #1b1530;
+  background: var(--gold);
+  white-space: nowrap;
+}
+.turn-banner.is-opponent { background: var(--text-dim); }
+
+/* Hands: yours fanned along the bottom, the opponent's card backs peeking from the top. */
+.hand {
+  display: flex;
+  justify-content: center;
+  min-height: calc(var(--h) * 0.6);
+  padding: 0 1rem;
+}
+.hand-player { margin-bottom: calc(var(--h) * -0.3); }
+.hand-opponent { margin-top: calc(var(--h) * -0.55); }
+
+.card {
+  width: calc(var(--w) * 1.25);
+  height: calc(var(--h) * 1.25);
+  border-radius: 8px;
+  border: 2px solid var(--gold-dim);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  flex-shrink: 0;
+}
+.hand .card + .card { margin-left: calc(var(--w) * -0.12); }
+.card-back {
+  width: var(--w);
+  height: var(--h);
+  background:
+    radial-gradient(circle at 50% 50%, rgba(242,196,90,0.35) 0 14%, transparent 15%),
+    repeating-linear-gradient(45deg, #2a2050 0 6px, #221a42 6px 12px);
+}
+.card-face {
+  background: linear-gradient(#efe6cf, #d8c9a2);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 6px;
+  cursor: pointer;
+  transition: transform 0.12s;
+}
+.card-name { font-size: calc(var(--h) * 0.14); color: #2a2050; font-weight: bold; }
+.hand-player .card-face:hover { transform: translateY(-30%); position: relative; z-index: 2; }
 
 /* ---------- Tutorial screen ---------- */
 #tutorial-screen {
