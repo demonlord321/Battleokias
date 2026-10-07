@@ -5,7 +5,7 @@
 // exactly the same rules. See RULES.md for the rules themselves.
 
 import { createRng, shuffle } from "./rng.js";
-import { createGame, createPlayer, MAX_ENERGY_CAP } from "./state.js";
+import { createGame, createPlayer, MAX_ENERGY_CAP, MAX_DAMAGE } from "./state.js";
 
 // Opening hands (RULES.md, Setup). Each player's first Draw Phase then takes
 // the starting player to 5 cards and the opponent to 6.
@@ -31,17 +31,17 @@ function win(game, playerIndex, why) {
   game.log.push(`${game.players[playerIndex].name} wins: ${why}`);
 }
 
-// RULES.md placeholder: a unit attacks down its column. The opponent's half is
-// rotated 180 degrees, so my column c faces their column 2 - c. Rows go front
-// (nearest the centre) to back, so the target is the first unit found in
-// slots col, col + 3, col + 6. Returns that slot, or null if the column is empty.
-export function targetSlot(game, attackerIndex, slot) {
-  const col = 2 - (slot % 3);
-  const enemy = game.players[1 - attackerIndex];
-  for (let row = 0; row < 3; row++) {
-    if (enemy.ups[row * 3 + col]) return row * 3 + col;
-  }
-  return null;
+// Removes a unit from the field. It and any cards stacked under it go to the Grave.
+// Nothing destroys units yet; spells and effects will use this.
+export function destroyUnit(game, playerIndex, slot) {
+  const p = game.players[playerIndex];
+  const unit = p.ups[slot];
+  if (!unit) return null;
+  const { under = [], ...card } = unit;
+  p.ups[slot] = null;
+  p.graveyard.push(...under, card);
+  game.log.push(`${unit.name} goes to the Grave.`);
+  return unit;
 }
 
 // The summon action names a hand card either by its hand index (a number) or by
@@ -90,15 +90,10 @@ function startTurn(game) {
   if (game.activePlayer === game.startingPlayer) game.turn += 1;
   const p = game.players[game.activePlayer];
   refreshEnergy(p);
-  // RULES.md: one promotion per turn (Field Spells may raise this later).
+  // RULES.md: one promotion per turn (Field Spells may raise this later),
+  // and your Formation can attack once per Battle Phase (placeholder).
   game.promotionsLeft = PROMOTIONS_PER_TURN;
-  // Your units shake off summoning sickness and get their attack back.
-  for (const unit of p.ups) {
-    if (unit) {
-      unit.summonedThisTurn = false;
-      unit.hasAttacked = false;
-    }
-  }
+  game.formationAttacked = false;
   game.phase = "draw";
   game.log.push(`Turn ${game.turn}: ${p.name}'s turn.`);
   // RULES.md placeholder: a player who can't draw in their Draw Phase loses.
@@ -161,7 +156,7 @@ const ACTIONS = {
       const p = game.players[game.activePlayer];
       const [card] = p.hand.splice(handIndex(p, action.card), 1);
       spendEnergy(p, cardCost(card));
-      p.ups[action.slot] = { ...card, summonedThisTurn: true, hasAttacked: false };
+      p.ups[action.slot] = { ...card };
       game.log.push(`${p.name} summons ${card.name}.`);
     },
   },
@@ -191,9 +186,8 @@ const ACTIONS = {
       const base = p.ups[action.slot];
       spendEnergy(p, card.grade - base.grade);
       game.promotionsLeft -= 1;
-      const { under = [], summonedThisTurn, hasAttacked, ...baseCard } = base;
-      // RULES.md placeholder: the promoted unit can attack this turn if the unit beneath was already on the field.
-      p.ups[action.slot] = { ...card, under: [...under, baseCard], summonedThisTurn, hasAttacked };
+      const { under = [], ...baseCard } = base;
+      p.ups[action.slot] = { ...card, under: [...under, baseCard] };
       game.log.push(`${p.name} promotes ${base.name} to ${card.name}.`);
     },
   },
@@ -222,39 +216,35 @@ const ACTIONS = {
     },
   },
 
-  // { type: "attack", player, slot }: the unit in that slot attacks down its column.
+  // { type: "attack", player }: your Formation attacks in the Battle Phase (RULES.md, Formations).
+  // If its Attack is equal to or higher than the opponent's Formation Defense, the
+  // opponent gains a Damage Counter, and 10 means they lose.
+  // Placeholders until Dyllan decides: once per Battle Phase, 1 counter per hit, an
+  // opponent with no complete Formation has 0 Defense, a failed attack does nothing,
+  // and units summoned this turn count toward the Formation.
   attack: {
     check(game, action) {
-      const p = game.players[game.activePlayer];
-      if (game.phase !== "battle") return "Units can only attack in the Battle Phase.";
-      const unit = p.ups[action.slot];
-      if (!unit) return "There's no unit there.";
-      if (unit.summonedThisTurn) return `${unit.name} was summoned this turn and can't attack yet.`;
-      if (unit.hasAttacked) return `${unit.name} has already attacked this turn.`;
+      if (game.phase !== "battle") return "You can only attack in the Battle Phase.";
+      const mine = formationStats(game, game.activePlayer);
+      if (!mine) return "You need a Formation set to attack.";
+      if (!mine.complete) return `${mine.name} needs ${mine.missing} more unit${mine.missing === 1 ? "" : "s"} in its slots.`;
+      if (game.formationAttacked) return "Your Formation has already attacked this turn.";
       return null;
     },
     apply(game, action) {
       const me = game.activePlayer;
       const p = game.players[me];
       const enemy = game.players[1 - me];
-      const unit = p.ups[action.slot];
-      unit.hasAttacked = true;
-      const target = targetSlot(game, me, action.slot);
-      if (target === null) {
-        enemy.defense -= unit.attack;
-        game.log.push(`${unit.name} hits ${enemy.name} for ${unit.attack}. ${enemy.name} has ${Math.max(0, enemy.defense)} Defense left.`);
-        if (enemy.defense <= 0) win(game, me, `${enemy.name}'s Defense fell to 0.`);
-        return;
-      }
-      const foe = enemy.ups[target];
-      if (unit.attack > foe.defense) {
-        // The unit and any cards stacked under it go to the Grave.
-        const { under = [], summonedThisTurn, hasAttacked, ...foeCard } = foe;
-        enemy.ups[target] = null;
-        enemy.graveyard.push(...under, foeCard);
-        game.log.push(`${unit.name} (${unit.attack}) destroys ${foe.name} (${foe.defense}).`);
+      const mine = formationStats(game, me);
+      const theirs = formationStats(game, 1 - me);
+      const defense = theirs?.complete ? theirs.defense : 0;
+      game.formationAttacked = true;
+      if (mine.attack >= defense) {
+        enemy.damage += 1;
+        game.log.push(`${p.name}'s ${mine.name} (${mine.attack}) breaks through ${theirs?.complete ? `${theirs.name} (${defense})` : "an open field"}. ${enemy.name} has ${enemy.damage} Damage Counter${enemy.damage === 1 ? "" : "s"}.`);
+        if (enemy.damage >= MAX_DAMAGE) win(game, me, `${enemy.name} reached ${MAX_DAMAGE} Damage Counters.`);
       } else {
-        game.log.push(`${unit.name} (${unit.attack}) can't break ${foe.name} (${foe.defense}).`);
+        game.log.push(`${p.name}'s ${mine.name} (${mine.attack}) can't get through ${theirs.name} (${defense}).`);
       }
     },
   },
@@ -311,6 +301,6 @@ export function legalActions(game) {
       candidates.push({ type: "promote", player, card: i, slot });
     });
   });
-  p.ups.forEach((_, slot) => candidates.push({ type: "attack", player, slot }));
+  candidates.push({ type: "attack", player });
   return candidates.filter((a) => checkAction(game, a) === null);
 }

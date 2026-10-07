@@ -97,6 +97,6 @@ test("spent Energy refills to max at the start of your turn", () => {
   assert.equal(me.maxEnergy, 3);
 });
 
-test("both players start with 1000 Defense", () => {
-  for (const p of start().players) assert.equal(p.defense, 1000);
+test("both players start with 0 Damage Counters", () => {
+  for (const p of start().players) assert.equal(p.damage, 0);
 });
