@@ -38,12 +38,13 @@ Mapmaker (game board and screens), Advisor (balance reviews), Planner (plan and 
 ## Milestone 1.5: First Arms vs Arms test game (current focus)
 Uses the placeholder rules in `RULES.md`; Dyllan refines them as we play.
 - [x] Arms-only sample cards in `data/cards.json`: 10 units, Grades 1 to 6, Developer (Dyllan to refine)
+- [ ] Add Dyllan's Student/Apprentice/Graduate of Arms (Grades 1-3) to `data/cards.json` and the test decks, Developer
 - [x] Unit `grade` field replaces `cost`/`level`, Developer + Mapmaker
 - [x] Two 30-card Arms decks built from them, Developer
 - [x] Summon a unit from hand to an empty UPS slot, paying Energy, Developer (engine) + Mapmaker (click/drag)
 - [x] Battle Phase: units attack down their column; unit vs unit and direct Defense damage, Developer
 - [x] Phase flow: Draw, Preparation I, Battle, End, with a button to advance, Mapmaker
-- [ ] Promotion: exactly one Grade up, costs the difference, one per turn, Developer (`promote` move) + Mapmaker (highlight valid units)
+- [x] Promotion: exactly one Grade up, costs the difference, one per turn, Developer (`promote` move) + Mapmaker (highlight valid units)
 - [x] Win screen when Defense hits 0, Mapmaker
 - [x] Hot-seat play so Dyllan can test both sides, Mapmaker
 - [ ] Dyllan playtests and replaces placeholder rules, Planner updates `RULES.md`

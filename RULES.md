@@ -69,6 +69,15 @@ Open questions:
 - A Grade N unit costs **N Energy** to summon normally.
 - **(?)** What is the Grade range (Energy caps at 10)?
 
+### Official sample units (School of Arms, from Dyllan)
+| Grade | Name | Attack | Defense |
+|---|---|---|---|
+| 1 | Student of Arms | 500 | 500 |
+| 2 | Apprentice of Arms | 1500 | 1000 |
+| 3 | Graduate of Arms | 2000 | 1500 |
+
+These three form a promotion line (Student to Apprentice to Graduate). Under the current rules any Grade 2 can still promote any Grade 1.
+
 ### Promotion
 - Instead of summoning normally, you can **promote** a unit already on the field by playing a
   higher-Grade unit from your hand **on top of it**.
@@ -77,6 +86,7 @@ Open questions:
   The units don't need to be related.
 - **One promotion per turn.** Field Spells can allow extra promotions in the same turn.
 - Placeholder until Dyllan decides: the card underneath stays stacked beneath the new unit and both go to the Grave when the unit is destroyed.
+- Built (`8eb3c65`) with these placeholders. Bot games: first player wins 77% (62% if the first player skips their first draw). Dyllan to decide on a fix.
 - Placeholder until Dyllan decides: a promoted unit can attack this turn if the unit beneath was already on the field at the start of the turn.
 - **(?)** How does Grade map to rarity names, if any (e.g. Common, Rare, Legendary)?
 - **(?)** What triggers a Formation Effect (a pattern of units in the 3x3 grid, adjacency, same Signet)?
