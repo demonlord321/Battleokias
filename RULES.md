@@ -43,15 +43,27 @@ Open questions:
 | **Equipment** | (?) | (?) |
 | **Artifact** | (?) | (?) |
 | **Monster** | Deferred: defined once unit attacks are designed | (?) |
+| **Formation** | (?) likely tied to unit placement in the 3x3 grid | (?) |
 
 Build order: **Units, Spells and Traps first**, then Field Spells, Equipment, Artifacts
 and Monsters one at a time.
 
 Open questions:
-- **(?)** What does a Unit card show besides name and Energy cost (attack, defense, level, effect text)?
 - **(?)** Do Equipment cards attach to a unit? What do Artifacts do?
 - **(?)** Which card types go in the Special Deck Zones?
 - **(?)** Which card types cost Energy, and how do card levels map to cost?
+
+## Unit cards
+A Unit card shows:
+- The **unit image** as the card background
+- **Attack** stat
+- **Defense** stat
+- A **Formation Effect**
+
+Open questions:
+- **(?)** What triggers a Formation Effect (a pattern of units in the 3x3 grid, adjacency, same Signet)?
+- **(?)** How does the Formation card type relate to a unit's Formation Effect?
+- **(?)** Do Units also carry a Signet, an Energy cost and a level on the card?
 
 ## Player stats
 Shown alongside each player's **Hand** (the zone where drawn cards go).
