@@ -207,6 +207,7 @@ Open questions:
 - The Equipment's effect applies **once the unit is equipped**.
 - Equipment carries **Signets** too. It can only equip a unit that **shares a Signet** with it.
 - Equipped units' boosted stats count toward a Formation.
+- **Order of maths** (confirmed by Dyllan): apply each unit's Equipment first, then add up the Formation, then apply the Formation's multiplier or divisor (such as Vanguard Charge's x1.5 and /1.5) **at the end**, rounding down.
 
 Open questions (placeholders in brackets):
 - **(?)** Cost: does Equipment follow the usual 1 Energy? (Yes, 1 Energy.)
@@ -216,8 +217,8 @@ Open questions (placeholders in brackets):
 - **(?)** Which phase can you equip in? (Preparation Phase I.)
 
 ### Equipment: Practice Gear (School of Arms)
-- **Effect:** the equipped Arms unit gets **+25% Attack and +25% Defense** (rounded down).
-- Example: a Student of Arms goes from 500/500 to 625/625, and an Apprentice from 1500/1000 to 1875/1250.
+- **Effect:** the equipped Arms unit gets **+500 Attack and +500 Defense** (a flat bonus, confirmed by Dyllan).
+- Example: a Student of Arms goes from 500/500 to 1000/1000, and an Apprentice from 1500/1000 to 2000/1500.
 
 ## Placeholder rules for the first Arms vs Arms test game
 These are **temporary** so a units-only game can be played and tuned. Dyllan will replace them.
