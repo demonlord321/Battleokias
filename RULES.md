@@ -53,7 +53,7 @@ The game simulates medieval warfare: your units are your army, and armies need n
 | **Spell** | Spells with effects | (?) |
 | **Field Spell** | Affects the field | Field Effect Zone (?) |
 | **Trap** | Set face-down, activated on the opponent's turn | (?) |
-| **Equipment** | (?) | (?) |
+| **Equipment** | Placed over a unit with a shared Signet; boosts or changes it (see Equipment) | On a unit in the grid |
 | **Artifact** | (?) | (?) |
 | **Monster** | Deferred: defined once unit attacks are designed | (?) |
 | **Formation** | Names a pattern of filled grid slots and gives its Attack and Defense for battle (see Formations) | Formation Zone |
@@ -62,7 +62,7 @@ Build order: **Units, Spells and Traps first**, then Field Spells, Equipment, Ar
 and Monsters one at a time.
 
 Open questions:
-- **(?)** Do Equipment cards attach to a unit? What do Artifacts do?
+- **(?)** What do Artifacts do?
 - **(?)** Which card types go in the Special Deck Zones?
 - **(?)** Which card types cost Energy, and how do card levels map to cost?
 
@@ -201,6 +201,23 @@ Open questions:
 - **Second effect:** while Arms Academy is in play, you can promote **any number** of your units with the **Arms Signet** each turn, as long as you have the Energy. (The normal limit is one promotion per turn.)
 - Placeholder: if there's no empty slot or no Graduate of Arms to pick, the student stays in the Academy and tries again next turn. Playing a new Field Spell sends the old one and its students to the Grave.
 - The arriving Graduate can attack that turn if it's placed in your Formation (confirmed by Dyllan).
+
+## Equipment (confirmed by Dyllan)
+- An Equipment card is **placed over a unit** on the field, and that unit becomes **equipped**.
+- The Equipment's effect applies **once the unit is equipped**.
+- Equipment carries **Signets** too. It can only equip a unit that **shares a Signet** with it.
+- Equipped units' boosted stats count toward a Formation.
+
+Open questions (placeholders in brackets):
+- **(?)** Cost: does Equipment follow the usual 1 Energy? (Yes, 1 Energy.)
+- **(?)** Can a unit carry more than one Equipment? (No, one per unit.)
+- **(?)** When the unit is destroyed or retired, does the Equipment go to the Grave with it? (Yes.)
+- **(?)** When an equipped unit is promoted, does the Equipment stay on the new unit? (Yes, if it still shares a Signet.)
+- **(?)** Which phase can you equip in? (Preparation Phase I.)
+
+### Equipment: Practice Gear (School of Arms)
+- **Effect:** the equipped Arms unit gets **+25% Attack and +25% Defense** (rounded down).
+- Example: a Student of Arms goes from 500/500 to 625/625, and an Apprentice from 1500/1000 to 1875/1250.
 
 ## Placeholder rules for the first Arms vs Arms test game
 These are **temporary** so a units-only game can be played and tuned. Dyllan will replace them.
