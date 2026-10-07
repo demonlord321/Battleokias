@@ -2,7 +2,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { createRng, shuffle } from "../src/engine/rng.js";
-import { newGame, applyAction, legalActions } from "../src/engine/engine.js";
+import { newGame, applyAction, legalActions, spendEnergy } from "../src/engine/engine.js";
 
 const deck = (prefix, n = 40) => Array.from({ length: n }, (_, i) => ({ id: `${prefix}${i}` }));
 const start = (opts = {}) => newGame({ seed: 1, decks: [deck("a"), deck("b")], ...opts });
@@ -65,4 +65,32 @@ test("legal actions are all accepted", () => {
   for (const action of legalActions(start())) {
     assert.equal(applyAction(start(), action).ok, true);
   }
+});
+
+test("Energy: 1 on your first turn, +1 each of your turns, capped at 10", () => {
+  const game = start({ startingPlayer: 0 });
+  const [me, them] = game.players;
+  assert.equal(me.maxEnergy, 1);
+  assert.equal(me.energy, 1);
+  assert.equal(them.maxEnergy, 0); // hasn't had a turn yet
+  applyAction(game, { type: "endTurn", player: 0 });
+  assert.equal(them.maxEnergy, 1);
+  assert.equal(me.maxEnergy, 1); // only grows on your own turn
+  for (let i = 0; i < 30; i++) applyAction(game, { type: "endTurn", player: game.activePlayer });
+  assert.equal(me.maxEnergy, 10);
+  assert.equal(them.maxEnergy, 10);
+});
+
+test("spent Energy refills to max at the start of your turn", () => {
+  const game = start({ startingPlayer: 0 });
+  const me = game.players[0];
+  applyAction(game, { type: "endTurn", player: 0 });
+  applyAction(game, { type: "endTurn", player: 1 }); // my turn 2: 2 / 2
+  assert.equal(spendEnergy(me, 3), false);
+  assert.equal(spendEnergy(me, 2), true);
+  assert.equal(me.energy, 0);
+  applyAction(game, { type: "endTurn", player: 0 });
+  applyAction(game, { type: "endTurn", player: 1 }); // my turn 3: 3 / 3
+  assert.equal(me.energy, 3);
+  assert.equal(me.maxEnergy, 3);
 });

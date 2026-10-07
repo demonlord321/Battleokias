@@ -5,7 +5,7 @@
 // exactly the same rules. See RULES.md for the rules themselves.
 
 import { createRng, shuffle } from "./rng.js";
-import { createGame, createPlayer } from "./state.js";
+import { createGame, createPlayer, MAX_ENERGY_CAP } from "./state.js";
 
 // Opening hands (RULES.md, Setup). Each player's first Draw Phase then takes
 // the starting player to 5 cards and the opponent to 6.
@@ -21,10 +21,26 @@ export function drawCard(game, playerIndex) {
   return card;
 }
 
-// Starts the active player's turn: Draw Phase (draw 1), then Preparation Phase I.
+// Start of your turn (RULES.md, Energy): max Energy goes up by 1, to a cap of 10,
+// and all your Energy refills to that max. So turn 1 has 1, turn 2 has 2, and so on.
+export function refreshEnergy(player) {
+  player.maxEnergy = Math.min(MAX_ENERGY_CAP, player.maxEnergy + 1);
+  player.energy = player.maxEnergy;
+}
+
+// Spends Energy if the player has enough. Returns true if it was spent.
+// Playing higher-level cards will use this once card costs exist.
+export function spendEnergy(player, amount) {
+  if (amount > player.energy) return false;
+  player.energy -= amount;
+  return true;
+}
+
+// Starts the active player's turn: refill Energy, Draw Phase (draw 1), then Preparation Phase I.
 function startTurn(game) {
   if (game.activePlayer === game.startingPlayer) game.turn += 1;
   const p = game.players[game.activePlayer];
+  refreshEnergy(p);
   game.phase = "draw";
   game.log.push(`Turn ${game.turn}: ${p.name}'s turn.`);
   drawCard(game, game.activePlayer);
