@@ -43,6 +43,7 @@ Starting Signets:
 Deck rule:
 - A deck is built around **one Signet**. Every card in the deck must carry that Signet.
 - A card can belong to **more than one** Signet, so it can appear in decks of any of them.
+- **Deck legality (confirmed by Dyllan):** a deck is legal as long as every card shares the deck's Signet, whether as its main Signet or a sub-Signet. This allows unusual cross-academy combinations, and that's intended.
 - The card's Signet symbol(s) sit in the **top left** corner of the card.
 - **Main Signet and sub-Signets (confirmed by Dyllan):** a card's **first** Signet is its **main Signet**, and it decides the card's **promotion line**. Any Signets after it are **sub-Signets**: they let the card into those decks, but play no part in promotion.
 - **Support cards and Signets (confirmed by Dyllan):** Equipment, Artifacts and other cards that attach to or affect a unit can be used on it if they share **any** Signet, main or sub-Signet, unless the card says otherwise. So Practice Gear (Arms) can go on another academy's unit that has Arms as a sub-Signet.
