@@ -85,7 +85,7 @@ These three form a promotion line (Student to Apprentice to Graduate). Under the
 - Promotion costs the **difference** in Grade. For example, a Grade 2 played on a Grade 1 costs **1 Energy** instead of 2.
 - Promotion is **exactly one Grade** up: any Grade 2 promotes any Grade 1, any Grade 3 promotes any Grade 2, and so on. No skipping.
   The units don't need to be related.
-- **One promotion per turn.** Field Spells can allow extra promotions in the same turn.
+- **(?) Promotions per turn:** Dyllan has now said there is no restriction on how many promotions you do. Earlier the rule was one per turn, with Field Spells allowing more. Waiting for him to confirm which one applies.
 - Placeholder until Dyllan decides: the card underneath stays stacked beneath the new unit and both go to the Grave when the unit is destroyed.
 - First-player edge: with Formations and unit destruction in (`58d4e06`), bot games show the first player winning 49%, so no extra fix is needed for now.
 - Placeholder until Dyllan decides: a promoted unit can attack this turn if the unit beneath was already on the field at the start of the turn.
@@ -155,19 +155,19 @@ Open questions:
 A Field Spell goes in the **Field Effect Zone (FEZ)** and stays there, giving an ongoing effect.
 
 ### Field Spell: Arms Academy (School of Arms, from Dyllan)
-- **Effect:** In your **Preparation Phase I**, you may send a **Grade 1 Arms unit from your hand** to the Academy.
-- **Two of your turns later**, in your Preparation Phase I, a **Grade 3 unit** leaves the Academy and is **summoned to the field at no cost**, in **any empty slot you choose**.
+- **Effect:** In your **Preparation Phase I**, you may send a **Student of Arms** from your hand to the Academy. (Specific to this line: Student of Arms in, Graduate of Arms out.)
+- **Two of your turns later**, in your Preparation Phase I, a **Graduate of Arms** leaves the Academy and is **summoned to the field at no cost**, in **any empty slot you choose**.
   - Example: send the Grade 1 in Preparation Phase I of your 3rd turn, and the Grade 3 arrives in Preparation Phase I of your 5th turn.
 - **Cost to play:** 1 Energy.
 - **Enrolling** a unit costs its Grade in Energy, so 1 Energy per Grade 1 unit.
 - **Capacity:** the Academy holds up to **2** units. Sending two costs 2 Energy.
 - When the Grade 3 emerges, the **Grade 1 goes to the Grave**.
-- You choose that Grade 3 unit **from your hand** or **from your deck**. If you take it from your deck, **reshuffle** the deck afterwards.
+- You choose that Graduate of Arms **from your hand** or **from your deck**. If you take it from your deck, **reshuffle** the deck afterwards.
 
 Open questions:
-- **(?)** Must the Grade 3 be an Arms unit? If your grid is full when it arrives, can you retire a unit to make room first?
-- **(?)** Can the arriving Grade 3 attack that turn? (It would count toward a Formation straight away.)
-- **(?)** Does Arms Academy also allow extra promotions per turn, or is that left to other Field Spells?
+- The Academy does not affect any other promotion.
+- Placeholder: if there's no empty slot or no Graduate of Arms to pick, the student stays in the Academy and tries again next turn. Playing a new Field Spell sends the old one and its students to the Grave.
+- The arriving Graduate can attack that turn if it's placed in your Formation (confirmed by Dyllan).
 
 ## Placeholder rules for the first Arms vs Arms test game
 These are **temporary** so a units-only game can be played and tuned. Dyllan will replace them.
