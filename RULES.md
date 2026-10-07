@@ -21,6 +21,18 @@ Written up from Dyllan's notes. Open questions are marked **(?)**.
 - Resource system
 - Board zones: see **Field layout** below
 
+## Signets
+A deck is built around a **Signet**, a faction (like houses or clans in other games).
+Starting Signets:
+1. **School of Arms**
+2. **School of Magic**
+3. **School of Alchemy**
+
+Open questions:
+- **(?)** Is a deck limited to one Signet, or can it mix?
+- **(?)** How does a Signet shape its Units (stats, abilities, play style)?
+- **(?)** Are there neutral cards any deck can use?
+
 ## Card types
 | Type | What it does | Where it goes |
 |---|---|---|
