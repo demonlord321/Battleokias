@@ -47,7 +47,7 @@ Open questions:
 | **Equipment** | (?) | (?) |
 | **Artifact** | (?) | (?) |
 | **Monster** | Deferred: defined once unit attacks are designed | (?) |
-| **Formation** | Uses the 3x3 grid; details to come | Formation Zone |
+| **Formation** | Names a pattern of filled grid slots and gives its Attack and Defense for battle (see Formations) | Formation Zone |
 
 Build order: **Units, Spells and Traps first**, then Field Spells, Equipment, Artifacts
 and Monsters one at a time.
@@ -92,6 +92,28 @@ These three form a promotion line (Student to Apprentice to Graduate). Under the
 - **(?)** How does Grade map to rarity names, if any (e.g. Common, Rare, Legendary)?
 - **(?)** What triggers a Formation Effect (a pattern of units in the 3x3 grid, adjacency, same Signet)?
 - **(?)** How does the Formation card type relate to a unit's Formation Effect?
+
+## Formations
+A **Formation** card goes in the **Formation Zone**. It names a pattern of Unit Position Slots.
+While those slots are filled, the Formation has its own **Attack** and **Defense** for the Battle Phase.
+You can only attack if you have a Formation set.
+
+- Units in other slots can still be on the field, but **only units in the Formation's slots add to its power**.
+- Each Formation has its own formula for its power. Basic Formations use the **sum**.
+
+### Formation: Frontal Assault (basic)
+- **Pattern:** all three **front-row** slots (the row nearest the centre) are filled with units.
+- **Formation Attack** = the sum of the three front-row units' Attack.
+- **Formation Defense** = the sum of the three front-row units' Defense.
+- Example: three Students of Arms make 1500 Attack and 1500 Defense. Three Graduates of Arms make 6000 Attack and 4500 Defense.
+
+Open questions:
+- **(?)** What does the Formation attack: the opponent's Formation, their units, or their Defense Points? What happens if the opponent has no Formation?
+- **(?)** How is damage worked out? For example, attacker's Formation Attack minus the defender's Formation Defense, with the rest going to Defense Points.
+- **(?)** How many times can a Formation attack per Battle Phase?
+- **(?)** Does playing a Formation card cost Energy? Can you swap it for another Formation?
+- **(?)** If a unit in the pattern is destroyed or leaves its slot, does the Formation break until the slot is filled again?
+- **(?)** Do units that just arrived count toward the Formation on the turn they're summoned or promoted?
 
 ## Placeholder rules for the first Arms vs Arms test game
 These are **temporary** so a units-only game can be played and tuned. Dyllan will replace them.
