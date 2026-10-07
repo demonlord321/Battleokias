@@ -77,7 +77,8 @@
       "turns": 2,
       "capacity": 2
     },
-    "text": "In your Preparation Phase I, you may enroll a Student of Arms from your hand by paying its Grade in Energy (up to 2 at a time). Two of your turns later, in your Preparation Phase I, summon a Graduate of Arms from your hand or deck to an empty slot at no cost, then send the Student of Arms to the Grave. If you took it from your deck, shuffle your deck.",
+    "unlimitedPromotions": "arms",
+    "text": "In your Preparation Phase I, you may enroll a Student of Arms from your hand by paying its Grade in Energy (up to 2 at a time). Two of your turns later, in your Preparation Phase I, summon a Graduate of Arms from your hand or deck to an empty slot at no cost, then send the Student of Arms to the Grave. If you took it from your deck, shuffle your deck. While this card is in play, you can promote any number of your Arms units on the field each turn, as long as you have the Energy.",
     "image": "images/fld-001.png"
   },
   {
