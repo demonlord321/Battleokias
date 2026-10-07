@@ -162,6 +162,15 @@ const catalogueId = (c) => c.cardId ?? c.id;
 // promotesFrom ["ARM-010"]) only goes on those cards. Placeholder until Dyllan says how
 // named units fit: a card without it goes on any unit one Grade lower in the same line.
 export const promotionLine = (card) => card.signets?.[0] ?? null;
+
+// The Defense a unit has when it arrives on the field. Most use their printed number. A unit
+// with variableDefense (Drazel) has variableDefense.summoned when summoned, and copies the
+// printed Defense of the unit it promotes (not Equipment bonuses; those stay on top).
+function arrivingDefense(card, base = null) {
+  const v = card.variableDefense;
+  if (!v) return card.defense;
+  return base && v.promoted === "base" ? base.defense : v.summoned;
+}
 export function inPromotionLine(base, card) {
   if (card.promotesFrom) return card.promotesFrom.includes(catalogueId(base));
   return promotionLine(base) !== null && promotionLine(base) === promotionLine(card);
@@ -354,7 +363,7 @@ const ACTIONS = {
       const p = game.players[game.activePlayer];
       const [card] = p.hand.splice(handIndex(p, action.card), 1);
       spendEnergy(p, cardCost(card));
-      p.ups[action.slot] = { ...card };
+      p.ups[action.slot] = { ...card, defense: arrivingDefense(card) };
       game.log.push(`${p.name} summons ${card.name}.`);
     },
   },
@@ -388,7 +397,7 @@ const ACTIONS = {
       if (!unlimitedPromotion(game, game.activePlayer, base)) game.promotionsLeft -= 1;
       // Placeholder: Equipment stays on the unit through a promotion.
       const { under = [], equipment, ...baseCard } = base;
-      p.ups[action.slot] = { ...card, under: [...under, baseCard], ...(equipment ? { equipment } : {}) };
+      p.ups[action.slot] = { ...card, defense: arrivingDefense(card, base), under: [...under, baseCard], ...(equipment ? { equipment } : {}) };
       game.log.push(`${p.name} promotes ${base.name} to ${card.name}.`);
     },
   },

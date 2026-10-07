@@ -38,6 +38,7 @@ export function checkCards(cards) {
     const fields = { ...COMMON, ...(BY_TYPE[card.type] ?? DEFAULT_FIELDS) };
     for (const [field, kind] of Object.entries(fields)) {
       if (!(field in card)) problems.push(`${where}: missing "${field}".`);
+      else if (field === "defense" && card.defense === null && card.variableDefense) continue; // worked out on the field
       else if (typeOf(card[field]) !== kind) problems.push(`${where}: "${field}" should be a ${kind}, not ${typeOf(card[field])}.`);
     }
 
@@ -89,6 +90,14 @@ export function checkCards(cards) {
         if (!["attack", "defense", "attackPercent", "defensePercent"].includes(k)) problems.push(`${where}: unknown boost "${k}". Use attack, defense, attackPercent or defensePercent.`);
         else if (!Number.isInteger(v)) problems.push(`${where}: boost.${k} should be a whole number.`);
       }
+    }
+    // Named units (Grade 4 and up) carry a Class and flavour text.
+    for (const k of ["class", "flavor"]) if (k in card && (typeof card[k] !== "string" || !card[k])) problems.push(`${where}: "${k}" should be text.`);
+    if ("variableDefense" in card) {
+      // Drazel: { summoned: 1000, promoted: "base" } = 1000 when summoned, the promoted unit's Defense when promoting.
+      const v = card.variableDefense;
+      if (typeOf(v) !== "object" || !Number.isInteger(v.summoned) || !["base"].includes(v.promoted)) problems.push(`${where}: "variableDefense" should look like { "summoned": 1000, "promoted": "base" }.`);
+      if (card.defense !== null) problems.push(`${where}: a unit with "variableDefense" should have "defense": null.`);
     }
     if ("promotesFrom" in card) {
       // Promotion lines: the cards this unit can go on, each a unit one Grade lower in the same line.
