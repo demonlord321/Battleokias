@@ -35,6 +35,17 @@ Mapmaker (game board and screens), Advisor (balance reviews), Planner (plan and 
 - [ ] Turn phases, playing cards, resources, combat, win check
 - [ ] Two random bots play full games in Node; unit tests
 
+## Milestone 1.5: First Arms vs Arms test game (current focus)
+Uses the placeholder rules in `RULES.md`; Dyllan refines them as we play.
+- [ ] Arms-only sample cards in `data/cards.json`: about 8 units across costs 1 to 6, Dyllan or Developer
+- [ ] Two 30-card Arms decks built from them, Developer
+- [ ] Summon a unit from hand to an empty UPS slot, paying Energy, Developer (engine) + Mapmaker (click/drag)
+- [ ] Battle Phase: units attack down their column; unit vs unit and direct Defense damage, Developer
+- [ ] Phase flow: Draw, Preparation I, Battle, End, with a button to advance, Mapmaker
+- [ ] Win screen when Defense hits 0, Mapmaker
+- [ ] Hot-seat play so Dyllan can test both sides, Mapmaker
+- [ ] Dyllan playtests and replaces placeholder rules, Planner updates `RULES.md`
+
 ## Milestone 2: Playable board
 - [x] Board layout: 3x3 UPS, Special Deck Zones, Grave, Draw, Field Effect Zone, mirrored opponent, Mapmaker
 - [x] Board wired to engine state (`ups`, `specialZones`, `fieldEffect`), turn and phase banner, Mapmaker + Developer

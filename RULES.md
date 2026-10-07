@@ -68,6 +68,19 @@ Open questions:
 - **(?)** How does the Formation card type relate to a unit's Formation Effect?
 - **(?)** Do Units also show an Energy cost and a level on the card?
 
+## Placeholder rules for the first Arms vs Arms test game
+These are **temporary** so a units-only game can be played and tuned. Dyllan will replace them.
+- **Deck:** 30 cards, up to 3 copies of a card (placeholder).
+- **Summoning (Preparation Phase I):** play a Unit from hand into any empty Unit Position Slot by paying its Energy cost. No limit per turn beyond Energy.
+- **Summoning sickness:** a unit can't attack on the turn it was summoned.
+- **Battle Phase (after Preparation Phase I):** each of your units may attack once.
+  - A unit attacks down its **column**. It hits the nearest enemy unit in that column (front row first).
+  - Unit vs unit: if Attack is greater than the target's Defense, the target is destroyed and goes to the Grave. Otherwise nothing happens.
+  - If the column is empty, the attack hits the opponent's Defense Points directly for the unit's Attack value.
+- **End Phase:** pass the turn.
+- **Win:** reduce the opponent to 0 Defense Points (placeholder until the damage formula).
+- **Empty Draw Pile:** placeholder is that a player who can't draw loses.
+
 ## Player stats
 Shown alongside each player's **Hand** (the zone where drawn cards go).
 - **Player Name**
