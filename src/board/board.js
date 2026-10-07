@@ -195,7 +195,6 @@ export const PHASE_NAMES = {
   setup: "Setup",
   draw: "Draw Phase",
   prep1: "Preparation Phase I",
-  prep2: "Preparation Phase II",
   battle: "Battle Phase",
   prep2: "Preparation Phase II",
   end: "End Phase",
