@@ -226,3 +226,41 @@ test("chooseLoss is refused when there's nothing to choose", () => {
   const game = start();
   assert.match(checkAction(game, { type: "chooseLoss", player: 0, slot: 0 }), /nothing to choose/);
 });
+
+test("from turn 3 with no Formation in hand or set, take one from the deck (deckFormation)", () => {
+  const game = newGame({ seed: 3, decks: [[...deckOf(29), frontal()], deckOf()], startingPlayer: 0 });
+  const p = game.players[0];
+  const id = p.deck.find((c) => c.type === "formation")?.id ?? p.hand.find((c) => c.type === "formation").id;
+  // Make sure it's in the deck, not the hand, for this test.
+  if (!p.deck.some((c) => c.id === id)) p.deck.unshift(...p.hand.splice(p.hand.findIndex((c) => c.id === id), 1));
+  const take = { type: "deckFormation", player: 0, card: id };
+  assert.match(checkAction(game, take), /from turn 3/);
+  for (let i = 0; i < 2; i++) {
+    applyAction(game, { type: "endTurn", player: 0 });
+    applyAction(game, { type: "endTurn", player: 1 });
+  }
+  assert.equal(game.turn, 3);
+  // If the draws brought it into the hand, put it back on the bottom of the deck.
+  if (!p.deck.some((c) => c.id === id)) p.deck.unshift(...p.hand.splice(p.hand.findIndex((c) => c.id === id), 1));
+  assert.ok(legalActions(game).some((a) => a.type === "deckFormation" && a.card === id));
+  const deckSize = p.deck.length;
+  assert.equal(applyAction(game, take).ok, true);
+  assert.equal(p.formationZone.id, id);
+  assert.equal(p.deck.length, deckSize - 1);
+  assert.match(checkAction(game, take), /already have a Formation/);
+});
+
+test("deckFormation isn't allowed with a Formation in hand, a non-Formation card, or outside Preparation Phase I", () => {
+  const game = newGame({ seed: 3, decks: [[...deckOf(29), frontal()], deckOf()], startingPlayer: 0 });
+  game.turn = 3;
+  const p = game.players[0];
+  p.hand = p.hand.filter((c) => c.type !== "formation");
+  p.deck.push(frontal());
+  const fid = p.deck.at(-1).id;
+  assert.match(checkAction(game, { type: "deckFormation", player: 0, card: p.deck[0].type === "formation" ? "nope" : p.deck[0].id }), /Pick a Formation/);
+  p.hand.push(frontal());
+  assert.match(checkAction(game, { type: "deckFormation", player: 0, card: fid }), /in your hand/);
+  p.hand.pop();
+  applyAction(game, { type: "nextPhase", player: 0 });
+  assert.match(checkAction(game, { type: "deckFormation", player: 0, card: fid }), /Preparation Phase I/);
+});

@@ -14,6 +14,10 @@ export const STARTING_HAND = { first: 4, second: 5 };
 // RULES.md, Promotion: one per turn unless a Field Spell allows more.
 export const PROMOTIONS_PER_TURN = 1;
 
+// RULES.md, Formations: from your own third turn, if you have no Formation in hand
+// or in your Formation Zone, you can play one straight from your deck.
+export const DECK_FORMATION_TURN = 3;
+
 // RULES.md: a hit that lands always deals at least 1 Damage Counter, whatever the Defense Grade.
 export const MIN_COUNTERS = 1;
 
@@ -448,6 +452,32 @@ const ACTIONS = {
     },
   },
 
+  // { type: "deckFormation", player, card }: from your own third turn, in Preparation
+  // Phase I, if there's no Formation in your hand or Formation Zone, put a Formation
+  // from your deck (card = its instance id) into the Formation Zone, paying its normal
+  // cost, then shuffle the deck. Placeholder: no once-per-game limit.
+  deckFormation: {
+    check(game, action) {
+      const p = game.players[game.activePlayer];
+      if (game.phase !== "prep1") return "You can only do that in Preparation Phase I.";
+      if (game.turn < DECK_FORMATION_TURN) return `You can take a Formation from your deck from turn ${DECK_FORMATION_TURN}.`;
+      if (p.formationZone) return "You already have a Formation set.";
+      if (p.hand.some((c) => c.type === "formation")) return "You have a Formation in your hand.";
+      const card = p.deck.find((c) => c.id === action.card);
+      if (!card || card.type !== "formation") return "Pick a Formation from your deck.";
+      if (cardCost(card) > p.energy) return `${card.name} costs ${cardCost(card)} Energy and you have ${p.energy}.`;
+      return null;
+    },
+    apply(game, action) {
+      const p = game.players[game.activePlayer];
+      const [card] = p.deck.splice(p.deck.findIndex((c) => c.id === action.card), 1);
+      spendEnergy(p, cardCost(card));
+      p.deck = shuffle(p.deck, game.rng);
+      p.formationZone = card;
+      game.log.push(`${p.name} has no Formation and takes ${card.name} from their deck.`);
+    },
+  },
+
   // { type: "attack", player }: your Formation attacks in the Battle Phase (RULES.md, Formations).
   // If its Attack is equal to or higher than the opponent's Formation Defense, the
   // opponent takes your Damage Grade minus their Defense Grade in Damage Counters; 10 means they lose.
@@ -570,6 +600,12 @@ export function legalActions(game) {
     });
   });
   candidates.push({ type: "attack", player });
+  const seenFormations = new Set();
+  for (const c of p.deck) {
+    if (c.type !== "formation" || seenFormations.has(c.cardId ?? c.id)) continue; // one choice per Formation name
+    seenFormations.add(c.cardId ?? c.id);
+    candidates.push({ type: "deckFormation", player, card: c.id });
+  }
   p.ups.forEach((_, from) => {
     candidates.push({ type: "retire", player, slot: from });
     p.ups.forEach((_, to) => candidates.push({ type: "move", player, from, to }));
