@@ -14,16 +14,16 @@ Mapmaker (game board and screens), Advisor (balance reviews), Planner (plan and 
 - [ ] Load, Settings and Quit come later
 
 ## Milestone 0: Rules on one page (Dyllan, with Planner)
-- [ ] Win condition
-- [ ] Resource system
-- [ ] Turn phases
-- [ ] Card types and board zones
+- [x] Win condition (10 Damage Counters)
+- [x] Resource system (Energy, Hearthstone-style)
+- [ ] Turn phases (Draw, Preparation I, Battle done; anything after Battle still to come)
+- [x] Card types and board zones
 - [ ] Deck size, starting hand, card limits
 - [ ] Paper playtest with 15 to 20 cards (Advisor's suggestion)
 
 ## Milestone 1: Headless rules engine (Developer)
 - [x] Engine skeleton in `src/engine/`: seeded RNG, per-player deck/hand/field/graveyard state, `applyAction()` (End Turn only), `npm test`
-- [ ] `cards.json` card definitions (`id`, `name`, `type`, `cost`, `level`, `text` + per-type fields), Developer
+- [x] `cards.json` card definitions (`id`, `name`, `type`, `cost`, `level`, `text` + per-type fields), Developer
 - [x] Card faces: frame colour per type, Signet symbols top left, cost top right, unit image/Attack/Defense/Formation panel, Mapmaker
 - [x] Single-Signet deck check (`checkDeck`), Developer
 - [ ] Card catalogue: master `data/cards.json` (IDs like `ARM-001`), checker script, generated `CARDS.md`. Dyllan edits the JSON directly and pushes new cards, Developer + Planner
@@ -31,9 +31,9 @@ Mapmaker (game board and screens), Advisor (balance reviews), Planner (plan and 
 - [ ] Card types stage 2 (one at a time): Field Spells, Equipment, Artifacts, Monsters (after unit attacks are designed)
 - [x] Coin flip, opening deal (4 and 5), Draw Phase each turn, seeded shuffle
 - [ ] Hand limits, empty Draw Pile rule
-- [ ] Game state; every move is an action passed to one `applyAction` function
-- [ ] Turn phases, playing cards, resources, combat, win check
-- [ ] Two random bots play full games in Node; unit tests
+- [x] Game state; every move is an action passed to one `applyAction` function
+- [x] Turn phases, playing cards, resources, combat, win check
+- [x] Two random bots play full games in Node; unit tests
 
 ## Milestone 1.5: First Arms vs Arms test game (current focus)
 Uses the placeholder rules in `RULES.md`; Dyllan refines them as we play.
