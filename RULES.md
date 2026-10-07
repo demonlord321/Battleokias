@@ -59,21 +59,21 @@ Alongside the 60-card main deck, each player has **four Special Decks**, one in 
   2. Artifacts
   3. Monsters
   4. Items (a new card type, details to come)
-- **Spells and Traps** can go in the main deck **or** have their own Special Deck. If you choose a Spell or Trap Special Deck, you **can't have any Spells or Traps in your main deck**.
-- **Preparation Phase II:** at the start of it, you choose one of your four Special Decks to draw from.
+- **Spells and Traps** can go in the main deck **or** have their own Special Deck (see below for what that blocks).
+- **Preparation Phase II:** at the start of it, you choose one of your four Special Decks and draw **one card** from it. That is the only Special Deck draw.
+- **In Preparation Phase II you can only set cards.**
+- **Equipment set in Phase II** goes on its unit, but the unit only **becomes equipped at the start of your next Preparation Phase I**, so the bonus doesn't apply until then.
+- **Artifacts and Monsters** are Special Deck only, like Equipment.
+- A **Spell Special Deck** blocks only Spells from your main deck, and a **Trap Special Deck** blocks only Traps.
 
 Open questions (placeholders in brackets):
-- **(?)** How many cards do you draw in Preparation Phase II? (1.)
-- **(?)** What can you do in Preparation Phase II: play and equip cards? Can you summon, promote, move or retire units? (Play Spells, Traps, Equipment and other Special Deck cards only. Moving and retiring stay in Preparation Phase I, as Advisor suggested.)
-- **(?)** Are Artifacts, Monsters and Items also Special Deck only, like Equipment? (Yes.)
-- **(?)** Does a Spell Special Deck ban only Spells from your main deck, or Traps too? (Both, as written above.)
+- **(?)** Are Items Special Deck only too? (Yes.)
 - **(?)** Can two Special Decks be the same type, and must you fill all four? (No, and no.)
 - **(?)** Does the 3-copy limit apply inside Special Decks? (Yes.)
 - **(?)** Do Special Decks count toward the 60 cards, or are they on top of the main deck? (On top.)
 - **(?)** Are Special Decks shuffled, or do you pick the card you want? (Shuffled.)
 - **(?)** Does the player going first get a Special Deck draw on their first turn? (No.)
 - **(?)** Is there a hand limit, now that you draw 2 cards a turn? (No limit yet.)
-- Built placeholders (`698d902`): Equipment and Field Spells can be played in Phase I or II. Summoning, promoting, moving, retiring, Formations and the Academy stay in Phase I only.
 
 ## Card types
 | Type | What it does | Where it goes |
