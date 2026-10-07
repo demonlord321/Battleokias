@@ -70,6 +70,65 @@ function buildDeck(cards, decks, signet) {
 const SIGNETS = ["arms", "arms"];
 const NAMES = ["Player 1", "Player 2"];
 
+// ---------- Game mode: vs Computer or Hot-seat ----------
+// vs Computer: you are always Player 1 at the bottom; the computer plays Player 2, one move
+// at a time with a short pause, and there's no handover screen.
+let mode = "computer";
+export const setGameMode = (m) => (mode = m === "hotseat" ? "hotseat" : "computer");
+const COMPUTER = 1;
+const COMPUTER_DELAY = 650; // ms between the computer's moves
+const vsComputer = () => mode === "computer";
+const computerToMove = () => vsComputer() && game && game.winner === null && me() === COMPUTER;
+
+// The computer's brain lives in the engine (src/engine/bot.js, chooseAction(game)). Until that
+// exists, a simple built-in picker plays: Formation, Field Spell, promote, summon into the
+// Formation's slots, equip, attack only when it will hit, then move on.
+let chooseAction = null;
+import("../engine/bot.js").then((m) => (chooseAction = m.chooseAction ?? m.default ?? null)).catch(() => {});
+
+function basicPick(game) {
+  const p = game.players[game.activePlayer];
+  const options = legalActions(game).filter((a) => a.player === undefined || a.player === me());
+  const wanted = new Set(p.formationZone?.slots ?? p.hand.find((c) => c.type === "formation")?.slots ?? [0, 1, 2]);
+  const inF = (a) => (wanted.has(a.slot) ? 0 : 1);
+  const of = (type) => options.filter((a) => a.type === type);
+  const hits = attackPreview(game, me())?.hits;
+  return (
+    of("chooseLoss")[0] || of("specialDraw")[0] || of("graduate").sort((a, b) => inF(a) - inF(b))[0] ||
+    (!p.formationZone && (of("setFormation")[0] || of("deckFormation")[0])) ||
+    (!p.fieldEffect && of("setField")[0]) ||
+    of("promote").sort((a, b) => inF(a) - inF(b))[0] ||
+    of("enroll")[0] ||
+    of("summon").sort((a, b) => inF(a) - inF(b) || (p.hand[b.card]?.grade ?? 0) - (p.hand[a.card]?.grade ?? 0) || a.slot - b.slot)[0] ||
+    of("equip").sort((a, b) => inF(a) - inF(b))[0] ||
+    (hits && of("attack")[0]) ||
+    of("nextPhase")[0] || of("endTurn")[0] || options[0] ||
+    { type: "endTurn", player: me() }
+  );
+}
+
+// Plays the computer's next move after a pause, then (through act) the one after that.
+let computerTimer = null;
+let computerSteps = 0;
+let computerTurnKey = null;
+function scheduleComputer() {
+  if (!computerToMove() || computerTimer) return;
+  computerTimer = setTimeout(() => {
+    computerTimer = null;
+    if (!computerToMove()) return;
+    const key = `${game.turn}:${game.phase}`;
+    computerSteps = key === computerTurnKey ? computerSteps + 1 : 0;
+    computerTurnKey = key;
+    let action = null;
+    try { action = chooseAction?.(game, COMPUTER) ?? null; } catch (err) { console.error(err); }
+    if (!action || checkAction(game, action)) action = basicPick(game);
+    // Safety net: never let the computer loop forever in one phase.
+    if (computerSteps > 40 || checkAction(game, action)) action = [{ type: "nextPhase", player: me() }, { type: "endTurn", player: me() }].find(legal) ?? action;
+    if (!act(action)) act({ type: "endTurn", player: me() });
+  }, COMPUTER_DELAY);
+}
+const blocked = () => curtain.hidden === false || computerToMove();
+
 // ---------- Hot-seat game controller ----------
 
 let game = null;
@@ -98,8 +157,9 @@ function act(action) {
   gradCard = null;
   deckFormOpen = false;
   if (game.winner !== null) return render(), showWin(), true;
-  if (me() !== prevActor) showCurtain(); // turn passed, or the defender has to choose a loss
+  if (me() !== prevActor && !vsComputer()) showCurtain(); // turn passed, or the defender has to choose a loss
   render();
+  scheduleComputer();
   return true;
 }
 
@@ -182,7 +242,8 @@ function render() {
 
   const pa = phaseAction();
   phaseBtn.textContent = phaseLabel(pa);
-  phaseBtn.disabled = game.winner !== null || !!game.pending;
+  phaseBtn.disabled = game.winner !== null || !!game.pending || computerToMove();
+  if (computerToMove()) phaseBtn.textContent = "Computer is playing…";
   renderAttackButton(ui.formationCanAttack);
   renderDeckFormation();
 
@@ -217,7 +278,7 @@ function renderDeckFormation() {
   deckFormBtn.hidden = !choices.length;
   deckFormBtn.innerHTML = `&#x1F4DC; Formation from deck <small>No Formation yet: take one from your deck</small>`;
   let panel = $("#deckform-panel");
-  if (!choices.length || !deckFormOpen || curtain.hidden === false) {
+  if (!choices.length || !deckFormOpen || blocked()) {
     if (!choices.length) deckFormOpen = false;
     return panel?.remove();
   }
@@ -250,7 +311,7 @@ function renderDeckFormation() {
 // then click a glowing empty slot. Engine: game.pending = { type: "graduate", cards, slots }.
 function renderGradPanel() {
   let panel = $("#grad-panel");
-  if (!graduating() || curtain.hidden === false) return panel?.remove();
+  if (!graduating() || blocked()) return panel?.remove();
   if (!panel) {
     panel = document.createElement("div");
     panel.id = "grad-panel";
@@ -306,14 +367,18 @@ async function startGame() {
   winScreen.hidden = true;
   curtain.hidden = true;
   selectedHand = null;
+  clearTimeout(computerTimer);
+  computerTimer = null;
   try {
     const [cards, decks] = await Promise.all([loadJson("data/cards.json"), loadJson("data/decks.json", true)]);
     // The engine flips the coin, deals 4 and 5, and runs the first Draw Phase.
-    game = newGame({ decks: SIGNETS.map((s) => buildDeck(cards, decks, s)), specialDecks: SIGNETS.map((s) => buildSpecialDecks(cards, decks, s)), names: NAMES });
+    const names = vsComputer() ? [NAMES[0], "Computer"] : NAMES;
+    game = newGame({ decks: SIGNETS.map((s) => buildDeck(cards, decks, s)), specialDecks: SIGNETS.map((s) => buildSpecialDecks(cards, decks, s)), names });
     window.game = game; // handy for poking at the state from the browser console
-    viewer = me();
+    viewer = vsComputer() ? 0 : me();
     render();
-    showCurtain();
+    if (vsComputer()) scheduleComputer();
+    else showCurtain();
   } catch (err) {
     console.error(err);
     toast(err.message);
@@ -323,7 +388,7 @@ async function startGame() {
 // ---------- Clicks ----------
 
 function onHandClick({ index }) {
-  if (curtain.hidden === false || game.winner !== null) return;
+  if (blocked() || game.winner !== null) return;
   if (choosingLoss()) return toast("Pick one of the glowing units to send to the Grave.");
   if (graduating()) return toast("Pick a Grade 3 in the Academy panel first.");
   if (drawingSpecial()) return toast("Preparation Phase II: click one of your glowing Special Decks to draw from it.");
@@ -348,7 +413,7 @@ function onHandClick({ index }) {
 }
 
 function onSlotClick({ owner, zone, index }) {
-  if (curtain.hidden === false || game.winner !== null) return;
+  if (blocked() || game.winner !== null) return;
   if (owner !== 0) return; // only your own side does anything for now
   if (drawingSpecial()) {
     if (zone === "sdz" && game.pending.decks.includes(index)) act({ type: "specialDraw", player: me(), deck: index });
@@ -409,7 +474,7 @@ const dropAction = (from, el) => {
 };
 
 function onPointerDown(e) {
-  if (e.button !== 0 || curtain.hidden === false || game.winner !== null || game.pending) return;
+  if (e.button !== 0 || blocked() || game.winner !== null || game.pending) return;
   const slot = e.target.closest('.slot[data-owner="0"][data-zone="ups"].is-filled');
   if (!slot) return;
   const from = +slot.dataset.index;
@@ -489,6 +554,7 @@ export function setupGame() {
   registerScreen("game", {
     el: "#game-screen",
     onShow: startGame,
+    onHide: () => (clearTimeout(computerTimer), (computerTimer = null)),
     onKey: (e) => {
       if (e.key !== "Escape") return;
       if (selectedHand !== null) {
