@@ -18,6 +18,10 @@ test("the checker catches common mistakes", () => {
   assert.equal(checkCards([{ ...good, signets: ["pirates"] }]).length, 1);
   assert.equal(checkCards([{ ...good, type: "unit" }]).length, 5); // 4 unit fields missing, plus cost instead of grade
   assert.equal(checkCards([{ ...good, cost: "2" }]).length, 1);
+  const formation = { ...good, type: "formation", slots: [0, 1, 2], combine: "sum" };
+  assert.deepEqual(checkCards([formation]), []);
+  assert.equal(checkCards([{ ...formation, slots: [0, 9] }]).length, 1);
+  assert.equal(checkCards([{ ...formation, combine: "times" }]).length, 1);
 });
 
 test("data/decks.json decks are legal", async () => {

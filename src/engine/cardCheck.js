@@ -11,7 +11,11 @@ const COMMON = { id: "string", name: "string", type: "string", signets: "array",
 // Units have a Grade (their Energy cost and rarity in one number); other cards have a cost.
 const BY_TYPE = {
   unit: { grade: "number", attack: "number", defense: "number", formation: "string" },
+  // slots: the Unit Position Slots (0 to 8, front row 0-2) the Formation draws from.
+  formation: { cost: "number", slots: "array", combine: "string" },
 };
+// How a Formation adds up its units. Only "sum" (Frontal Assault) so far.
+export const COMBINE_RULES = ["sum"];
 const DEFAULT_FIELDS = { cost: "number" };
 
 // IDs look like ARM-001, or ARM-ALC-001 for a card with more than one Signet.
@@ -55,7 +59,16 @@ export function checkCards(cards) {
       if (typeof card.grade === "number" && (card.grade < 1 || card.grade > 10 || !Number.isInteger(card.grade))) {
         problems.push(`${where}: grade should be a whole number from 1 to 10.`);
       }
-    } else if (typeof card.cost === "number" && (card.cost < 0 || card.cost > 10 || !Number.isInteger(card.cost))) {
+    } else if (card.type === "formation" && Array.isArray(card.slots)) {
+      const ok = card.slots.every((n) => Number.isInteger(n) && n >= 0 && n <= 8);
+      if (!ok || card.slots.length === 0 || new Set(card.slots).size !== card.slots.length) {
+        problems.push(`${where}: slots should list different slot numbers from 0 to 8 (front row is 0, 1, 2).`);
+      }
+      if (typeof card.combine === "string" && !COMBINE_RULES.includes(card.combine)) {
+        problems.push(`${where}: unknown combine "${card.combine}". Use one of: ${COMBINE_RULES.join(", ")}.`);
+      }
+    }
+    if (card.type !== "unit" && typeof card.cost === "number" && (card.cost < 0 || card.cost > 10 || !Number.isInteger(card.cost))) {
       problems.push(`${where}: cost should be a whole number from 0 to 10.`);
     }
   });

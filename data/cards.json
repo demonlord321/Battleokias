@@ -42,6 +42,25 @@
     "image": "images/arm-012.png"
   },
   {
+    "id": "FRM-001",
+    "name": "Frontal Assault",
+    "type": "formation",
+    "signets": [
+      "arms",
+      "magic",
+      "alchemy"
+    ],
+    "cost": 0,
+    "slots": [
+      0,
+      1,
+      2
+    ],
+    "combine": "sum",
+    "text": "Needs units in all three front-row slots. Attack and Defense are the sums of those three units.",
+    "image": "images/frm-001.png"
+  },
+  {
     "id": "ARM-001",
     "name": "Iron Recruit",
     "type": "unit",
