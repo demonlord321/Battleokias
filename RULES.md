@@ -337,12 +337,11 @@ Shown alongside each player's **Hand** (the zone where drawn cards go).
     start of each of your turns, up to a cap of **10**.
   - At the start of your turn, Energy refills to your current max. Unspent Energy does
     not carry over beyond that.
-- **Player Grade** (confirmed by Dyllan): equal to the **highest Grade among your units on the field**.
+- **Player Grade** (confirmed by Dyllan): the **highest Grade you've had on the field this game**. It goes up when a unit of a higher Grade comes onto your field, and it **never drops**. Example: if your Player Grade is 3 and your Grade 3 is destroyed, you can still summon a Grade 4 next round.
   - You can't bring out a unit more than one Grade above your Player Grade, even if a spell or effect makes it cheap. Example: with a Grade 4 in hand and a spell that cuts its cost to 1, you still can't summon it while your Player Grade is 2. You first need a Grade 3 out to raise your Player Grade to 3.
   - Normally your Player Grade can rise by only **one per turn**, through your one promotion. Spells and effects (like Arms Academy's extra promotions) can raise it faster.
   - Placeholders until Dyllan decides:
     - With no units on the field, your Player Grade is **0**, so only Grade 1 units can be summoned.
-    - Player Grade updates straight away: if your highest unit is destroyed or retired, it drops.
     - Arms Academy's free Graduate still arrives even if your Player Grade is only 1, because the card says it's summoned automatically.
 
 ## Empty Draw Pile

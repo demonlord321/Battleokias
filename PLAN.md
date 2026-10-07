@@ -57,7 +57,7 @@ Uses the placeholder rules in `RULES.md`; Dyllan refines them as we play.
 - [ ] Katana: Dyllan removed the cost 2 and 1-per-deck limits (back to cost 1, 3 copies; done in `ccd93fd`). Re-check its win rate once decks are 60 cards and other Special Deck types exist, Advisor. Parked ideas: breaks after its first special kill; minimum Special Deck size
 - [ ] Vanguard Charge still wins over 90%; Dyllan to revisit (Frontal Assault Defense Grade 1 got it to about 43%)
 - [ ] Katana costs 3, printed on the card, Developer
-- [ ] Player Grade: highest Grade among your units on the field; you can't summon a unit more than one Grade above it, even if its cost is reduced. Engine check plus `playerGrade` in the state, Developer; shown in the player stats panel, Mapmaker
+- [ ] Player Grade: highest Grade you've had on the field this game, never drops (`p.playerGrade`; panel shown in `cc95f79`, needs to read the stored value); you can't summon a unit more than one Grade above it, even if its cost is reduced. Engine check plus `playerGrade` in the state, Developer; shown in the player stats panel, Mapmaker
 - [ ] Named units (Grade 4+): flavour text and Class fields in `data/cards.json`, shown on the card face, Developer + Mapmaker (waiting on Dyllan's first named units and Class list)
 - [ ] Dyllan playtests and replaces placeholder rules, Planner updates `RULES.md`
 
