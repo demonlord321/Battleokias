@@ -148,6 +148,9 @@ Open questions:
 - **(?)** Does playing a Formation card cost Energy? Can you swap it for another Formation? (Placeholders built: 0 Energy, and the old one goes to the Grave.)
 - **(?)** Do units that just arrived count toward the Formation on the turn they're summoned or promoted?
 
+## Spell and Trap cost
+- Most Spells, Field Spells and Traps cost **1 Energy** to play, unless the card says otherwise.
+
 ## Field Spells
 A Field Spell goes in the **Field Effect Zone (FEZ)** and stays there, giving an ongoing effect.
 
@@ -155,16 +158,16 @@ A Field Spell goes in the **Field Effect Zone (FEZ)** and stays there, giving an
 - **Effect:** In your **Preparation Phase I**, you may send a **Grade 1 Arms unit from your hand** to the Academy.
 - **Two of your turns later**, in your Preparation Phase I, a **Grade 3 unit** leaves the Academy and is **summoned to the field at no cost**, in **any empty slot you choose**.
   - Example: send the Grade 1 in Preparation Phase I of your 3rd turn, and the Grade 3 arrives in Preparation Phase I of your 5th turn.
+- **Cost to play:** 1 Energy.
+- **Enrolling** a unit costs its Grade in Energy, so 1 Energy per Grade 1 unit.
+- **Capacity:** the Academy holds up to **2** units. Sending two costs 2 Energy.
+- When the Grade 3 emerges, the **Grade 1 goes to the Grave**.
 - You choose that Grade 3 unit **from your hand** or **from your deck**. If you take it from your deck, **reshuffle** the deck afterwards.
 
 Open questions:
-- **(?)** What happens to the Grade 1 unit when the Grade 3 comes out: does it go to the Grave, or is it stacked under the Grade 3 like a promotion?
-- **(?)** Can more than one unit be in the Academy at a time?
 - **(?)** Must the Grade 3 be an Arms unit? If your grid is full when it arrives, can you retire a unit to make room first?
-- **(?)** What does Arms Academy cost to play, and in which phase?
 - **(?)** Can the arriving Grade 3 attack that turn? (It would count toward a Formation straight away.)
 - **(?)** Does Arms Academy also allow extra promotions per turn, or is that left to other Field Spells?
-- Advisor suggests a limit of one unit in the Academy at a time, so it doesn't give a free Grade 3 every turn.
 
 ## Placeholder rules for the first Arms vs Arms test game
 These are **temporary** so a units-only game can be played and tuned. Dyllan will replace them.
