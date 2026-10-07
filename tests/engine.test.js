@@ -45,7 +45,7 @@ test("coin flip follows the seed and both outcomes happen", () => {
 test("each player has a 3x3 grid, 4 Special Deck Zones, a Field Effect Zone and a Formation Zone", () => {
   const p = start().players[0];
   assert.equal(p.ups.length, 9);
-  assert.equal(p.specialZones.length, 4);
+  assert.equal(p.specialDecks.length, 4);
   assert.equal(p.fieldEffect, null);
   assert.equal(p.formationZone, null);
 });

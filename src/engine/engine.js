@@ -236,6 +236,23 @@ function startTurn(game) {
   nextGraduation(game);
 }
 
+// Phases where Spells and Equipment can be played (placeholder: summoning, promoting,
+// moving, retiring, Formations and the Academy stay in Phase I only).
+const PREP = ["prep1", "prep2"];
+
+// Start of Preparation Phase II (RULES.md, Special Decks): you pick one of your
+// Special Decks and draw its top card, through game.pending. Placeholder: the player
+// going first skips this on turn 1, and if every Special Deck is empty there's no draw.
+function startPrep2(game) {
+  const player = game.activePlayer;
+  const p = game.players[player];
+  game.phase = "prep2";
+  game.log.push(`${p.name} moves to Preparation Phase II.`);
+  if (game.turn === 1 && player === game.startingPlayer) return;
+  const decks = p.specialDecks.flatMap((d, i) => (d?.cards.length ? [i] : []));
+  if (decks.length) game.pending = { type: "specialDraw", player, decks };
+}
+
 // Passes the turn to the other player.
 function passTurn(game) {
   game.activePlayer = 1 - game.activePlayer;
@@ -255,14 +272,16 @@ const ACTIONS = {
     },
   },
 
-  // Preparation Phase I goes to the Battle Phase; the Battle Phase ends the turn.
+  // Preparation Phase I goes to Preparation Phase II, then the Battle Phase; the Battle Phase ends the turn.
   nextPhase: {
     check(game, action) {
-      if (game.phase !== "prep1" && game.phase !== "battle") return "There's no next phase right now.";
+      if (!["prep1", "prep2", "battle"].includes(game.phase)) return "There's no next phase right now.";
       return null;
     },
     apply(game, action) {
       if (game.phase === "prep1") {
+        startPrep2(game);
+      } else if (game.phase === "prep2") {
         game.phase = "battle";
         game.log.push(`${game.players[game.activePlayer].name} goes to battle.`);
       } else {
@@ -389,14 +408,33 @@ const ACTIONS = {
     },
   },
 
+  // { type: "specialDraw", player, deck }: answers game.pending { type: "specialDraw" }
+  // at the start of Preparation Phase II by drawing the top card of Special Deck 0-3.
+  specialDraw: {
+    check(game, action) {
+      const p = game.players[game.activePlayer];
+      if (game.pending?.type !== "specialDraw") return "You can only draw from a Special Deck at the start of Preparation Phase II.";
+      if (!game.pending.decks.includes(action.deck)) return "Pick one of your Special Decks that still has cards.";
+      return null;
+    },
+    apply(game, action) {
+      const p = game.players[game.activePlayer];
+      const d = p.specialDecks[action.deck];
+      const card = d.cards.pop();
+      p.hand.push(card);
+      game.pending = null;
+      game.log.push(`${p.name} draws from their ${d.type} Special Deck.`);
+    },
+  },
+
   // { type: "equip", player, card, slot }: put an Equipment card from hand onto your
-  // unit in that slot during Preparation Phase I, paying its cost. The unit must share
+  // unit in that slot during Preparation Phase I or II, paying its cost. The unit must share
   // one of its Signets. Placeholders until Dyllan decides: one Equipment per unit,
   // it stays on through promotion, and goes to the Grave with its unit.
   equip: {
     check(game, action) {
       const p = game.players[game.activePlayer];
-      if (game.phase !== "prep1") return "You can only equip in Preparation Phase I.";
+      if (!PREP.includes(game.phase)) return "You can only equip in a Preparation Phase.";
       const i = handIndex(p, action.card);
       if (i < 0) return "That card isn't in your hand.";
       const card = p.hand[i];
@@ -418,13 +456,13 @@ const ACTIONS = {
   },
 
   // { type: "setField", player, card }: put a Field Spell from hand into your Field
-  // Effect Zone during Preparation Phase I, paying its cost (most cost 1).
+  // Effect Zone during Preparation Phase I or II, paying its cost (most cost 1).
   // Placeholder: a new Field Spell replaces the old one, which goes to the Grave
   // along with any units still in it.
   setField: {
     check(game, action) {
       const p = game.players[game.activePlayer];
-      if (game.phase !== "prep1") return "You can only play a Field Spell in Preparation Phase I.";
+      if (!PREP.includes(game.phase)) return "You can only play a Field Spell in a Preparation Phase.";
       const i = handIndex(p, action.card);
       if (i < 0) return "That card isn't in your hand.";
       const card = p.hand[i];
@@ -584,9 +622,13 @@ const ACTIONS = {
 // Sets up a new game: shuffle both decks, flip the coin, deal the opening
 // hands, then start the first turn (which runs its Draw Phase).
 // Pass startingPlayer to skip the coin flip (handy for the tutorial and tests).
-export function newGame({ seed = Date.now(), decks, names = ["Player 1", "Player 2"], startingPlayer }) {
+// specialDecks (optional): per player, up to four { type, cards } (or null); each is shuffled.
+export function newGame({ seed = Date.now(), decks, specialDecks = [], names = ["Player 1", "Player 2"], startingPlayer }) {
   const rng = createRng(seed);
-  const players = names.map((name, i) => createPlayer(name, shuffle(decks[i] ?? [], rng)));
+  const players = names.map((name, i) => {
+    const special = (specialDecks[i] ?? []).map((d) => (d ? { type: d.type, cards: shuffle(d.cards ?? [], rng) } : null));
+    return createPlayer(name, shuffle(decks[i] ?? [], rng), special);
+  });
   const game = createGame({ seed, players });
   game.rng = rng; // kept on the game so every later random event follows the seed
   game.log.push(`New game (seed ${seed}).`);
@@ -612,7 +654,8 @@ export function checkAction(game, action) {
   if (game.pending) {
     const who = game.players[game.pending.player].name;
     if (action.type !== game.pending.type) {
-      return game.pending.type === "graduate" ? `${who} has to choose who comes out of the Academy first.` : `${who} has to choose which unit goes to the Grave first.`;
+      const waiting = { graduate: "choose who comes out of the Academy", specialDraw: "pick a Special Deck to draw from", chooseLoss: "choose which unit goes to the Grave" };
+      return `${who} has to ${waiting[game.pending.type]} first.`;
     }
     if (action.player !== undefined && action.player !== game.pending.player) return `It's ${who}'s choice.`;
     return rule.check(game, action);
@@ -638,6 +681,10 @@ export function legalActions(game) {
   if (game.pending?.type === "graduate") {
     const { player, cards, slots } = game.pending;
     return cards.flatMap((c) => slots.map((slot) => ({ type: "graduate", player, card: c.id, slot })));
+  }
+  if (game.pending?.type === "specialDraw") {
+    const { player, decks } = game.pending;
+    return decks.map((deck) => ({ type: "specialDraw", player, deck }));
   }
   const player = game.activePlayer;
   const p = game.players[player];

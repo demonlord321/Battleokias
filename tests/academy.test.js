@@ -64,7 +64,8 @@ test("only in Preparation Phase I, and only with enough Energy", () => {
   assert.match(checkAction(game, { type: "enroll", player: 0, card: idx(game, (c) => c.cardId === "ARM-010") }), /costs 1 Energy/);
   applyAction(game, { type: "nextPhase", player: 0 });
   assert.match(checkAction(game, { type: "enroll", player: 0, card: 0 }), /Preparation Phase I/);
-  assert.match(checkAction(game, { type: "setField", player: 0, card: 0 }), /Preparation Phase I/);
+  applyAction(game, { type: "nextPhase", player: 0 }); // Field Spells work in Phase II too, so go on to Battle
+  assert.match(checkAction(game, { type: "setField", player: 0, card: 0 }), /Preparation Phase/);
 });
 
 test("sent on turn 1, a Graduate of Arms comes out on turn 3 from the deck, free, and the Student goes to the Grave", () => {

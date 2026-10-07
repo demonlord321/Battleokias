@@ -37,7 +37,7 @@ test("percent boosts round down: 1500/333 at +25% becomes 1875/416", () => {
   assert.deepEqual(unitStats(game, 0, 1), { attack: 1875, defense: 416 });
 });
 
-test("needs a shared Signet, a unit, one Equipment per unit, Preparation Phase I and Energy", () => {
+test("needs a shared Signet, a unit, one Equipment per unit, a Preparation Phase and Energy", () => {
   const game = start();
   game.players[0].ups[0] = unit(1, 500, 500, "magic");
   game.players[0].ups[1] = unit(1, 500, 500);
@@ -53,7 +53,9 @@ test("needs a shared Signet, a unit, one Equipment per unit, Preparation Phase I
   assert.match(checkAction(game, { type: "equip", player: 0, card: lastCard(game), slot: 2 }), /costs 1 Energy/);
   game.players[0].energy = 5;
   applyAction(game, { type: "nextPhase", player: 0 });
-  assert.match(checkAction(game, { type: "equip", player: 0, card: lastCard(game), slot: 2 }), /Preparation Phase I/);
+  assert.equal(checkAction(game, { type: "equip", player: 0, card: lastCard(game), slot: 2 }), null); // Phase II is fine
+  applyAction(game, { type: "nextPhase", player: 0 });
+  assert.match(checkAction(game, { type: "equip", player: 0, card: lastCard(game), slot: 2 }), /Preparation Phase/);
 });
 
 test("boosts count toward the Formation, before it adds up and scales", () => {
