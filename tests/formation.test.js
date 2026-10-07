@@ -247,7 +247,13 @@ test("from turn 3 with no Formation in hand or set, take one from the deck (deck
   assert.equal(applyAction(game, take).ok, true);
   assert.equal(p.formationZone.id, id);
   assert.equal(p.deck.length, deckSize - 1);
-  assert.match(checkAction(game, take), /already have a Formation/);
+  assert.match(checkAction(game, take), /already/);
+  // Once per game: even with the Formation Zone empty again, it's not offered.
+  p.formationZone = null;
+  p.hand = p.hand.filter((c) => c.type !== "formation");
+  p.deck.push(frontal());
+  assert.match(checkAction(game, { type: "deckFormation", player: 0, card: p.deck.at(-1).id }), /already taken a Formation/);
+  assert.ok(!legalActions(game).some((a) => a.type === "deckFormation"));
 });
 
 test("deckFormation isn't allowed with a Formation in hand, a non-Formation card, or outside Preparation Phase I", () => {

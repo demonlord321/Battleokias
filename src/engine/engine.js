@@ -455,11 +455,12 @@ const ACTIONS = {
   // { type: "deckFormation", player, card }: from your own third turn, in Preparation
   // Phase I, if there's no Formation in your hand or Formation Zone, put a Formation
   // from your deck (card = its instance id) into the Formation Zone, paying its normal
-  // cost, then shuffle the deck. Placeholder: no once-per-game limit.
+  // cost, then shuffle the deck. RULES.md: once per game (player.usedDeckFormation).
   deckFormation: {
     check(game, action) {
       const p = game.players[game.activePlayer];
       if (game.phase !== "prep1") return "You can only do that in Preparation Phase I.";
+      if (p.usedDeckFormation) return "You've already taken a Formation from your deck this game.";
       if (game.turn < DECK_FORMATION_TURN) return `You can take a Formation from your deck from turn ${DECK_FORMATION_TURN}.`;
       if (p.formationZone) return "You already have a Formation set.";
       if (p.hand.some((c) => c.type === "formation")) return "You have a Formation in your hand.";
@@ -474,6 +475,7 @@ const ACTIONS = {
       spendEnergy(p, cardCost(card));
       p.deck = shuffle(p.deck, game.rng);
       p.formationZone = card;
+      p.usedDeckFormation = true;
       game.log.push(`${p.name} has no Formation and takes ${card.name} from their deck.`);
     },
   },

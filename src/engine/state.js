@@ -23,6 +23,7 @@ export function createPlayer(name, deck = []) {
     fieldEffect: null, // Field Effect Zone
     formationZone: null, // Formation Zone, above the Field Effect Zone
     graveyard: [], // the Grave Pile
+    usedDeckFormation: false, // RULES.md: taking a Formation from your deck works once per game
   };
 }
 
