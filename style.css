@@ -742,3 +742,5 @@ html, body {
 .slot-sdz.has-pile { background: repeating-linear-gradient(45deg, #2f2560 0 6px, #261d4e 6px 12px); border-color: #8f7ae8; }
 .slot-sdz.can-draw { outline: 2px solid #b9a6ff; outline-offset: 2px; animation: draw-pulse 0.9s ease-in-out infinite alternate; cursor: pointer; }
 @keyframes draw-pulse { from { box-shadow: 0 0 2px #b9a6ff; } to { box-shadow: 0 0 14px #b9a6ff; } }
+/* Equipment set in Phase II: dimmed, dashed tag until it switches on at the owner's next Phase I. */
+.equip-tag.is-waiting { opacity: 0.6; border-style: dashed; background: #2b323d; color: #b8c6d8; font-style: italic; }

@@ -184,9 +184,10 @@ function renderEquipment(slot, card) {
   const eq = card?.equipment;
   if (!eq) return;
   const tag = document.createElement("div");
-  tag.className = "equip-tag";
-  tag.title = `${eq.name}: ${eq.text ?? ""}`;
-  tag.textContent = `\u2692 ${eq.name}`;
+  const waiting = !!eq.readyNextTurn;
+  tag.className = "equip-tag" + (waiting ? " is-waiting" : "");
+  tag.title = `${eq.name}: ${eq.text ?? ""}` + (waiting ? " (set in Phase II, active from your next Phase I)" : "");
+  tag.textContent = `\u2692 ${eq.name}` + (waiting ? " \u00b7 ready next turn" : "");
   slot.append(tag);
 }
 
