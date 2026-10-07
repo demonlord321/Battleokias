@@ -117,6 +117,21 @@ You can only attack if you have a Formation set.
 - Units in other slots can still be on the field, but **only units in the Formation's slots add to its power**.
 - Each Formation has its own formula for its power. Basic Formations use the **sum**.
 
+### Formation: Vanguard Charge (from Dyllan)
+- **Pattern:** the **front-centre** slot plus the **whole middle row**, four slots in a T shape (grid positions `[1, 3, 4, 5]`).
+  ```
+  front   [ ][X][ ]
+  middle  [X][X][X]
+  back    [ ][ ][ ]
+  ```
+- **Formation Attack** = sum of those units' Attack **x 1.5**.
+- **Formation Defense** = sum of those units' Defense **/ 1.5**.
+- **Damage Grade 2**, **Defense Grade 0**.
+- Example: a Student in front centre, with Apprentice, Graduate and Student in the middle row, gives 4500 x 1.5 = **6750 Attack** and 3500 / 1.5 = **2333 Defense**.
+- **(?)** Is that the pattern you meant (front centre plus the middle row)?
+- **(?)** How are fractions rounded? Placeholder: round down to a whole number.
+- **(?)** Which Signets does it carry, and how many Energy does it cost? Placeholder: all three Signets and 0 Energy, the same as Frontal Assault.
+
 ### Formation from the deck (confirmed by Dyllan)
 - If by **round three** you hold **no Formation**, you can **summon one directly from your deck**.
 - **(?)** Does "round three" mean your own third turn? Placeholder: your third turn or any later turn, in Preparation Phase I.
