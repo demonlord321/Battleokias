@@ -682,3 +682,14 @@ html, body {
 /* Defender picking which tied unit to lose. */
 .slot.choose-loss { border-color: #e0484f; cursor: pointer; animation: loss-pulse 0.8s ease-in-out infinite alternate; }
 @keyframes loss-pulse { from { box-shadow: 0 0 4px rgba(224, 72, 79, 0.4); } to { box-shadow: 0 0 20px rgba(224, 72, 79, 0.9); } }
+/* Dragging a unit to move it (to another slot) or retire it (to the Grave). */
+.slot[data-owner="0"][data-zone="ups"].is-filled { touch-action: none; }
+.drag-ghost {
+  position: fixed; z-index: 50; pointer-events: none; transform: translate(-50%, -50%) rotate(-4deg) scale(1.05);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6); opacity: 0.92;
+}
+.slot.is-dragging .card { opacity: 0.35; }
+.slot.drop-ok { border-color: #7dffb0; border-style: dashed; }
+.slot.drop-ok.drop-retire { border-color: #e0484f; }
+.slot.drop-hover { background: rgba(125, 255, 176, 0.18); box-shadow: 0 0 16px rgba(125, 255, 176, 0.7); }
+.slot.drop-retire.drop-hover { background: rgba(224, 72, 79, 0.2); box-shadow: 0 0 16px rgba(224, 72, 79, 0.8); }

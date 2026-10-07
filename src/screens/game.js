@@ -262,6 +262,70 @@ function onSlotClick({ owner, zone, index }) {
   }
 }
 
+// ---------- Drag to move / retire (RULES.md: Preparation Phase I, free) ----------
+// Drag one of your units onto another slot to move it (onto a unit to swap them), or onto
+// your Grave to retire it. Pointer events, so it works with a mouse or a finger.
+// Engine actions: { type: "move", player, from, to } and { type: "retire", player, slot }.
+let drag = null;
+let suppressClick = false;
+
+const slotAt = (x, y) => document.elementFromPoint(x, y)?.closest(".slot");
+const dropAction = (from, el) => {
+  if (!el || +el.dataset.owner !== 0) return null;
+  if (el.dataset.zone === "ups" && +el.dataset.index !== from) return { type: "move", player: me(), from, to: +el.dataset.index };
+  if (el.dataset.zone === "grave") return { type: "retire", player: me(), slot: from };
+  return null;
+};
+
+function onPointerDown(e) {
+  if (e.button !== 0 || curtain.hidden === false || game.winner !== null || choosingLoss()) return;
+  const slot = e.target.closest('.slot[data-owner="0"][data-zone="ups"].is-filled');
+  if (!slot) return;
+  const from = +slot.dataset.index;
+  // Only start a drag if the engine would allow some move or a retire from here.
+  const p = game.players[me()];
+  const targets = p.ups.map((_, to) => to).filter((to) => to !== from && legal({ type: "move", player: me(), from, to }));
+  const canRetire = legal({ type: "retire", player: me(), slot: from });
+  if (!targets.length && !canRetire) return;
+  drag = { from, slot, targets, canRetire, x: e.clientX, y: e.clientY, ghost: null };
+}
+
+function onPointerMove(e) {
+  if (!drag) return;
+  if (!drag.ghost) {
+    if (Math.hypot(e.clientX - drag.x, e.clientY - drag.y) < 6) return;
+    const card = drag.slot.querySelector(".card");
+    const r = card.getBoundingClientRect();
+    drag.ghost = card.cloneNode(true);
+    drag.ghost.className += " drag-ghost";
+    Object.assign(drag.ghost.style, { width: r.width + "px", height: r.height + "px" });
+    document.body.append(drag.ghost);
+    drag.slot.classList.add("is-dragging");
+    drag.targets.forEach((to) => board.querySelector(`.slot[data-owner="0"][data-zone="ups"][data-index="${to}"]`)?.classList.add("drop-ok"));
+    if (drag.canRetire) board.querySelector('.slot[data-owner="0"][data-zone="grave"]')?.classList.add("drop-ok", "drop-retire");
+  }
+  drag.ghost.style.left = e.clientX + "px";
+  drag.ghost.style.top = e.clientY + "px";
+  board.querySelectorAll(".drop-hover").forEach((el) => el.classList.remove("drop-hover"));
+  drag.ghost.hidden = true;
+  const over = slotAt(e.clientX, e.clientY);
+  drag.ghost.hidden = false;
+  if (over?.classList.contains("drop-ok")) over.classList.add("drop-hover");
+}
+
+function onPointerUp(e) {
+  if (!drag) return;
+  const d = drag;
+  drag = null;
+  if (!d.ghost) return; // a plain click; let the click handler deal with it
+  d.ghost.remove();
+  board.querySelectorAll(".drop-ok, .drop-hover, .is-dragging").forEach((el) => el.classList.remove("drop-ok", "drop-hover", "drop-retire", "is-dragging"));
+  suppressClick = true;
+  setTimeout(() => (suppressClick = false), 0);
+  const action = dropAction(d.from, slotAt(e.clientX, e.clientY));
+  if (action) act(action);
+}
+
 export function setupGame() {
   board = $("#board");
   phaseBtn = $("#phase-btn");
@@ -274,7 +338,10 @@ export function setupGame() {
 
   buildBoard(board);
   board.addEventListener("handclick", (e) => onHandClick(e.detail));
-  board.addEventListener("slotclick", (e) => onSlotClick(e.detail));
+  board.addEventListener("slotclick", (e) => !suppressClick && onSlotClick(e.detail));
+  board.addEventListener("pointerdown", onPointerDown);
+  window.addEventListener("pointermove", onPointerMove);
+  window.addEventListener("pointerup", onPointerUp);
   board.addEventListener("contextmenu", (e) => {
     e.preventDefault();
     selectedHand = null;
