@@ -16,7 +16,7 @@ Mapmaker (game board and screens), Advisor (balance reviews), Planner (plan and 
 ## Milestone 0: Rules on one page (Dyllan, with Planner)
 - [x] Win condition (10 Damage Counters)
 - [x] Resource system (Energy, Hearthstone-style)
-- [ ] Turn phases (Draw, Preparation I, Battle done; anything after Battle still to come)
+- [x] Turn phases: Start, Draw, Preparation I, Battle, Preparation II, End (engine `56bb658`, tracker `5293262`)
 - [x] Card types and board zones
 - [x] Deck size, starting hand, card limits (60 cards; units unlimited, other cards max 3)
 - [ ] Paper playtest with 15 to 20 cards (Advisor's suggestion)
@@ -61,6 +61,8 @@ Uses the placeholder rules in `RULES.md`; Dyllan refines them as we play.
 - [ ] Board rendering wired to the engine state, Mapmaker + Developer
 - [ ] Click or drag to play and attack, End Turn button, game log
 - [ ] Hot-seat play
+- [ ] Computer opponent (Dyllan's request): Player 2 played by a bot that picks from `legalActions`, starting simple (fill the Formation, promote, attack when the hit lands), Developer
+- [ ] Start screen choice: Play vs Computer or Hot-seat; the computer's moves play out with a short delay and show in the game log; no handover screen in vs Computer mode, Mapmaker
 
 ## Milestone 2.5: Tutorial (also our demo)
 - [ ] Tutorial script written from the Milestone 0 rules: one step per rule (win condition, resource, playing a card, attacking, end turn), Planner drafts, Dyllan approves
