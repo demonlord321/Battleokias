@@ -37,8 +37,10 @@ test("Player Grade never drops: lose your Grade 3 and you can still bring out a 
   const game = newGame({ seed: 4, decks: [filler(), filler()], startingPlayer: 0 });
   const p = game.players[0];
   p.energy = 10;
-  p.ups[0] = copy("ARM-010");
   p.ups[1] = copy("ARM-012");
+  p.hand.push(copy("ARM-010", 1));
+  assert.equal(applyAction(game, { type: "summon", player: 0, card: "ARM-010#1", slot: 0 }).ok, true);
+  assert.equal(p.playerGrade, 3);
   assert.equal(applyAction(game, { type: "retire", player: 0, slot: 1 }).ok, true);
   assert.equal(p.playerGrade, 3);
   p.hand.push(copy("ARM-MER-001"));
