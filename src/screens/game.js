@@ -2,6 +2,23 @@ import { registerScreen, showScreen } from "../screens.js";
 import { newGame, applyAction, checkAction, attackPreview, legalActions, formationStats, unitStats } from "../engine/engine.js";
 import { buildBoard, renderBoard, PHASE_NAMES } from "../board/board.js";
 
+// Special Decks: data/decks.json may hold "special": { "<signet>": [ { "type": "equipment", "cards": [ids] }, ... ] },
+// up to four (null for an empty zone). With none listed, the player has no Special Decks.
+function buildSpecialDecks(cards, decks, signet) {
+  const byId = Object.fromEntries(cards.map((c) => [c.id, c]));
+  const list = decks?.special?.[signet] ?? [];
+  return [0, 1, 2, 3].map((i) => {
+    const d = list[i];
+    if (!d) return null;
+    const seen = {};
+    return { type: d.type, cards: (d.cards ?? []).map((id) => {
+      if (!byId[id]) throw new Error(`data/decks.json: unknown card "${id}" in the ${signet} Special Decks.`);
+      seen[id] = (seen[id] ?? 0) + 1;
+      return { ...instance(byId[id], seen[id]), id: `${id}#s${i}-${seen[id]}` };
+    }) };
+  });
+}
+
 // ---------- Cards and decks ----------
 
 // Cards come from data/cards.json, the master list Dyllan edits.
@@ -91,6 +108,7 @@ function act(action) {
 const me = () => game.pending?.player ?? game.activePlayer;
 const choosingLoss = () => game.pending?.type === "chooseLoss";
 const graduating = () => game.pending?.type === "graduate";
+const drawingSpecial = () => game.pending?.type === "specialDraw";
 let gradCard = null; // Grade 3 picked in the graduation panel (its card id)
 const legal = (action) => checkAction(game, action) === null;
 // A hand card can go to a slot by a normal summon, or by promoting the unit already there
@@ -153,6 +171,8 @@ function render() {
   if (choosingLoss()) ui.lossSlots = new Set(game.pending.slots);
   // Graduation: once a Grade 3 is picked in the panel, its possible slots glow.
   if (graduating() && gradCard) ui.legalSlots = new Set(game.pending.slots);
+  // Preparation Phase II: the Special Decks you can draw from glow.
+  if (drawingSpecial()) ui.drawDecks = new Set(game.pending.decks);
   renderGradPanel();
 
   ui.formationStats = game.players.map((_, i) => formationStats(game, i));
@@ -289,7 +309,7 @@ async function startGame() {
   try {
     const [cards, decks] = await Promise.all([loadJson("data/cards.json"), loadJson("data/decks.json", true)]);
     // The engine flips the coin, deals 4 and 5, and runs the first Draw Phase.
-    game = newGame({ decks: SIGNETS.map((s) => buildDeck(cards, decks, s)), names: NAMES });
+    game = newGame({ decks: SIGNETS.map((s) => buildDeck(cards, decks, s)), specialDecks: SIGNETS.map((s) => buildSpecialDecks(cards, decks, s)), names: NAMES });
     window.game = game; // handy for poking at the state from the browser console
     viewer = me();
     render();
@@ -306,6 +326,7 @@ function onHandClick({ index }) {
   if (curtain.hidden === false || game.winner !== null) return;
   if (choosingLoss()) return toast("Pick one of the glowing units to send to the Grave.");
   if (graduating()) return toast("Pick a Grade 3 in the Academy panel first.");
+  if (drawingSpecial()) return toast("Preparation Phase II: click one of your glowing Special Decks to draw from it.");
   selectedHand = selectedHand === index ? null : index;
   if (selectedHand !== null) {
     const p = game.players[me()];
@@ -329,6 +350,11 @@ function onHandClick({ index }) {
 function onSlotClick({ owner, zone, index }) {
   if (curtain.hidden === false || game.winner !== null) return;
   if (owner !== 0) return; // only your own side does anything for now
+  if (drawingSpecial()) {
+    if (zone === "sdz" && game.pending.decks.includes(index)) act({ type: "specialDraw", player: me(), deck: index });
+    else toast("Pick one of your glowing Special Decks to draw from.");
+    return;
+  }
   if (graduating()) {
     if (!gradCard) toast("Pick a Grade 3 in the Academy panel first.");
     else if (zone === "ups") act({ type: "graduate", player: me(), card: gradCard, slot: index });

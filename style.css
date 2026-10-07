@@ -738,3 +738,7 @@ html, body {
 }
 .card-stats .is-up { color: #7dffb0 !important; text-shadow: 0 0 4px rgba(125, 255, 176, 0.6); }
 .card-stats .is-down { color: #ff8a8a !important; }
+/* Special Deck piles: face-down when they hold cards; glow when you can draw from them (Phase II). */
+.slot-sdz.has-pile { background: repeating-linear-gradient(45deg, #2f2560 0 6px, #261d4e 6px 12px); border-color: #8f7ae8; }
+.slot-sdz.can-draw { outline: 2px solid #b9a6ff; outline-offset: 2px; animation: draw-pulse 0.9s ease-in-out infinite alternate; cursor: pointer; }
+@keyframes draw-pulse { from { box-shadow: 0 0 2px #b9a6ff; } to { box-shadow: 0 0 14px #b9a6ff; } }

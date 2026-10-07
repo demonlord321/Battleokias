@@ -159,6 +159,25 @@ function renderFormation(side, p, ui = {}, stats = null) {
   zone.append(total);
 }
 
+// Special Deck Zone: a face-down pile labelled with its card type and how many are left.
+// Glows when it's one you can draw from at the start of Preparation Phase II.
+const TYPE_LABELS = { equipment: "Equip", artifact: "Artifact", monster: "Monster", item: "Item", spell: "Spell", trap: "Trap" };
+function renderSpecialPile(slot, deck, canDraw) {
+  fillSlot(slot, null);
+  slot.querySelector(".pile-count")?.remove();
+  const label = slot.querySelector(".slot-label");
+  const n = deck?.cards?.length ?? 0;
+  slot.classList.toggle("has-pile", n > 0);
+  slot.classList.toggle("can-draw", canDraw);
+  if (label) label.textContent = deck ? TYPE_LABELS[deck.type] ?? deck.type : "Special";
+  slot.title = deck ? `${TYPE_LABELS[deck.type] ?? deck.type} Special Deck: ${n} card${n === 1 ? "" : "s"} left` : "Empty Special Deck Zone";
+  if (!deck) return;
+  const count = document.createElement("span");
+  count.className = "pile-count";
+  count.textContent = n;
+  slot.append(count);
+}
+
 // Equipment sits tucked under its unit: a small tag with its name along the bottom edge.
 function renderEquipment(slot, card) {
   slot.querySelector(".equip-tag")?.remove();
@@ -237,7 +256,7 @@ export function renderBoard(game, viewer = 0, ui = {}) {
       slot.classList.toggle("is-exhausted", !!card && side === 0 && ui.phase === "battle" && !!ui.attackers && !ui.attackers.has(i));
     });
     renderFormation(side, p, ui, ui.formationStats?.[owner]);
-    p.specialDecks.forEach((deck, i) => fillSlot(getSlot(side, "sdz", i), null)); // piles still to draw (Mapmaker)
+    p.specialDecks.forEach((deck, i) => renderSpecialPile(getSlot(side, "sdz", i), deck, side === 0 && !!ui.drawDecks?.has(i)));
     fillSlot(getSlot(side, "fez"), p.fieldEffect);
     renderAcademy(side, p, game, ui);
     fillSlot(getSlot(side, "formation"), p.formationZone ?? null);
