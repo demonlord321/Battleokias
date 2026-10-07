@@ -96,7 +96,8 @@ function buildStats(cls) {
     <div class="stat stat-dmg"><span class="stat-icon" aria-hidden="true">&#x1F494;</span><span class="stat-label">Damage</span><span class="stat-value"></span></div>
     <div class="damage-pips" title="Damage Counters: 10 and you lose">${'<span class="dpip"></span>'.repeat(DAMAGE_LIMIT)}</div>
     <div class="stat stat-energy"><span class="stat-icon" aria-hidden="true">&#x26A1;</span><span class="stat-label">Energy</span><span class="stat-value"></span></div>
-    <div class="energy-pips">${'<span class="pip"></span>'.repeat(ENERGY_CAP)}</div>`;
+    <div class="energy-pips">${'<span class="pip"></span>'.repeat(ENERGY_CAP)}</div>
+    <div class="stat stat-pgrade"><span class="stat-icon" aria-hidden="true">&#x2605;</span><span class="stat-label">Player Grade</span><span class="stat-value"></span></div>`;
   return el;
 }
 
@@ -115,6 +116,12 @@ function renderStats(el, p, active) {
   el.querySelectorAll(".pip").forEach((pip, i) => {
     pip.className = "pip" + (i < (p.energy ?? 0) ? " is-full" : hasMax && i < p.maxEnergy ? " is-spent" : "");
   });
+  // Player Grade (RULES.md): the highest Grade among your units on the field. You can bring
+  // out units up to one Grade above it. Uses the engine's p.playerGrade when it has one.
+  const pg = typeof p.playerGrade === "number" ? p.playerGrade : Math.max(0, ...(p.ups ?? []).map((u) => u?.grade ?? 0));
+  const pgEl = el.querySelector(".stat-pgrade");
+  pgEl.querySelector(".stat-value").textContent = pg;
+  pgEl.title = `Player Grade ${pg}: the highest Grade on your field. You can bring out units up to Grade ${pg + 1}.`;
   el.classList.toggle("is-active", active);
 }
 

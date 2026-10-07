@@ -768,3 +768,7 @@ html, body {
 .hand-player .card-face:hover .card-flavor { display: block; }
 /* Sub-Signets (every Signet after the first) sit smaller and dimmer than the promotion-line Signet. */
 .signet.is-sub { transform: scale(0.75); opacity: 0.75; }
+/* Player Grade row in the stats panel. */
+.stat-pgrade { margin-top: 4px; }
+.stat-pgrade .stat-icon { color: #ffd98a; }
+.stat-pgrade .stat-value { color: #ffd98a; }
