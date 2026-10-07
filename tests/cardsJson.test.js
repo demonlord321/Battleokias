@@ -1,0 +1,21 @@
+// Checks the real data/cards.json, so `npm test` catches a bad card before it's pushed.
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { checkCards } from "../src/engine/cardCheck.js";
+
+test("data/cards.json is valid JSON with no problems", () => {
+  const text = readFileSync(new URL("../data/cards.json", import.meta.url), "utf8");
+  let cards;
+  assert.doesNotThrow(() => (cards = JSON.parse(text)), "data/cards.json isn't valid JSON (check for a trailing comma)");
+  assert.deepEqual(checkCards(cards), []);
+});
+
+test("the checker catches common mistakes", () => {
+  const good = { id: "ARM-009", name: "X", type: "spell", signets: ["arms"], cost: 1, text: "", image: "" };
+  assert.deepEqual(checkCards([good]), []);
+  assert.equal(checkCards([good, good]).length, 1); // duplicate id
+  assert.equal(checkCards([{ ...good, signets: ["pirates"] }]).length, 1);
+  assert.equal(checkCards([{ ...good, type: "unit" }]).length, 4); // unit fields missing
+  assert.equal(checkCards([{ ...good, cost: "2" }]).length, 1);
+});

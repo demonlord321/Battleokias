@@ -1,0 +1,85 @@
+[
+  {
+    "id": "ARM-001",
+    "name": "Iron Recruit",
+    "type": "unit",
+    "signets": ["arms"],
+    "cost": 1,
+    "level": 1,
+    "attack": 100,
+    "defense": 100,
+    "formation": "Formation effect text",
+    "text": "",
+    "image": "images/arm-001.png"
+  },
+  {
+    "id": "ARM-002",
+    "name": "Shield Sergeant",
+    "type": "unit",
+    "signets": ["arms"],
+    "cost": 3,
+    "level": 2,
+    "attack": 150,
+    "defense": 300,
+    "formation": "Formation effect text",
+    "text": "",
+    "image": "images/arm-002.png"
+  },
+  {
+    "id": "MAG-001",
+    "name": "Apprentice Mage",
+    "type": "unit",
+    "signets": ["magic"],
+    "cost": 2,
+    "level": 1,
+    "attack": 200,
+    "defense": 100,
+    "formation": "Formation effect text",
+    "text": "",
+    "image": "images/mag-001.png"
+  },
+  {
+    "id": "MAG-002",
+    "name": "Arcane Bolt",
+    "type": "spell",
+    "signets": ["magic"],
+    "cost": 2,
+    "text": "Spell effect text",
+    "image": "images/mag-002.png"
+  },
+  {
+    "id": "ALC-001",
+    "name": "Flask Thrower",
+    "type": "unit",
+    "signets": ["alchemy"],
+    "cost": 2,
+    "level": 1,
+    "attack": 150,
+    "defense": 150,
+    "formation": "Formation effect text",
+    "text": "",
+    "image": "images/alc-001.png"
+  },
+  {
+    "id": "ALC-002",
+    "name": "Caustic Snare",
+    "type": "trap",
+    "signets": ["alchemy"],
+    "cost": 1,
+    "text": "Trap effect text",
+    "image": "images/alc-002.png"
+  },
+  {
+    "id": "ARM-ALC-001",
+    "name": "Goblin Scout",
+    "type": "unit",
+    "signets": ["arms", "alchemy"],
+    "cost": 2,
+    "level": 1,
+    "attack": 120,
+    "defense": 120,
+    "formation": "Formation effect text",
+    "text": "",
+    "image": "images/arm-alc-001.png"
+  }
+]
