@@ -1,5 +1,5 @@
 import { registerScreen, showScreen } from "../screens.js";
-import { newGame, applyAction, checkAction, attackPreview, legalActions } from "../engine/engine.js";
+import { newGame, applyAction, checkAction, attackPreview, legalActions, formationStats } from "../engine/engine.js";
 import { buildBoard, renderBoard, PHASE_NAMES } from "../board/board.js";
 
 // ---------- Cards and decks ----------
@@ -152,6 +152,7 @@ function render() {
   if (graduating() && gradCard) ui.legalSlots = new Set(game.pending.slots);
   renderGradPanel();
 
+  ui.formationStats = game.players.map((_, i) => formationStats(game, i));
   renderBoard(game, viewer, ui);
 
   const pa = phaseAction();

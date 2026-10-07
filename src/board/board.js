@@ -129,7 +129,9 @@ function fillSlot(slot, card) {
 // Formation Zone: outline the Unit Position Slots the set Formation draws from, and show
 // its live total (RULES.md: Frontal Assault sums Attack and Defense of the units in its slots;
 // units elsewhere don't count). Until every slot is filled it shows how many are still missing.
-function renderFormation(side, p, ui = {}) {
+// stats: the engine's formationStats for this player (passed in by the screen), so scaled
+// Formations like Vanguard Charge show their real totals; falls back to a plain sum.
+function renderFormation(side, p, ui = {}, stats = null) {
   const f = p.formationZone ?? null;
   const slots = f && Array.isArray(f.slots) ? f.slots : [];
   p.ups.forEach((_, i) => {
@@ -145,8 +147,8 @@ function renderFormation(side, p, ui = {}) {
   if (!slots.length) return;
   const units = slots.map((i) => p.ups[i]).filter(Boolean);
   const missing = slots.length - units.length;
-  const atk = units.reduce((n, u) => n + (u.attack ?? 0), 0);
-  const def = units.reduce((n, u) => n + (u.defense ?? 0), 0);
+  const atk = stats?.attack ?? units.reduce((n, u) => n + (u.attack ?? 0), 0);
+  const def = stats?.defense ?? units.reduce((n, u) => n + (u.defense ?? 0), 0);
   const total = document.createElement("div");
   // RULES.md: a Formation with an empty slot is inactive until the slot is filled again.
   zone.classList.toggle("is-inactive", missing > 0);
@@ -215,7 +217,7 @@ export function renderBoard(game, viewer = 0, ui = {}) {
       slot.classList.toggle("choose-loss", side === 0 && !!ui.lossSlots?.has(i));
       slot.classList.toggle("is-exhausted", !!card && side === 0 && ui.phase === "battle" && !!ui.attackers && !ui.attackers.has(i));
     });
-    renderFormation(side, p, ui);
+    renderFormation(side, p, ui, ui.formationStats?.[owner]);
     p.specialZones.forEach((card, i) => fillSlot(getSlot(side, "sdz", i), card));
     fillSlot(getSlot(side, "fez"), p.fieldEffect);
     renderAcademy(side, p, game, ui);
