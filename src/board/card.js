@@ -14,7 +14,25 @@ export const CARD_TYPES = {
   formation: { label: "Formation",   color: "#5a6fd0" },
 };
 
+// Signets (RULES.md): the card's Signet symbols sit in its top-left corner.
+// A card can carry more than one.
+export const SIGNETS = {
+  arms:    { label: "School of Arms",    symbol: "⚔", color: "#c8483a" },
+  magic:   { label: "School of Magic",   symbol: "✦", color: "#7a5ce0" },
+  alchemy: { label: "School of Alchemy", symbol: "⚗", color: "#3f9a5a" },
+};
+
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+
+function signetIcons(signets = []) {
+  return signets
+    .map((id) => {
+      const sg = SIGNETS[String(id).toLowerCase()];
+      if (!sg) return `<span class="signet" title="${esc(id)}">?</span>`;
+      return `<span class="signet" title="${sg.label}" style="--signet-color:${sg.color}">${sg.symbol}</span>`;
+    })
+    .join("");
+}
 
 export function renderCard(card, faceUp = true) {
   const el = document.createElement("div");
@@ -32,8 +50,9 @@ export function renderCard(card, faceUp = true) {
   el.title = card?.name ?? "";
   el.innerHTML = `
     <div class="card-top">
-      ${card?.cost != null ? `<span class="card-cost">${esc(card.cost)}</span>` : ""}
+      <span class="card-signets">${signetIcons(card?.signets)}</span>
       <span class="card-name">${esc(card?.name ?? "Card")}</span>
+      ${card?.cost != null ? `<span class="card-cost" title="Energy cost">${esc(card.cost)}</span>` : ""}
     </div>
     <div class="card-art"></div>
     <div class="card-type">${esc(type.label)}${card?.level ? ` <span class="card-level">${"★".repeat(card.level)}</span>` : ""}</div>
