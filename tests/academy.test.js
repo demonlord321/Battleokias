@@ -162,7 +162,8 @@ test("with Arms Academy in play, Arms units on the field can promote more than o
   assert.equal(p.ups[1].grade, 3);
   // The limit still applies to units without the Arms Signet, and Energy still counts.
   assert.equal(unlimitedPromotion(game, 0, p.ups[2]), false);
-  assert.match(checkAction(game, { type: "promote", player: 0, card: p.hand.findIndex((c) => c.grade === 2), slot: 2 }), /already promoted/);
+  p.hand.push(unit(2, "magic"));
+  assert.match(checkAction(game, { type: "promote", player: 0, card: p.hand.length - 1, slot: 2 }), /already promoted/);
   p.energy = 0;
   p.ups[3] = unit(1);
   assert.match(checkAction(game, { type: "promote", player: 0, card: p.hand.findIndex((c) => c.grade === 2), slot: 3 }), /costs 1 Energy/);

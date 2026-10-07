@@ -90,6 +90,18 @@ export function checkCards(cards) {
         else if (!Number.isInteger(v)) problems.push(`${where}: boost.${k} should be a whole number.`);
       }
     }
+    if ("promotesFrom" in card) {
+      // Promotion lines: the cards this unit can go on, each a unit one Grade lower in the same line.
+      const from = card.promotesFrom;
+      if (card.type !== "unit") problems.push(`${where}: only units can have "promotesFrom".`);
+      else if (!Array.isArray(from) || !from.length) problems.push(`${where}: "promotesFrom" should be a list of card ids, like ["ARM-010"].`);
+      else for (const id of from) {
+        const base = cards.find((c) => c?.id === id);
+        if (!base) problems.push(`${where}: promotesFrom "${id}" isn't a card in cards.json.`);
+        else if (base.type !== "unit" || base.grade !== card.grade - 1) problems.push(`${where}: promotesFrom "${id}" should be a Grade ${card.grade - 1} unit.`);
+        else if (base.signets?.[0] !== card.signets?.[0]) problems.push(`${where}: promotesFrom "${id}" is in a different promotion line (first Signet).`);
+      }
+    }
     if (card.type === "field_spell" && "unlimitedPromotions" in card && !SIGNETS.includes(card.unlimitedPromotions)) {
       problems.push(`${where}: unlimitedPromotions should be one of: ${SIGNETS.join(", ")}.`);
     }

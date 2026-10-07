@@ -157,6 +157,16 @@ export function unlimitedPromotion(game, playerIndex, base) {
 // The catalogue id of a card (deck copies are "ARM-010#2" with cardId "ARM-010").
 const catalogueId = (c) => c.cardId ?? c.id;
 
+// Promotion lines (RULES.md): a unit's line is its first Signet; later Signets are
+// sub-Signets and don't count. A card with "promotesFrom" (like Apprentice of Arms,
+// promotesFrom ["ARM-010"]) only goes on those cards. Placeholder until Dyllan says how
+// named units fit: a card without it goes on any unit one Grade lower in the same line.
+export const promotionLine = (card) => card.signets?.[0] ?? null;
+export function inPromotionLine(base, card) {
+  if (card.promotesFrom) return card.promotesFrom.includes(catalogueId(base));
+  return promotionLine(base) !== null && promotionLine(base) === promotionLine(card);
+}
+
 // What a graduating unit could become right now: every copy of the Academy's
 // emerge card in your hand or deck (one entry per place, so the choice list
 // stays short), and your empty slots.
@@ -363,6 +373,7 @@ const ACTIONS = {
       const base = p.ups[action.slot];
       if (!base) return "There's no unit there to promote.";
       if (card.grade !== base.grade + 1) return `${card.name} is Grade ${card.grade} and can only promote a Grade ${card.grade - 1} unit.`;
+      if (!inPromotionLine(base, card)) return `${card.name} isn't next in ${base.name}'s promotion line.`;
       if (game.promotionsLeft <= 0 && !unlimitedPromotion(game, game.activePlayer, base)) return "You've already promoted this turn.";
       const cost = card.grade - base.grade;
       if (cost > p.energy) return `Promoting costs ${cost} Energy and you have ${p.energy}.`;
