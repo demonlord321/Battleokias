@@ -122,14 +122,23 @@ Every Formation card has two extra numbers:
   - Example: a Damage Grade 3 attack into a Defense Grade 1 Formation deals 2 counters.
 - **(?)** Frontal Assault's Damage Grade and Defense Grade. Placeholder: 1 and 0.
 - **A landed hit always deals at least 1 Damage Counter** (confirmed by Dyllan). Example: Damage Grade 1 into Defense Grade 1 still deals 1.
-- **(?)** Does an incomplete Formation still give its Defense Grade? Placeholder: no, so it counts as Defense Grade 0.
+- An inactive (incomplete) Formation gives no Defense Grade.
 
 Open questions:
-- **(?)** If the opponent has no Formation (or it's broken), does your attack go through automatically?
-- **(?)** Does a failed attack do anything to the attacker, and are any units destroyed in a Formation battle?
+
+### Destroying units and inactive Formations (confirmed by Dyllan)
+- Units are **not** destroyed just by being attacked.
+- **When an attack gets through, the defender's lowest-Grade unit in their Formation is destroyed** and goes to the Grave.
+- **Units can only be attacked while they are in a Formation.** Units outside the Formation's slots can't be destroyed by an attack.
+- **A Formation with any of its slots empty becomes inactive.** It becomes active again once the missing unit is replaced.
+- **If there is no opposing Formation**, your attack deals exactly **1 Damage Counter**, whatever your Damage Grade, and **no units are destroyed**.
+
+Open questions:
+- **(?)** If several units tie for lowest Grade, who picks which one is destroyed? Placeholder: the defender picks.
+- **(?)** Does an inactive Formation count as "no opposing Formation" (1 counter, no units destroyed)? Placeholder: yes.
+- **(?)** Does a failed attack do anything to the attacker? Placeholder: no.
 - **(?)** How many times can a Formation attack per Battle Phase? (Placeholder: once.)
 - **(?)** Does playing a Formation card cost Energy? Can you swap it for another Formation? (Placeholders built: 0 Energy, and the old one goes to the Grave.)
-- **(?)** If a unit in the pattern is destroyed or leaves its slot, does the Formation break until the slot is filled again?
 - **(?)** Do units that just arrived count toward the Formation on the turn they're summoned or promoted?
 
 ## Placeholder rules for the first Arms vs Arms test game
