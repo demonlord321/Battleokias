@@ -71,6 +71,17 @@ export function checkCards(cards) {
         problems.push(`${where}: unknown combine "${card.combine}". Use one of: ${COMBINE_RULES.join(", ")}.`);
       }
     }
+    if (card.type === "field_spell" && "academy" in card) {
+      // An Academy Field Spell (Arms Academy): which units enroll, what comes out, after how many turns, and how many fit.
+      const a = card.academy;
+      if (typeOf(a) !== "object") problems.push(`${where}: "academy" should be an object in { }.`);
+      else {
+        if (!SIGNETS.includes(a.signet)) problems.push(`${where}: academy.signet should be one of: ${SIGNETS.join(", ")}.`);
+        for (const k of ["enrollGrade", "emergeGrade", "turns", "capacity"]) {
+          if (!Number.isInteger(a[k]) || a[k] < 1) problems.push(`${where}: academy.${k} should be a whole number, 1 or more.`);
+        }
+      }
+    }
     if (card.type !== "unit" && typeof card.cost === "number" && (card.cost < 0 || card.cost > 10 || !Number.isInteger(card.cost))) {
       problems.push(`${where}: cost should be a whole number from 0 to 10.`);
     }

@@ -106,6 +106,59 @@ export function lowestGradeSlots(game, playerIndex) {
   return slots.filter((slot) => p.ups[slot].grade === lowest);
 }
 
+// Arms Academy (RULES.md, Field Spells). An Academy Field Spell card carries
+//   academy: { signet, enrollGrade, emergeGrade, turns, capacity }
+// While it sits in your Field Effect Zone, fieldEffect.enrolled lists the units
+// in it as { card, ready }, where ready is the turn number they graduate on
+// (sent on your turn 3 with turns: 2 means ready on your turn 5).
+export function academyOf(game, playerIndex) {
+  const field = game.players[playerIndex].fieldEffect;
+  return field?.academy ? field : null;
+}
+
+// What a graduating unit could become right now: every unit of the Academy's
+// emergeGrade and Signet in your hand or deck (one entry per card name and
+// place, so the choice list stays short), and your empty slots.
+export function graduateOptions(game, playerIndex) {
+  const p = game.players[playerIndex];
+  const { academy } = academyOf(game, playerIndex);
+  const fits = (c) => c.type === "unit" && c.grade === academy.emergeGrade && (c.signets ?? []).includes(academy.signet);
+  const cards = [];
+  const seen = new Set();
+  for (const [from, pile] of [["hand", p.hand], ["deck", p.deck]]) {
+    for (const c of pile) {
+      const key = `${from}:${c.cardId ?? c.name}`;
+      if (!fits(c) || seen.has(key)) continue;
+      seen.add(key);
+      cards.push({ id: c.id, name: c.name, from });
+    }
+  }
+  const slots = p.ups.map((u, slot) => (u ? -1 : slot)).filter((slot) => slot >= 0);
+  return { cards, slots };
+}
+
+// In Preparation Phase I, each unit whose time is up graduates, one at a time:
+// game.pending asks the player which Grade 3 comes out and into which empty slot.
+// Placeholder until Dyllan decides: if there's no empty slot or no Grade 3 to
+// pick, the unit stays in the Academy and tries again next turn.
+function nextGraduation(game) {
+  const player = game.activePlayer;
+  const field = academyOf(game, player);
+  if (!field || game.phase !== "prep1") return;
+  for (const student of field.enrolled) {
+    if (!student.due) continue;
+    const { cards, slots } = graduateOptions(game, player);
+    if (cards.length && slots.length) {
+      game.pending = { type: "graduate", player, student: student.card.id, cards, slots };
+      game.log.push(`${student.card.name} is ready to leave ${field.name}.`);
+      return;
+    }
+    student.due = false;
+    const why = slots.length ? `there's no Grade ${field.academy.emergeGrade} to call` : "there's no empty slot";
+    game.log.push(`${student.card.name} stays in ${field.name} for now: ${why}.`);
+  }
+}
+
 function handIndex(player, card) {
   if (typeof card === "number") return Number.isInteger(card) && card >= 0 && card < player.hand.length ? card : -1;
   return player.hand.findIndex((c) => c.id === card);
@@ -140,6 +193,8 @@ function startTurn(game) {
   // RULES.md placeholder: a player who can't draw in their Draw Phase loses.
   if (!drawCard(game, game.activePlayer)) return win(game, 1 - game.activePlayer, `${p.name} couldn't draw.`);
   game.phase = "prep1";
+  for (const student of academyOf(game, game.activePlayer)?.enrolled ?? []) student.due = student.ready <= game.turn;
+  nextGraduation(game);
 }
 
 // Passes the turn to the other player.
@@ -293,6 +348,93 @@ const ACTIONS = {
     },
   },
 
+  // { type: "setField", player, card }: put a Field Spell from hand into your Field
+  // Effect Zone during Preparation Phase I, paying its cost (most cost 1).
+  // Placeholder: a new Field Spell replaces the old one, which goes to the Grave
+  // along with any units still in it.
+  setField: {
+    check(game, action) {
+      const p = game.players[game.activePlayer];
+      if (game.phase !== "prep1") return "You can only play a Field Spell in Preparation Phase I.";
+      const i = handIndex(p, action.card);
+      if (i < 0) return "That card isn't in your hand.";
+      const card = p.hand[i];
+      if (card.type !== "field_spell") return "That isn't a Field Spell.";
+      if (cardCost(card) > p.energy) return `${card.name} costs ${cardCost(card)} Energy and you have ${p.energy}.`;
+      return null;
+    },
+    apply(game, action) {
+      const p = game.players[game.activePlayer];
+      const [card] = p.hand.splice(handIndex(p, action.card), 1);
+      spendEnergy(p, cardCost(card));
+      if (p.fieldEffect) {
+        const { enrolled = [], ...old } = p.fieldEffect;
+        p.graveyard.push(...enrolled.map((e) => e.card), old);
+      }
+      p.fieldEffect = card.academy ? { ...card, enrolled: [] } : { ...card };
+      game.log.push(`${p.name} plays the Field Spell ${card.name}.`);
+    },
+  },
+
+  // { type: "enroll", player, card }: send a Grade 1 Arms unit from hand into your
+  // Academy during Preparation Phase I. It costs the unit's Grade in Energy, and
+  // the Academy holds up to 2 units (RULES.md, Arms Academy).
+  enroll: {
+    check(game, action) {
+      const p = game.players[game.activePlayer];
+      if (game.phase !== "prep1") return "You can only enroll units in Preparation Phase I.";
+      const field = academyOf(game, game.activePlayer);
+      if (!field) return "You need an Academy in your Field Effect Zone.";
+      const { academy } = field;
+      if (field.enrolled.length >= academy.capacity) return `${field.name} is full (${academy.capacity} units).`;
+      const i = handIndex(p, action.card);
+      if (i < 0) return "That card isn't in your hand.";
+      const card = p.hand[i];
+      if (card.type !== "unit" || card.grade !== academy.enrollGrade || !(card.signets ?? []).includes(academy.signet)) {
+        return `Only Grade ${academy.enrollGrade} ${academy.signet} units can enroll in ${field.name}.`;
+      }
+      if (cardCost(card) > p.energy) return `Enrolling ${card.name} costs ${cardCost(card)} Energy and you have ${p.energy}.`;
+      return null;
+    },
+    apply(game, action) {
+      const p = game.players[game.activePlayer];
+      const field = academyOf(game, game.activePlayer);
+      const [card] = p.hand.splice(handIndex(p, action.card), 1);
+      spendEnergy(p, cardCost(card));
+      field.enrolled.push({ card, ready: game.turn + field.academy.turns, due: false });
+      game.log.push(`${p.name} enrolls ${card.name} in ${field.name}. It graduates on turn ${game.turn + field.academy.turns}.`);
+    },
+  },
+
+  // { type: "graduate", player, card, slot }: answer the Academy's pending choice.
+  // `card` is the id of a Grade 3 from game.pending.cards (hand or deck), `slot` an
+  // empty slot from game.pending.slots. The Grade 3 is summoned there for free,
+  // the Grade 1 goes to the Grave, and the deck is reshuffled if the card came from it.
+  // Placeholders until Dyllan decides: it must be an Arms unit, and it can attack that turn.
+  graduate: {
+    check(game, action) {
+      if (game.pending?.type !== "graduate") return "Nobody is graduating right now.";
+      if (!game.pending.cards.some((c) => c.id === action.card)) return "Pick one of the Grade 3 units on offer.";
+      if (!game.pending.slots.includes(action.slot)) return "Pick one of your empty slots.";
+      return null;
+    },
+    apply(game, action) {
+      const { player, student, cards } = game.pending;
+      game.pending = null;
+      const p = game.players[player];
+      const field = academyOf(game, player);
+      const leaving = field.enrolled.splice(field.enrolled.findIndex((e) => e.card.id === student), 1)[0];
+      p.graveyard.push(leaving.card);
+      const { from } = cards.find((c) => c.id === action.card);
+      const pile = from === "hand" ? p.hand : p.deck;
+      const [card] = pile.splice(pile.findIndex((c) => c.id === action.card), 1);
+      if (from === "deck") p.deck = shuffle(p.deck, game.rng);
+      p.ups[action.slot] = { ...card };
+      game.log.push(`${leaving.card.name} graduates from ${field.name}: ${card.name} is summoned from ${p.name}'s ${from}, and ${leaving.card.name} goes to the Grave.`);
+      nextGraduation(game);
+    },
+  },
+
   // { type: "attack", player }: your Formation attacks in the Battle Phase (RULES.md, Formations).
   // If its Attack is equal to or higher than the opponent's Formation Defense, the
   // opponent takes your Damage Grade minus their Defense Grade in Damage Counters; 10 means they lose.
@@ -374,7 +516,9 @@ export function checkAction(game, action) {
   // While a choice is pending (game.pending), only that player's answer is allowed.
   if (game.pending) {
     const who = game.players[game.pending.player].name;
-    if (action.type !== game.pending.type) return `${who} has to choose which unit goes to the Grave first.`;
+    if (action.type !== game.pending.type) {
+      return game.pending.type === "graduate" ? `${who} has to choose who comes out of the Academy first.` : `${who} has to choose which unit goes to the Grave first.`;
+    }
     if (action.player !== undefined && action.player !== game.pending.player) return `It's ${who}'s choice.`;
     return rule.check(game, action);
   }
@@ -396,11 +540,17 @@ export function legalActions(game) {
     const { player, slots } = game.pending;
     return slots.map((slot) => ({ type: "chooseLoss", player, slot }));
   }
+  if (game.pending?.type === "graduate") {
+    const { player, cards, slots } = game.pending;
+    return cards.flatMap((c) => slots.map((slot) => ({ type: "graduate", player, card: c.id, slot })));
+  }
   const player = game.activePlayer;
   const p = game.players[player];
   const candidates = [{ type: "endTurn", player }, { type: "nextPhase", player }];
   p.hand.forEach((card, i) => {
     candidates.push({ type: "setFormation", player, card: i });
+    candidates.push({ type: "setField", player, card: i });
+    candidates.push({ type: "enroll", player, card: i });
     p.ups.forEach((_, slot) => {
       candidates.push({ type: "summon", player, card: i, slot });
       candidates.push({ type: "promote", player, card: i, slot });
