@@ -19,8 +19,24 @@ Written up from Dyllan's notes. Open questions are marked **(?)**.
 ## Still to define
 - Win condition
 - Resource system
-- Card types: **Units**, **Spells**, **Traps** (details to come)
 - Board zones: see **Field layout** below
+
+## Card types
+| Type | What it does | Where it goes |
+|---|---|---|
+| **Unit** | Your creatures | Unit Position Slots (UPS) |
+| **Spell** | Spells with effects | (?) |
+| **Field Spell** | Affects the field | Field Effect Zone (?) |
+| **Trap** | Set face-down, activated on the opponent's turn | (?) |
+| **Equipment** | (?) | (?) |
+| **Artifact** | (?) | (?) |
+| **Monster** | (?) how it differs from a Unit | (?) |
+
+Open questions:
+- **(?)** How do Monsters differ from Units?
+- **(?)** Do Equipment cards attach to a unit? What do Artifacts do?
+- **(?)** Which card types go in the Special Deck Zones?
+- **(?)** Which card types cost Energy, and how do card levels map to cost?
 
 ## Player stats
 Shown alongside each player's **Hand** (the zone where drawn cards go).
