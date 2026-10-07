@@ -1,5 +1,5 @@
 import { registerScreen, showScreen } from "../screens.js";
-import { newGame, applyAction, checkAction, attackPreview, legalActions, formationStats } from "../engine/engine.js";
+import { newGame, applyAction, checkAction, attackPreview, legalActions, formationStats, unitStats } from "../engine/engine.js";
 import { buildBoard, renderBoard, PHASE_NAMES } from "../board/board.js";
 
 // ---------- Cards and decks ----------
@@ -95,8 +95,9 @@ let gradCard = null; // Grade 3 picked in the graduation panel (its card id)
 const legal = (action) => checkAction(game, action) === null;
 // A hand card can go to a slot by a normal summon, or by promoting the unit already there
 // (one Grade up, for the difference in Grade; see RULES.md).
+const canEquip = (card, slot) => legal({ type: "equip", player: me(), card, slot });
 const canPlay = (card, slot) =>
-  legal({ type: "summon", player: me(), card, slot }) || legal({ type: "promote", player: me(), card, slot });
+  legal({ type: "summon", player: me(), card, slot }) || legal({ type: "promote", player: me(), card, slot }) || canEquip(card, slot);
 const canSetFormation = (card) => legal({ type: "setFormation", player: me(), card });
 // Field Effect Zone: play a Field Spell there, or enroll a unit in the Academy that's there.
 const fezAction = (card) =>
@@ -133,6 +134,8 @@ function render() {
     p.ups.forEach((_, slot) => {
       if (legal({ type: "summon", player: me(), card: selectedHand, slot })) ui.legalSlots.add(slot);
     });
+    // Equipment: units that can take the selected Equipment card (shared Signet).
+    ui.equipSlots = new Set(p.ups.flatMap((u, slot) => (u && canEquip(selectedHand, slot) ? [slot] : [])));
     ui.promoteSlots = new Set();
     p.ups.forEach((u, slot) => {
       if (u && legal({ type: "promote", player: me(), card: selectedHand, slot })) ui.promoteSlots.add(slot);
@@ -153,6 +156,8 @@ function render() {
   renderGradPanel();
 
   ui.formationStats = game.players.map((_, i) => formationStats(game, i));
+  // Each unit's Attack/Defense after Equipment, straight from the engine.
+  ui.unitStats = game.players.map((pl, i) => pl.ups.map((_, slot) => unitStats(game, i, slot)));
   renderBoard(game, viewer, ui);
 
   const pa = phaseAction();
@@ -348,7 +353,9 @@ function onSlotClick({ owner, zone, index }) {
   }
   if (zone !== "ups") return;
   const unit = game.players[me()].ups[index];
-  if (selectedHand !== null && !unit) {
+  if (selectedHand !== null && unit && canEquip(selectedHand, index)) {
+    act({ type: "equip", player: me(), card: selectedHand, slot: index });
+  } else if (selectedHand !== null && !unit) {
     act({ type: "summon", player: me(), card: selectedHand, slot: index });
   } else if (selectedHand !== null && legal({ type: "promote", player: me(), card: selectedHand, slot: index })) {
     act({ type: "promote", player: me(), card: selectedHand, slot: index });

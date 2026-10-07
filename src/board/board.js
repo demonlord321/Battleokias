@@ -159,6 +159,18 @@ function renderFormation(side, p, ui = {}, stats = null) {
   zone.append(total);
 }
 
+// Equipment sits tucked under its unit: a small tag with its name along the bottom edge.
+function renderEquipment(slot, card) {
+  slot.querySelector(".equip-tag")?.remove();
+  const eq = card?.equipment;
+  if (!eq) return;
+  const tag = document.createElement("div");
+  tag.className = "equip-tag";
+  tag.title = `${eq.name}: ${eq.text ?? ""}`;
+  tag.textContent = `\u2692 ${eq.name}`;
+  slot.append(tag);
+}
+
 // Field Effect Zone: glows when the selected hand card can go there (a Field Spell, or a
 // unit to enroll), and lists Academy students with how many turns until they graduate.
 function renderAcademy(side, p, game, ui) {
@@ -205,7 +217,14 @@ export function renderBoard(game, viewer = 0, ui = {}) {
     renderStats(els.stats[side], p, game.activePlayer === owner);
     p.ups.forEach((card, i) => {
       const slot = getSlot(side, "ups", i);
-      fillSlot(slot, card);
+      // Show the unit's live stats (after Equipment) and mark which ones changed.
+      const st = card && ui.unitStats?.[owner]?.[i];
+      const mod = (now, base) => (now == null || now === base ? null : now > base ? "up" : "down");
+      fillSlot(slot, st ? { ...card, attack: st.attack ?? card.attack, defense: st.defense ?? card.defense,
+        statMods: { attack: mod(st.attack, card.attack), defense: mod(st.defense, card.defense) },
+        baseStats: { attack: card.attack, defense: card.defense } } : card);
+      renderEquipment(slot, card);
+      slot.classList.toggle("can-equip", side === 0 && !!ui.equipSlots?.has(i));
       slot.classList.toggle("is-legal", side === 0 && !!ui.legalSlots?.has(i));
       slot.classList.toggle("can-promote", side === 0 && !!ui.promoteSlots?.has(i));
       // Promoted units keep the card(s) underneath; show how many.

@@ -75,8 +75,8 @@ export function renderCard(card, faceUp = true) {
       <span class="stat-def-grade" title="Defense Grade: taken off the attacker's Damage Grade">&#x1F6E1; ${esc(card?.defenseGrade ?? 0)}</span>
     </div>` : ""}
     ${isUnit ? `<div class="card-stats">
-      <span class="stat-atk" title="Attack">&#x2694; ${esc(card?.attack ?? "?")}</span>
-      <span class="stat-def" title="Defense">&#x1F6E1; ${esc(card?.defense ?? "?")}</span>
+      <span class="stat-atk${card?.statMods?.attack ? ` is-${card.statMods.attack}` : ""}" title="Attack${card?.statMods?.attack ? ` (base ${esc(card.baseStats.attack)})` : ""}">&#x2694; ${esc(card?.attack ?? "?")}</span>
+      <span class="stat-def${card?.statMods?.defense ? ` is-${card.statMods.defense}` : ""}" title="Defense${card?.statMods?.defense ? ` (base ${esc(card.baseStats.defense)})` : ""}">&#x1F6E1; ${esc(card?.defense ?? "?")}</span>
     </div>` : ""}`;
   return el;
 }
