@@ -57,6 +57,8 @@
       2
     ],
     "combine": "sum",
+    "damageGrade": 1,
+    "defenseGrade": 0,
     "text": "Needs units in all three front-row slots. Attack and Defense are the sums of those three units.",
     "image": "images/frm-001.png"
   },

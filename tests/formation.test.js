@@ -1,7 +1,7 @@
 // Formations (RULES.md): Frontal Assault sums the Attack and Defense of the units in its slots.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { newGame, applyAction, checkAction, legalActions, formationStats } from "../src/engine/engine.js";
+import { newGame, applyAction, checkAction, legalActions, formationStats, attackPreview } from "../src/engine/engine.js";
 
 let n = 0;
 const unit = (grade, attack, defense) => ({ id: `U-${++n}`, name: `Unit${n}`, type: "unit", grade, attack, defense });
@@ -35,10 +35,10 @@ test("Frontal Assault sums the three front-row units and ignores the rest", () =
   applyAction(game, { type: "setFormation", player: 0, card: lastCard(game) });
   place(game, 0, 0, unit(1, 500, 500)); // Student
   place(game, 0, 1, unit(2, 1500, 1000)); // Apprentice
-  assert.deepEqual(formationStats(game, 0), { name: "Frontal Assault", attack: 2000, defense: 1500, missing: 1, complete: false });
+  assert.deepEqual(formationStats(game, 0), { name: "Frontal Assault", attack: 2000, defense: 1500, missing: 1, complete: false, damageGrade: 1, defenseGrade: 0 });
   place(game, 0, 2, unit(1, 500, 500)); // Student
   place(game, 0, 4, unit(3, 2000, 1500)); // Graduate in the middle row doesn't count
-  assert.deepEqual(formationStats(game, 0), { name: "Frontal Assault", attack: 2500, defense: 2000, missing: 0, complete: true });
+  assert.deepEqual(formationStats(game, 0), { name: "Frontal Assault", attack: 2500, defense: 2000, missing: 0, complete: true, damageGrade: 1, defenseGrade: 0 });
 });
 
 test("a new Formation replaces the old one, which goes to the Grave (placeholder)", () => {
@@ -126,4 +126,37 @@ test("random legal play always finishes with a winner", () => {
     }
     assert.notEqual(game.winner, null);
   }
+});
+
+// Damage Grade and Defense Grade (RULES.md).
+test("a hit deals the attacker's Damage Grade minus the defender's Defense Grade", () => {
+  const game = battleReady([600, 500], [500, 500]);
+  game.players[0].formationZone.damageGrade = 3;
+  game.players[1].formationZone.defenseGrade = 1;
+  assert.equal(attackPreview(game).counters, 2);
+  attack(game);
+  assert.equal(game.players[1].damage, 2);
+});
+
+test("Defense Grade can take a hit down to 0 counters, not below (placeholder)", () => {
+  const game = battleReady([600, 500], [500, 500]);
+  game.players[1].formationZone.defenseGrade = 2;
+  assert.deepEqual([attackPreview(game).hits, attackPreview(game).counters], [true, 0]);
+  attack(game);
+  assert.equal(game.players[1].damage, 0);
+});
+
+test("an incomplete Formation gives no Defense Grade (placeholder)", () => {
+  const game = battleReady([100, 100]);
+  game.players[1].formationZone = { ...frontal(), defenseGrade: 5 };
+  attack(game);
+  assert.equal(game.players[1].damage, 1);
+});
+
+test("a big Damage Grade can finish the game", () => {
+  const game = battleReady([500, 500]);
+  game.players[0].formationZone.damageGrade = 3;
+  game.players[1].damage = 8;
+  attack(game);
+  assert.equal(game.winner, 0);
 });

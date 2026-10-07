@@ -62,7 +62,26 @@ export function formationStats(game, playerIndex) {
   const missing = f.slots.length - units.length;
   const attack = units.reduce((total, u) => total + u.attack, 0);
   const defense = units.reduce((total, u) => total + u.defense, 0);
-  return { name: f.name, attack, defense, missing, complete: missing === 0 };
+  return {
+    name: f.name, attack, defense, missing, complete: missing === 0,
+    damageGrade: f.damageGrade ?? 1, // Damage Counters dealt when its attack lands
+    defenseGrade: f.defenseGrade ?? 0, // taken off an incoming attack's Damage Grade
+  };
+}
+
+// What the active player's Formation attack would do right now, so the UI can
+// show it before the click and the attack itself uses exactly the same numbers.
+// Placeholders (RULES.md): an opponent with no complete Formation has 0 Defense
+// and 0 Defense Grade, and a hit can be reduced to 0 counters but not below.
+export function attackPreview(game, playerIndex = game.activePlayer) {
+  const mine = formationStats(game, playerIndex);
+  const theirs = formationStats(game, 1 - playerIndex);
+  const guarded = !!theirs?.complete;
+  const attack = mine?.complete ? mine.attack : 0;
+  const defense = guarded ? theirs.defense : 0;
+  const hits = !!mine?.complete && attack >= defense;
+  const counters = hits ? Math.max(0, mine.damageGrade - (guarded ? theirs.defenseGrade : 0)) : 0;
+  return { attack, defense, hits, counters, mine, theirs: guarded ? theirs : null };
 }
 
 function handIndex(player, card) {
@@ -218,9 +237,9 @@ const ACTIONS = {
 
   // { type: "attack", player }: your Formation attacks in the Battle Phase (RULES.md, Formations).
   // If its Attack is equal to or higher than the opponent's Formation Defense, the
-  // opponent gains a Damage Counter, and 10 means they lose.
-  // Placeholders until Dyllan decides: once per Battle Phase, 1 counter per hit, an
-  // opponent with no complete Formation has 0 Defense, a failed attack does nothing,
+  // opponent takes your Damage Grade minus their Defense Grade in Damage Counters; 10 means they lose.
+  // Placeholders until Dyllan decides: once per Battle Phase, an opponent with no
+  // complete Formation has 0 Defense and 0 Defense Grade, a failed attack does nothing,
   // and units summoned this turn count toward the Formation.
   attack: {
     check(game, action) {
@@ -235,18 +254,14 @@ const ACTIONS = {
       const me = game.activePlayer;
       const p = game.players[me];
       const enemy = game.players[1 - me];
-      const mine = formationStats(game, me);
-      const theirs = formationStats(game, 1 - me);
-      const defense = theirs?.complete ? theirs.defense : 0;
+      const { attack, defense, hits, counters, mine, theirs } = attackPreview(game, me);
       game.formationAttacked = true;
-      if (mine.attack >= defense) {
-        enemy.damage += 1;
-        game.log.push(`${p.name}'s ${mine.name} (${mine.attack}) breaks through ${theirs?.complete ? `${theirs.name} (${defense})` : "an open field"}. ${enemy.name} has ${enemy.damage} Damage Counter${enemy.damage === 1 ? "" : "s"}.`);
-        if (enemy.damage >= MAX_DAMAGE) win(game, me, `${enemy.name} reached ${MAX_DAMAGE} Damage Counters.`);
-      } else {
-        game.log.push(`${p.name}'s ${mine.name} (${mine.attack}) can't get through ${theirs.name} (${defense}).`);
-      }
-    },
+      const against = theirs ? `${theirs.name} (${defense})` : "an open field";
+      if (!hits) return game.log.push(`${p.name}'s ${mine.name} (${attack}) can't get through ${against}.`);
+      enemy.damage += counters;
+      game.log.push(`${p.name}'s ${mine.name} (${attack}) breaks through ${against} for ${counters} Damage Counter${counters === 1 ? "" : "s"}. ${enemy.name} has ${enemy.damage}.`);
+      if (enemy.damage >= MAX_DAMAGE) win(game, me, `${enemy.name} reached ${MAX_DAMAGE} Damage Counters.`);
+    }
   },
 };
 

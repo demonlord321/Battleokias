@@ -12,7 +12,7 @@ const COMMON = { id: "string", name: "string", type: "string", signets: "array",
 const BY_TYPE = {
   unit: { grade: "number", attack: "number", defense: "number", formation: "string" },
   // slots: the Unit Position Slots (0 to 8, front row 0-2) the Formation draws from.
-  formation: { cost: "number", slots: "array", combine: "string" },
+  formation: { cost: "number", slots: "array", combine: "string", damageGrade: "number", defenseGrade: "number" },
 };
 // How a Formation adds up its units. Only "sum" (Frontal Assault) so far.
 export const COMBINE_RULES = ["sum"];
@@ -63,6 +63,9 @@ export function checkCards(cards) {
       const ok = card.slots.every((n) => Number.isInteger(n) && n >= 0 && n <= 8);
       if (!ok || card.slots.length === 0 || new Set(card.slots).size !== card.slots.length) {
         problems.push(`${where}: slots should list different slot numbers from 0 to 8 (front row is 0, 1, 2).`);
+      }
+      for (const g of ["damageGrade", "defenseGrade"]) {
+        if (typeof card[g] === "number" && (card[g] < 0 || !Number.isInteger(card[g]))) problems.push(`${where}: ${g} should be a whole number, 0 or more.`);
       }
       if (typeof card.combine === "string" && !COMBINE_RULES.includes(card.combine)) {
         problems.push(`${where}: unknown combine "${card.combine}". Use one of: ${COMBINE_RULES.join(", ")}.`);
