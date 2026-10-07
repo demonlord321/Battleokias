@@ -60,7 +60,7 @@ function buildDeck(cards, decks, signet) {
   const units = pool.filter((c) => c.type === "unit");
   const deck = [];
   for (const c of pool.filter((c) => c.type !== "unit"))
-    for (let copy = 1; copy <= MAX_COPIES && deck.length < DECK_SIZE; copy++) deck.push(instance(c, copy));
+    for (let copy = 1; copy <= (c.maxCopies ?? MAX_COPIES) && deck.length < DECK_SIZE; copy++) deck.push(instance(c, copy));
   for (let copy = 1; units.length && deck.length < DECK_SIZE; copy++)
     for (const c of units) if (deck.length < DECK_SIZE) deck.push(instance(c, copy));
   return deck;
