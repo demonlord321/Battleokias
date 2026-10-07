@@ -118,6 +118,15 @@ export function academyOf(game, playerIndex) {
   return field?.academy ? field : null;
 }
 
+// RULES.md, Arms Academy: while it's in play, your units with its Signet on the
+// field can promote as often as your Energy allows. The Field Spell card says
+// which Signet with unlimitedPromotions: "arms". Every other promotion still
+// counts toward the normal one per turn.
+export function unlimitedPromotion(game, playerIndex, base) {
+  const signet = game.players[playerIndex].fieldEffect?.unlimitedPromotions;
+  return !!signet && (base?.signets ?? []).includes(signet);
+}
+
 // The catalogue id of a card (deck copies are "ARM-010#2" with cardId "ARM-010").
 const catalogueId = (c) => c.cardId ?? c.id;
 
@@ -276,7 +285,7 @@ const ACTIONS = {
       const base = p.ups[action.slot];
       if (!base) return "There's no unit there to promote.";
       if (card.grade !== base.grade + 1) return `${card.name} is Grade ${card.grade} and can only promote a Grade ${card.grade - 1} unit.`;
-      if (game.promotionsLeft <= 0) return "You've already promoted this turn.";
+      if (game.promotionsLeft <= 0 && !unlimitedPromotion(game, game.activePlayer, base)) return "You've already promoted this turn.";
       const cost = card.grade - base.grade;
       if (cost > p.energy) return `Promoting costs ${cost} Energy and you have ${p.energy}.`;
       return null;
@@ -286,7 +295,8 @@ const ACTIONS = {
       const [card] = p.hand.splice(handIndex(p, action.card), 1);
       const base = p.ups[action.slot];
       spendEnergy(p, card.grade - base.grade);
-      game.promotionsLeft -= 1;
+      // Promotions a Field Spell makes unlimited don't use up the normal one.
+      if (!unlimitedPromotion(game, game.activePlayer, base)) game.promotionsLeft -= 1;
       const { under = [], ...baseCard } = base;
       p.ups[action.slot] = { ...card, under: [...under, baseCard] };
       game.log.push(`${p.name} promotes ${base.name} to ${card.name}.`);

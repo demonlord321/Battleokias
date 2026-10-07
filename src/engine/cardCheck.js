@@ -71,6 +71,9 @@ export function checkCards(cards) {
         problems.push(`${where}: unknown combine "${card.combine}". Use one of: ${COMBINE_RULES.join(", ")}.`);
       }
     }
+    if (card.type === "field_spell" && "unlimitedPromotions" in card && !SIGNETS.includes(card.unlimitedPromotions)) {
+      problems.push(`${where}: unlimitedPromotions should be one of: ${SIGNETS.join(", ")}.`);
+    }
     if (card.type === "field_spell" && "academy" in card) {
       // An Academy Field Spell (Arms Academy): which card enrolls, which card comes out, after how many turns, and how many fit.
       const a = card.academy;

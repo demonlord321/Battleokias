@@ -2,7 +2,7 @@
 // turns later a Grade 3 Arms unit comes out for free while the Grade 1 goes to the Grave.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { newGame, applyAction, checkAction, legalActions, academyOf } from "../src/engine/engine.js";
+import { newGame, applyAction, checkAction, legalActions, academyOf, unlimitedPromotion } from "../src/engine/engine.js";
 
 let n = 0;
 const unit = (grade, signet = "arms") => ({ id: `U-${++n}`, cardId: `G${grade}-${signet}`, name: `G${grade} ${signet}`, type: "unit", signets: [signet], grade, attack: 500 * grade, defense: 500 * grade });
@@ -12,6 +12,7 @@ const graduate = () => ({ ...unit(3), cardId: "ARM-012", name: "Graduate of Arms
 const academy = () => ({
   id: `FLD-001#${++n}`, cardId: "FLD-001", name: "Arms Academy", type: "field_spell", signets: ["arms"], cost: 1,
   academy: { enroll: "ARM-010", enrollName: "Student of Arms", emerge: "ARM-012", turns: 2, capacity: 2 },
+  unlimitedPromotions: "arms",
 });
 const filler = () => Array.from({ length: 30 }, () => unit(2));
 
@@ -138,4 +139,31 @@ test("a new Field Spell sends the old one and its students to the Grave (placeho
   applyAction(game, { type: "setField", player: 0, card: game.players[0].hand.length - 1 });
   assert.deepEqual(academyOf(game, 0).enrolled, []);
   assert.equal(game.players[0].graveyard.length, 2);
+});
+
+test("with Arms Academy in play, Arms units on the field can promote more than once a turn", () => {
+  const game = start();
+  const p = game.players[0];
+  p.energy = 10;
+  game.players[0].ups[0] = unit(1);
+  game.players[0].ups[1] = unit(1);
+  game.players[0].ups[2] = unit(1, "magic");
+  p.hand.push(unit(2), unit(2), unit(2));
+  const promote = (slot) => applyAction(game, { type: "promote", player: 0, card: p.hand.findIndex((c) => c.grade === 2), slot });
+  // Without the Academy: one promotion per turn.
+  assert.equal(promote(0).ok, true);
+  assert.match(checkAction(game, { type: "promote", player: 0, card: p.hand.findIndex((c) => c.grade === 2), slot: 1 }), /already promoted/);
+  playAcademy(game);
+  assert.equal(unlimitedPromotion(game, 0, p.ups[1]), true);
+  assert.equal(promote(1).ok, true);
+  p.hand.push(unit(3), unit(3));
+  assert.equal(applyAction(game, { type: "promote", player: 0, card: p.hand.findIndex((c) => c.grade === 3), slot: 0 }).ok, true);
+  assert.equal(applyAction(game, { type: "promote", player: 0, card: p.hand.findIndex((c) => c.grade === 3), slot: 1 }).ok, true);
+  assert.equal(p.ups[1].grade, 3);
+  // The limit still applies to units without the Arms Signet, and Energy still counts.
+  assert.equal(unlimitedPromotion(game, 0, p.ups[2]), false);
+  assert.match(checkAction(game, { type: "promote", player: 0, card: p.hand.findIndex((c) => c.grade === 2), slot: 2 }), /already promoted/);
+  p.energy = 0;
+  p.ups[3] = unit(1);
+  assert.match(checkAction(game, { type: "promote", player: 0, card: p.hand.findIndex((c) => c.grade === 2), slot: 3 }), /costs 1 Energy/);
 });
