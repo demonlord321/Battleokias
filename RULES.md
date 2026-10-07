@@ -117,6 +117,13 @@ You can only attack if you have a Formation set.
 - Units in other slots can still be on the field, but **only units in the Formation's slots add to its power**.
 - Each Formation has its own formula for its power. Basic Formations use the **sum**.
 
+### Formation from the deck (confirmed by Dyllan)
+- If by **round three** you hold **no Formation**, you can **summon one directly from your deck**.
+- **(?)** Does "round three" mean your own third turn? Placeholder: your third turn or any later turn, in Preparation Phase I.
+- **(?)** Does "hold no Formation" mean none in your hand **and** none in your Formation Zone? Placeholder: yes, both.
+- **(?)** Does it go straight into the Formation Zone or into your hand, and does it still cost its normal Energy? Placeholder: straight into the Formation Zone, at its normal cost.
+- **(?)** Can you do this more than once a game? Placeholder: yes, whenever the condition is met. The deck is shuffled afterwards.
+
 ### Formation: Frontal Assault (basic)
 - **Pattern:** all three **front-row** slots (the row nearest the centre) are filled with units.
 - **Formation Attack** = the sum of the three front-row units' Attack.
