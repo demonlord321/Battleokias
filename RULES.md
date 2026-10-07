@@ -116,21 +116,21 @@ You can only attack if you have a Formation set.
 
 - Units in other slots can still be on the field, but **only units in the Formation's slots add to its power**.
 - Each Formation has its own formula for its power. Basic Formations use the **sum**.
+- **Fractions always round down** (confirmed by Dyllan).
+- **Formation cost** (confirmed by Dyllan): a Formation with Damage Grade 1 costs **0 Energy**. Higher Damage Grades cost **one less than the Damage Grade** (Damage Grade 2 costs 1, Damage Grade 3 costs 2).
 
 ### Formation: Vanguard Charge (from Dyllan)
-- **Pattern:** the **front-centre** slot plus the **whole middle row**, four slots in a T shape (grid positions `[1, 3, 4, 5]`).
+- **Pattern:** the **whole front row** plus the **middle-centre** slot, four slots in a T shape (grid positions `[0, 1, 2, 4]`).
   ```
-  front   [ ][X][ ]
-  middle  [X][X][X]
+  front   [X][X][X]
+  middle  [ ][X][ ]
   back    [ ][ ][ ]
   ```
 - **Formation Attack** = sum of those units' Attack **x 1.5**.
 - **Formation Defense** = sum of those units' Defense **/ 1.5**.
-- **Damage Grade 2**, **Defense Grade 0**.
-- Example: a Student in front centre, with Apprentice, Graduate and Student in the middle row, gives 4500 x 1.5 = **6750 Attack** and 3500 / 1.5 = **2333 Defense**.
-- **(?)** Is that the pattern you meant (front centre plus the middle row)?
-- **(?)** How are fractions rounded? Placeholder: round down to a whole number.
-- **(?)** Which Signets does it carry, and how many Energy does it cost? Placeholder: all three Signets and 0 Energy, the same as Frontal Assault.
+- **Damage Grade 2**, **Defense Grade 0**, **cost 1 Energy** (see Formation cost).
+- Example: Student, Apprentice and Student across the front with a Graduate in the middle centre gives 4500 x 1.5 = **6750 Attack** and 3500 / 1.5 = **2333 Defense**.
+- **(?)** Which Signets does it carry? Placeholder: all three, the same as Frontal Assault.
 
 ### Formation from the deck (confirmed by Dyllan)
 - If by **round three** you hold **no Formation**, you can **summon one directly from your deck**.
