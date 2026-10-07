@@ -1,0 +1,7 @@
+{
+  "_note": "Deck styles for npm run sim. Each list starts from the arms test deck and swaps a few cards. Edit freely; every deck plays every other deck.",
+  "Frontal": { "from": "arms", "swap": [] },
+  "Vanguard": { "from": "arms", "swap": [["FRM-001", "FRM-002", 3]] },
+  "Gear": { "from": "arms", "swap": [["ARM-001", "EQP-001", 3]] },
+  "Academy": { "from": "arms", "swap": [["ARM-001", "FLD-001", 3]] }
+}

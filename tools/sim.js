@@ -1,0 +1,83 @@
+// Round-robin balance sim (Developer). Every deck style in tools/sim-decks.json
+// plays every other one with the same simple bot, swapping who goes first each game.
+//   npm run sim            (500 games per pairing)
+//   npm run sim -- 2000    (more games, steadier numbers)
+// A row's number is how often that deck beats the column's deck.
+import { readFileSync } from "node:fs";
+import { newGame, applyAction, legalActions } from "../src/engine/engine.js";
+
+const read = (f) => JSON.parse(readFileSync(new URL(f, import.meta.url)));
+const cards = read("../data/cards.json");
+const decks = read("../data/decks.json");
+const styles = Object.entries(read("./sim-decks.json")).filter(([k]) => !k.startsWith("_"));
+const byId = Object.fromEntries(cards.map((c) => [c.id, c]));
+const GAMES = Number(process.argv[2]) || 500;
+
+function build({ from, swap = [], cards: list }) {
+  let ids = list ? [...list] : [...decks[from]];
+  for (const [out, inn, count] of swap) {
+    let k = 0;
+    ids = ids.map((id) => (id === out && k++ < count ? inn : id));
+  }
+  return ids;
+}
+const instances = (ids) => {
+  const seen = {};
+  return ids.map((id) => ({ ...byId[id], cardId: id, id: `${id}#${(seen[id] = (seen[id] ?? 0) + 1)}` }));
+};
+
+// The bot: get a Formation and Field Spell out, promote, enroll Students, fill the
+// Formation's slots (biggest units first), equip, then attack.
+function pick(game) {
+  const options = legalActions(game);
+  const p = game.players[game.activePlayer];
+  const wanted = new Set(p.formationZone?.slots ?? p.hand.find((c) => c.type === "formation")?.slots ?? [0, 1, 2]);
+  const inFormation = (a) => (wanted.has(a.slot) ? 0 : 1);
+  const of = (type) => options.filter((a) => a.type === type);
+  const enroll = of("enroll")[0];
+  return (
+    of("graduate").sort((a, b) => inFormation(a) - inFormation(b))[0] ||
+    of("chooseLoss")[0] ||
+    (!p.formationZone && (of("setFormation")[0] || of("deckFormation")[0])) ||
+    (!p.fieldEffect && of("setField")[0]) ||
+    of("promote").sort((a, b) => inFormation(a) - inFormation(b))[0] ||
+    enroll ||
+    of("summon")
+      .filter((a) => !(enroll && p.hand[a.card].cardId === p.fieldEffect?.academy?.enroll))
+      .sort((a, b) => inFormation(a) - inFormation(b) || p.hand[b.card].grade - p.hand[a.card].grade || a.slot - b.slot)[0] ||
+    of("equip").sort((a, b) => inFormation(a) - inFormation(b) || p.ups[b.slot].grade - p.ups[a.slot].grade)[0] ||
+    of("attack")[0] ||
+    of("nextPhase")[0] ||
+    options[0]
+  );
+}
+
+function play(a, b, seed) {
+  const game = newGame({ seed, decks: [instances(a), instances(b)] });
+  for (let guard = 0; game.winner === null && guard < 5000; guard++) applyAction(game, pick(game));
+  return game.winner;
+}
+
+const lists = styles.map(([name, spec]) => [name, build(spec)]);
+const names = lists.map(([n]) => n);
+const wins = names.map(() => names.map(() => null));
+for (let i = 0; i < lists.length; i++)
+  for (let j = i + 1; j < lists.length; j++) {
+    let iWins = 0;
+    for (let seed = 0; seed < GAMES; seed++) {
+      const iFirst = seed % 2 === 0;
+      const winner = iFirst ? play(lists[i][1], lists[j][1], seed) : play(lists[j][1], lists[i][1], seed);
+      if (winner === (iFirst ? 0 : 1)) iWins++;
+    }
+    wins[i][j] = iWins / GAMES;
+    wins[j][i] = 1 - iWins / GAMES;
+  }
+
+const pct = (x) => (x === null ? "-" : `${Math.round(x * 100)}%`);
+const w = Math.max(...names.map((n) => n.length), 8);
+console.log(`${GAMES} games per pairing. Row deck's win rate against the column deck.\n`);
+console.log(["".padEnd(w), ...names.map((n) => n.padStart(w)), "Average".padStart(w)].join(" "));
+wins.forEach((row, i) => {
+  const avg = row.filter((x) => x !== null).reduce((s, x) => s + x, 0) / (row.length - 1);
+  console.log([names[i].padEnd(w), ...row.map((x) => pct(x).padStart(w)), pct(avg).padStart(w)].join(" "));
+});

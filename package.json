@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "test": "node --test",
-    "check-cards": "node tools/check-cards.js"
+    "check-cards": "node tools/check-cards.js",
+    "sim": "node tools/sim.js"
   }
 }
