@@ -613,7 +613,7 @@ html, body {
 /* Promotion: units the selected hand card can be played on top of. */
 .slot.can-promote { outline: 2px solid #f2c45a; outline-offset: 2px; animation: promote-pulse 0.9s ease-in-out infinite alternate; cursor: pointer; }
 .slot.can-promote::before {
-  content: "▲"; position: absolute; top: -0.6em; left: 50%; transform: translateX(-50%); z-index: 3;
+  content: "\25B2"; position: absolute; top: -0.6em; left: 50%; transform: translateX(-50%); z-index: 3;
   font-size: 0.8em; color: #1b1530; background: #f2c45a; border-radius: 50%; width: 1.4em; height: 1.4em;
   display: grid; place-items: center; box-shadow: 0 0 6px #f2c45a;
 }
