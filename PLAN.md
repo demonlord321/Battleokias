@@ -33,7 +33,9 @@ Mapmaker (game board and screens), Advisor (balance reviews), Planner (plan and 
 ## Milestone 2: Playable board
 - [x] Board layout: 3x3 UPS, Special Deck Zones, Grave, Draw, Field Effect Zone, mirrored opponent, Mapmaker
 - [x] Board wired to engine state (`ups`, `specialZones`, `fieldEffect`), turn and phase banner, Mapmaker + Developer
-- [ ] Hand zone with player stats beside it: Player Name, Defense Points, Energy, Mapmaker + Developer
+- [x] Hand zone with player stats panels (Name, Defense, Energy), Mapmaker
+- [ ] Energy engine: max starts 1, +1 per own turn to 10, refills each turn, Developer
+- [ ] Starting Defense Points, waiting on Dyllan
 - [ ] Board rendering wired to the engine state, Mapmaker + Developer
 - [ ] Click or drag to play and attack, End Turn button, game log
 - [ ] Hot-seat play

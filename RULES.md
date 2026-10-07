@@ -28,7 +28,10 @@ Shown alongside each player's **Hand** (the zone where drawn cards go).
 - **Defense Points (DP)**
   - **(?)** Starting DP? Is reducing the opponent to 0 DP the win condition?
 - **Energy:** the currency for playing higher-level cards.
-  - **(?)** Starting Energy, how much is gained each turn, and is there a cap?
+  - Works like Hearthstone mana. Max Energy starts at **1** and rises by **1** at the
+    start of each of your turns, up to a cap of **10**.
+  - At the start of your turn, Energy refills to your current max. Unspent Energy does
+    not carry over beyond that.
   - **(?)** Do lower-level cards cost nothing, and what does each level cost?
 
 ## Empty Draw Pile
