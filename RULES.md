@@ -122,7 +122,8 @@ You can only attack if you have a Formation set.
 - **(?)** Does "round three" mean your own third turn? Placeholder: your third turn or any later turn, in Preparation Phase I.
 - **(?)** Does "hold no Formation" mean none in your hand **and** none in your Formation Zone? Placeholder: yes, both.
 - **(?)** Does it go straight into the Formation Zone or into your hand, and does it still cost its normal Energy? Placeholder: straight into the Formation Zone, at its normal cost.
-- **(?)** Can you do this more than once a game? Placeholder: yes, whenever the condition is met. The deck is shuffled afterwards.
+- **Once per game** (confirmed by Dyllan). The deck is shuffled afterwards.
+- **Formations can't be destroyed** for now. Later, some spell effects may destroy them, and other spells will **recall** a Formation (for example, if you have no Formation by round two). Together these balance decks out.
 
 ### Formation: Frontal Assault (basic)
 - **Pattern:** all three **front-row** slots (the row nearest the centre) are filled with units.
