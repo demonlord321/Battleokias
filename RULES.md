@@ -129,7 +129,7 @@ Open questions:
 - From **Grade 4 upward**, units are **named** characters rather than generic ranks like Student or Graduate.
 - Named units also carry **flavour text** (story only, no rules effect) and a new typing called a **Class**.
 - Grades 1 to 3 have no name, flavour text or Class.
-- Classes so far: **Swordsman** (Drazel).
+- Classes so far: **Swordsmen** (Drazel).
 - **(?)** What other Classes are there?
 - **(?)** Does a unit's Class do anything in play (for example, a Formation or Field Spell that needs a certain Class), or is it just a label for now?
 - **(?)** Is each named unit one of a kind? (Placeholder: only one copy of the same named unit on your field at a time, but still no deck limit.)
@@ -141,7 +141,7 @@ Open questions:
 | Type | Unit |
 | Grade | 4 |
 | Signets | Arms (main), Mercenary (sub) |
-| Class | Swordsman |
+| Class | Swordsmen |
 | Attack | 4000 |
 | Defense | Set by his effect (see below) |
 
@@ -149,7 +149,7 @@ Open questions:
 
 **Effect:** Drazel halted his study of Defense and put everything into attack. His Defense is **1000** when he is summoned normally, or **equal to the Defense of the unit he promotes**.
 - Because his main Signet is Arms, he is in the Arms promotion line, so he can promote a Graduate of Arms (Defense 1500).
-- **(?)** Does "the unit he promotes" mean its printed Defense, or its Defense with Equipment? (Placeholder: printed Defense. Equipment then stays on Drazel and adds its bonus as usual, so it isn't counted twice.)
+- **(?)** Does "the unit he promotes" mean its printed Defense, or its Defense with Equipment? (Placeholder: printed Defense. Practice Gear goes to the Grave when he promotes, since it only works on Grades 1 to 3, so the question only matters for future Equipment that can stay on a Grade 4.)
 
 ### Official sample units (School of Arms, from Dyllan)
 | Grade | Name | Attack | Defense |
@@ -294,6 +294,7 @@ Open questions (placeholders in brackets):
 ### Equipment: Practice Gear (School of Arms)
 - **Effect:** the equipped Arms unit gets **+250 Attack and +250 Defense** (a flat bonus, confirmed by Dyllan).
 - Example: a Student of Arms goes from 500/500 to 750/750, and an Apprentice from 1500/1000 to 1750/1250.
+- **Grades 1 to 3 only (confirmed by Dyllan):** a unit that has mastered its craft has no use for practice gear. Practice Gear can only be equipped to a Grade 1, 2 or 3 unit, and when its unit is promoted to Grade 4 or higher, the Gear goes to the Grave.
 
 ## Placeholder rules for the first Arms vs Arms test game
 These are **temporary** so a units-only game can be played and tuned. Dyllan will replace them.
