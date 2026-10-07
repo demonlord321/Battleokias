@@ -44,6 +44,7 @@ Deck rule:
 - A deck is built around **one Signet**. Every card in the deck must carry that Signet.
 - A card can belong to **more than one** Signet, so it can appear in decks of any of them.
 - The card's Signet symbol(s) sit in the **top left** corner of the card.
+- **Main Signet and sub-Signets (confirmed by Dyllan):** a card's **first** Signet is its **main Signet**, and it decides the card's **promotion line**. Any Signets after it are **sub-Signets**: they let the card into those decks, but play no part in promotion.
 
 Open questions:
 - **(?)** How does a Signet shape its Units (stats, abilities, play style)?
@@ -133,14 +134,17 @@ Open questions:
 | 2 | Apprentice of Arms | 1500 | 1000 |
 | 3 | Graduate of Arms | 2000 | 1500 |
 
-These three form a promotion line (Student to Apprentice to Graduate). Under the current rules any Grade 2 can still promote any Grade 1.
+These three are the **only** Grade 1, 2 and 3 units of the Arms line (confirmed by Dyllan). Other Signets will have their own Grade 1 to 3 units later.
 
 ### Promotion
 - Instead of summoning normally, you can **promote** a unit already on the field by playing a
   higher-Grade unit from your hand **on top of it**.
 - Promotion costs the **difference** in Grade. For example, a Grade 2 played on a Grade 1 costs **1 Energy** instead of 2.
-- Promotion is **exactly one Grade** up: any Grade 2 promotes any Grade 1, any Grade 3 promotes any Grade 2, and so on. No skipping.
-  The units don't need to be related.
+- Promotion is **exactly one Grade** up. No skipping.
+- **Promotion lines (confirmed by Dyllan):** a unit can only be promoted by the next unit **in its own line**. The Arms line is **Student of Arms, then Apprentice of Arms, then Graduate of Arms**.
+  - Only a Student of Arms can become an Apprentice of Arms, and only an Apprentice of Arms can become a Graduate of Arms.
+  - The line comes from the card's **main (first) Signet**. A card that only has Arms as a sub-Signet is outside the Arms line, even if it can sit in an Arms deck.
+- **(?)** How does a Graduate of Arms move up to Grade 4? Placeholder: any named Grade 4 unit whose main Signet is Arms can promote a Graduate of Arms.
 - **One promotion per turn** normally. Some Field Spells lift this (see Arms Academy).
 - Placeholder until Dyllan decides: the card underneath stays stacked beneath the new unit and both go to the Grave when the unit is destroyed.
 - First-player edge: with Formations and unit destruction in (`58d4e06`), bot games show the first player winning 49%, so no extra fix is needed for now.
