@@ -40,6 +40,9 @@ Starting Signets:
 2. **School of Magic**
 3. **School of Alchemy**
 
+Other Signets seen on cards:
+- **Mercenary** (first seen as Drazel's sub-Signet). **(?)** Can you declare Mercenary as your deck's Signet, like the three Schools? (Placeholder: yes.)
+
 Deck rule:
 - A deck is built around **one Signet**. Every card in the deck must carry that Signet.
 - A card can belong to **more than one** Signet, so it can appear in decks of any of them.
@@ -126,10 +129,27 @@ Open questions:
 - From **Grade 4 upward**, units are **named** characters rather than generic ranks like Student or Graduate.
 - Named units also carry **flavour text** (story only, no rules effect) and a new typing called a **Class**.
 - Grades 1 to 3 have no name, flavour text or Class.
-- **(?)** What Classes are there?
+- Classes so far: **Swordsman** (Drazel).
+- **(?)** What other Classes are there?
 - **(?)** Does a unit's Class do anything in play (for example, a Formation or Field Spell that needs a certain Class), or is it just a label for now?
 - **(?)** Is each named unit one of a kind? (Placeholder: only one copy of the same named unit on your field at a time, but still no deck limit.)
-- **(?)** Where does the Class show on the card? (Placeholder: under the name, next to the Signet symbols.)
+- Class shows next to "Unit" on the card, and named units get a gold frame (Mapmaker, `2505553`).
+
+#### Drazel, Instructor of the Blade (from Dyllan)
+| Field | Value |
+|---|---|
+| Type | Unit |
+| Grade | 4 |
+| Signets | Arms (main), Mercenary (sub) |
+| Class | Swordsman |
+| Attack | 4000 |
+| Defense | Set by his effect (see below) |
+
+*Flavour text:* "Drazel found himself gifted with a blade. Upon graduation he chose to share that knowledge with the new recruits. When war came his unit was decimated, and Drazel joined the mercenaries to get stronger and make some money."
+
+**Effect:** Drazel halted his study of Defense and put everything into attack. His Defense is **1000** when he is summoned normally, or **equal to the Defense of the unit he promotes**.
+- Because his main Signet is Arms, he is in the Arms promotion line, so he can promote a Graduate of Arms (Defense 1500).
+- **(?)** Does "the unit he promotes" mean its printed Defense, or its Defense with Equipment? (Placeholder: printed Defense. Equipment then stays on Drazel and adds its bonus as usual, so it isn't counted twice.)
 
 ### Official sample units (School of Arms, from Dyllan)
 | Grade | Name | Attack | Defense |
