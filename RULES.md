@@ -307,7 +307,7 @@ Open questions (placeholders in brackets):
 - Placeholders until Dyllan decides:
   - Attack + Defense uses each unit's current stats, Equipment included. On a tie, the defender picks, as with the normal rule.
   - Signets Arms and Mercenary, the same as Drazel; Special Deck only like all Equipment; no Grade limit.
-- **Cost 1 Energy** and up to **3 copies**, like other Equipment (Dyllan, after testing). It wins about 72 to 79% of sims for now. Cost 2 and a 1-per-deck limit were tried and **removed**: Dyllan expects the odds to drop once decks are full size and other Special Deck types exist, since players may not pick Equipment. Making the destroy need Drazel's Attack to beat the target's Defense was turned down, since Dyllan thinks it would swing balance too far the other way.
+- **Cost 3 Energy**, printed on the card (confirmed by Dyllan), and up to **3 copies** like other Equipment. A 1-per-deck limit was tried and **removed**: Dyllan expects the odds to drop once decks are full size and other Special Deck types exist, since players may not pick Equipment. Making the destroy need Drazel's Attack to beat the target's Defense was turned down, since Dyllan thinks it would swing balance too far the other way.
 - Specialised Equipment is a new idea: Equipment that names the one unit it can go on.
 
 ## Placeholder rules for the first Arms vs Arms test game
@@ -337,6 +337,13 @@ Shown alongside each player's **Hand** (the zone where drawn cards go).
     start of each of your turns, up to a cap of **10**.
   - At the start of your turn, Energy refills to your current max. Unspent Energy does
     not carry over beyond that.
+- **Player Grade** (confirmed by Dyllan): equal to the **highest Grade among your units on the field**.
+  - You can't bring out a unit more than one Grade above your Player Grade, even if a spell or effect makes it cheap. Example: with a Grade 4 in hand and a spell that cuts its cost to 1, you still can't summon it while your Player Grade is 2. You first need a Grade 3 out to raise your Player Grade to 3.
+  - Normally your Player Grade can rise by only **one per turn**, through your one promotion. Spells and effects (like Arms Academy's extra promotions) can raise it faster.
+  - Placeholders until Dyllan decides:
+    - With no units on the field, your Player Grade is **0**, so only Grade 1 units can be summoned.
+    - Player Grade updates straight away: if your highest unit is destroyed or retired, it drops.
+    - Arms Academy's free Graduate still arrives even if your Player Grade is only 1, because the card says it's summoned automatically.
 
 ## Empty Draw Pile
 - **(?)** What happens when a player must draw from an empty Draw Pile (lose, take damage, reshuffle the Grave)?
