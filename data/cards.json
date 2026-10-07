@@ -63,6 +63,24 @@
     "image": "images/frm-001.png"
   },
   {
+    "id": "FLD-001",
+    "name": "Arms Academy",
+    "type": "field_spell",
+    "signets": [
+      "arms"
+    ],
+    "cost": 1,
+    "academy": {
+      "signet": "arms",
+      "enrollGrade": 1,
+      "emergeGrade": 3,
+      "turns": 2,
+      "capacity": 2
+    },
+    "text": "In your Preparation Phase I, you may enroll a Grade 1 Arms unit from your hand by paying its Grade in Energy (up to 2 units at a time). Two of your turns later, in your Preparation Phase I, summon a Grade 3 Arms unit from your hand or deck to an empty slot at no cost, then send the enrolled unit to the Grave. If you took it from your deck, shuffle your deck.",
+    "image": "images/fld-001.png"
+  },
+  {
     "id": "ARM-001",
     "name": "Iron Recruit",
     "type": "unit",
