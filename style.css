@@ -368,3 +368,15 @@ html, body {
 .stat-value { font-weight: bold; min-width: 2ch; text-align: right; }
 .stat-dp .stat-value { color: #8fd3ff; }
 .stat-energy .stat-value { color: #ffd66b; }
+
+.energy-pips { display: flex; gap: 3px; margin-top: 0.3rem; }
+.pip {
+  flex: 1;
+  height: 0.55em;
+  min-width: 0.55em;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.pip.is-spent { border-color: #ffd66b; background: transparent; }
+.pip.is-full { background: #ffd66b; border-color: #ffd66b; box-shadow: 0 0 6px rgba(255, 214, 107, 0.6); }
