@@ -43,6 +43,11 @@ export function targetSlot(game, attackerIndex, slot) {
 
 // The summon action names a hand card either by its hand index (a number) or by
 // its instance id (a string like "ARM-001#2"). Returns the hand index, or -1.
+// What a card costs to play: a unit's Grade, or another card's cost.
+export function cardCost(card) {
+  return card.grade ?? card.cost ?? 0;
+}
+
 function handIndex(player, card) {
   if (typeof card === "number") return Number.isInteger(card) && card >= 0 && card < player.hand.length ? card : -1;
   return player.hand.findIndex((c) => c.id === card);
@@ -117,7 +122,7 @@ const ACTIONS = {
     },
   },
 
-  // { type: "summon", player, card, slot }: pay a unit's Energy cost and put it
+  // { type: "summon", player, card, slot }: pay a unit's Grade in Energy and put it
   // into an empty Unit Position Slot (0 to 8) during Preparation Phase I.
   summon: {
     check(game, action) {
@@ -129,14 +134,14 @@ const ACTIONS = {
       if (card.type !== "unit") return "Only units can be summoned.";
       if (!Number.isInteger(action.slot) || action.slot < 0 || action.slot >= p.ups.length) return "Pick one of your Unit Position Slots.";
       if (p.ups[action.slot]) return "That slot is taken.";
-      const cost = card.cost ?? 0;
+      const cost = cardCost(card);
       if (cost > p.energy) return `${card.name} costs ${cost} Energy and you have ${p.energy}.`;
       return null;
     },
     apply(game, action) {
       const p = game.players[game.activePlayer];
       const [card] = p.hand.splice(handIndex(p, action.card), 1);
-      spendEnergy(p, card.cost ?? 0);
+      spendEnergy(p, cardCost(card));
       p.ups[action.slot] = { ...card, summonedThisTurn: true, hasAttacked: false };
       game.log.push(`${p.name} summons ${card.name}.`);
     },

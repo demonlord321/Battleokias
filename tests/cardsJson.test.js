@@ -16,7 +16,7 @@ test("the checker catches common mistakes", () => {
   assert.deepEqual(checkCards([good]), []);
   assert.equal(checkCards([good, good]).length, 1); // duplicate id
   assert.equal(checkCards([{ ...good, signets: ["pirates"] }]).length, 1);
-  assert.equal(checkCards([{ ...good, type: "unit" }]).length, 4); // unit fields missing
+  assert.equal(checkCards([{ ...good, type: "unit" }]).length, 5); // 4 unit fields missing, plus cost instead of grade
   assert.equal(checkCards([{ ...good, cost: "2" }]).length, 1);
 });
 

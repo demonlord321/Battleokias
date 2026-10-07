@@ -6,8 +6,7 @@
     "signets": [
       "arms"
     ],
-    "cost": 1,
-    "level": 1,
+    "grade": 1,
     "attack": 100,
     "defense": 100,
     "formation": "Formation effect text",
@@ -21,8 +20,7 @@
     "signets": [
       "arms"
     ],
-    "cost": 3,
-    "level": 3,
+    "grade": 3,
     "attack": 150,
     "defense": 300,
     "formation": "Formation effect text",
@@ -36,8 +34,7 @@
     "signets": [
       "arms"
     ],
-    "cost": 1,
-    "level": 1,
+    "grade": 1,
     "attack": 150,
     "defense": 50,
     "formation": "Formation effect text",
@@ -51,8 +48,7 @@
     "signets": [
       "arms"
     ],
-    "cost": 2,
-    "level": 2,
+    "grade": 2,
     "attack": 200,
     "defense": 150,
     "formation": "Formation effect text",
@@ -66,8 +62,7 @@
     "signets": [
       "arms"
     ],
-    "cost": 3,
-    "level": 3,
+    "grade": 3,
     "attack": 250,
     "defense": 100,
     "formation": "Formation effect text",
@@ -81,8 +76,7 @@
     "signets": [
       "arms"
     ],
-    "cost": 4,
-    "level": 4,
+    "grade": 4,
     "attack": 250,
     "defense": 300,
     "formation": "Formation effect text",
@@ -96,8 +90,7 @@
     "signets": [
       "arms"
     ],
-    "cost": 4,
-    "level": 4,
+    "grade": 4,
     "attack": 300,
     "defense": 250,
     "formation": "Formation effect text",
@@ -111,8 +104,7 @@
     "signets": [
       "arms"
     ],
-    "cost": 5,
-    "level": 5,
+    "grade": 5,
     "attack": 350,
     "defense": 350,
     "formation": "Formation effect text",
@@ -126,8 +118,7 @@
     "signets": [
       "arms"
     ],
-    "cost": 6,
-    "level": 6,
+    "grade": 6,
     "attack": 450,
     "defense": 400,
     "formation": "Formation effect text",
@@ -141,8 +132,7 @@
     "signets": [
       "magic"
     ],
-    "cost": 2,
-    "level": 2,
+    "grade": 2,
     "attack": 200,
     "defense": 100,
     "formation": "Formation effect text",
@@ -167,8 +157,7 @@
     "signets": [
       "alchemy"
     ],
-    "cost": 2,
-    "level": 2,
+    "grade": 2,
     "attack": 150,
     "defense": 150,
     "formation": "Formation effect text",
@@ -194,8 +183,7 @@
       "arms",
       "alchemy"
     ],
-    "cost": 2,
-    "level": 2,
+    "grade": 2,
     "attack": 120,
     "defense": 120,
     "formation": "Formation effect text",

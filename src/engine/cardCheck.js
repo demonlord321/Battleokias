@@ -7,10 +7,12 @@ import { SIGNETS } from "./cards.js";
 export const CARD_TYPES = ["unit", "spell", "field_spell", "trap", "equipment", "artifact", "monster", "formation"];
 
 // Fields every card needs, and the extra ones each type needs.
-const COMMON = { id: "string", name: "string", type: "string", signets: "array", cost: "number", text: "string", image: "string" };
+const COMMON = { id: "string", name: "string", type: "string", signets: "array", text: "string", image: "string" };
+// Units have a Grade (their Energy cost and rarity in one number); other cards have a cost.
 const BY_TYPE = {
-  unit: { level: "number", attack: "number", defense: "number", formation: "string" },
+  unit: { grade: "number", attack: "number", defense: "number", formation: "string" },
 };
+const DEFAULT_FIELDS = { cost: "number" };
 
 // IDs look like ARM-001, or ARM-ALC-001 for a card with more than one Signet.
 const ID_PATTERN = /^[A-Z]{3}(-[A-Z]{3})*-\d{3}$/;
@@ -28,7 +30,7 @@ export function checkCards(cards) {
     const where = `Card ${i + 1}${card?.id ? ` (${card.id})` : ""}`;
     if (typeOf(card) !== "object") return problems.push(`${where}: should be an object in { }.`);
 
-    const fields = { ...COMMON, ...(BY_TYPE[card.type] ?? {}) };
+    const fields = { ...COMMON, ...(BY_TYPE[card.type] ?? DEFAULT_FIELDS) };
     for (const [field, kind] of Object.entries(fields)) {
       if (!(field in card)) problems.push(`${where}: missing "${field}".`);
       else if (typeOf(card[field]) !== kind) problems.push(`${where}: "${field}" should be a ${kind}, not ${typeOf(card[field])}.`);
@@ -48,7 +50,12 @@ export function checkCards(cards) {
         if (!SIGNETS.includes(s)) problems.push(`${where}: unknown Signet "${s}". Use one of: ${SIGNETS.join(", ")}.`);
       }
     }
-    if (typeof card.cost === "number" && (card.cost < 0 || card.cost > 10 || !Number.isInteger(card.cost))) {
+    if (card.type === "unit") {
+      for (const old of ["cost", "level"]) if (old in card) problems.push(`${where}: units use "grade" instead of "${old}".`);
+      if (typeof card.grade === "number" && (card.grade < 1 || card.grade > 10 || !Number.isInteger(card.grade))) {
+        problems.push(`${where}: grade should be a whole number from 1 to 10.`);
+      }
+    } else if (typeof card.cost === "number" && (card.cost < 0 || card.cost > 10 || !Number.isInteger(card.cost))) {
       problems.push(`${where}: cost should be a whole number from 0 to 10.`);
     }
   });

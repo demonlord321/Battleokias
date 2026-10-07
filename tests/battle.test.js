@@ -3,12 +3,12 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { newGame, applyAction, checkAction, legalActions, targetSlot } from "../src/engine/engine.js";
 
-// A unit with the given cost, attack and defense. Every copy gets its own instance id.
+// A unit with the given Grade, attack and defense. Every copy gets its own instance id.
 let n = 0;
-const unit = (cost, attack, defense) => ({ id: `U-${++n}`, cardId: "U", name: `Unit${n}`, type: "unit", cost, attack, defense });
+const unit = (grade, attack, defense) => ({ id: `U-${++n}`, cardId: "U", name: `Unit${n}`, type: "unit", grade, attack, defense });
 const deckOf = (make, size = 30) => Array.from({ length: size }, make);
 
-// Player 0 starts. Both decks hold only 1-cost 100/100 units unless given others.
+// Player 0 starts. Both decks hold only Grade 1 100/100 units unless given others.
 function start(decks) {
   return newGame({ seed: 7, decks: decks ?? [deckOf(() => unit(1, 100, 100)), deckOf(() => unit(1, 100, 100))], startingPlayer: 0 });
 }
