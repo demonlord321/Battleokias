@@ -7,12 +7,13 @@
 
 export const UPS_SIZE = 9; // 3x3 Unit Position Slots, index = row * 3 + col
 export const SDZ_SIZE = 4; // Special Deck Zones
+export const STARTING_DEFENSE = 1000; // RULES.md placeholder until Dyllan's damage formula is set
 export const MAX_ENERGY_CAP = 10; // RULES.md: Energy works like Hearthstone's mana
 
 export function createPlayer(name, deck = []) {
   return {
     name,
-    defense: null, // Defense Points; starting value still to be set in RULES.md
+    defense: STARTING_DEFENSE, // Defense Points
     energy: 0, // Energy you can spend this turn
     maxEnergy: 0, // goes up by 1 at the start of each of your turns, to MAX_ENERGY_CAP
     deck: [...deck], // the Draw Pile; top of the pile is the end of the array
