@@ -3,6 +3,7 @@
 // so the engine, the tutorial overlay and click handlers can all find it.
 
 import { PLAYER_SLOTS, rotate } from "./layout.js";
+import { renderCard } from "./card.js";
 
 const els = { slots: {}, hands: [], counts: {} };
 
@@ -106,12 +107,7 @@ function renderStats(el, p, active) {
   el.classList.toggle("is-active", active);
 }
 
-function cardEl(card, faceUp) {
-  const el = document.createElement("div");
-  el.className = faceUp ? "card card-face" : "card card-back";
-  if (faceUp) el.innerHTML = `<span class="card-name">${card?.name ?? "Card"}</span>`;
-  return el;
-}
+const cardEl = (card, faceUp) => renderCard(card, faceUp);
 
 // Puts a card (or nothing) into a slot, keeping the slot's label.
 function fillSlot(slot, card) {

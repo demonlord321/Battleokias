@@ -23,7 +23,10 @@ Mapmaker (game board and screens), Advisor (balance reviews), Planner (plan and 
 
 ## Milestone 1: Headless rules engine (Developer)
 - [x] Engine skeleton in `src/engine/`: seeded RNG, per-player deck/hand/field/graveyard state, `applyAction()` (End Turn only), `npm test`
-- [ ] `cards.json` card definitions
+- [ ] `cards.json` card definitions (`id`, `name`, `type`, `cost`, `level`, `text` + per-type fields), Developer
+- [ ] Card faces with a frame colour per type, Mapmaker
+- [ ] Card types stage 1: Units, Spells, Traps
+- [ ] Card types stage 2 (one at a time): Field Spells, Equipment, Artifacts, Monsters (after unit attacks are designed)
 - [x] Coin flip, opening deal (4 and 5), Draw Phase each turn, seeded shuffle
 - [ ] Hand limits, empty Draw Pile rule
 - [ ] Game state; every move is an action passed to one `applyAction` function

@@ -30,10 +30,13 @@ Written up from Dyllan's notes. Open questions are marked **(?)**.
 | **Trap** | Set face-down, activated on the opponent's turn | (?) |
 | **Equipment** | (?) | (?) |
 | **Artifact** | (?) | (?) |
-| **Monster** | (?) how it differs from a Unit | (?) |
+| **Monster** | Deferred: defined once unit attacks are designed | (?) |
+
+Build order: **Units, Spells and Traps first**, then Field Spells, Equipment, Artifacts
+and Monsters one at a time.
 
 Open questions:
-- **(?)** How do Monsters differ from Units?
+- **(?)** What does a Unit card show besides name and Energy cost (attack, defense, level, effect text)?
 - **(?)** Do Equipment cards attach to a unit? What do Artifacts do?
 - **(?)** Which card types go in the Special Deck Zones?
 - **(?)** Which card types cost Energy, and how do card levels map to cost?
