@@ -51,7 +51,8 @@ Uses the placeholder rules in `RULES.md`; Dyllan refines them as we play.
 - [x] Hot-seat play so Dyllan can test both sides, Mapmaker
 - [x] Promotion lines (`d5c7f2e`, `9862607`; test deck still to rebuild): a unit only promotes into the next unit of its own line, and the line comes from the card's first Signet (Student to Apprentice to Graduate of Arms). Retire the placeholder Arms units of Grades 1 to 3 (ARM-001, 003, 004, 005) from the test decks, since the Arms line has only those three, Developer
 - [x] Drazel, Instructor of the Blade (`931c2cc`, `a7db9af`) (Grade 4, Arms/Mercenary, Swordsmen, 4000 Attack; Defense 1000 when summoned, or the printed Defense of the unit he promotes): add the `mercenary` Signet and the card, Developer
-- [ ] Practice Gear works on Grades 1 to 3 only: it can't be equipped to Grade 4+, and it goes to the Grave when its unit is promoted to Grade 4+, Developer
+- [x] Practice Gear works on Grades 1 to 3 only (`8c5a9b2`, `4ca0cc3`): it can't be equipped to Grade 4+, and it goes to the Grave when its unit is promoted to Grade 4+, Developer
+- [ ] Drazel copies the total Defense (Equipment included) when the unit's Equipment stays on through promotion, without counting its Defense bonus twice, Developer
 - [ ] Named units (Grade 4+): flavour text and Class fields in `data/cards.json`, shown on the card face, Developer + Mapmaker (waiting on Dyllan's first named units and Class list)
 - [ ] Dyllan playtests and replaces placeholder rules, Planner updates `RULES.md`
 

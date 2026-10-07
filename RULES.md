@@ -149,7 +149,8 @@ Open questions:
 
 **Effect:** Drazel halted his study of Defense and put everything into attack. His Defense is **1000** when he is summoned normally, or **equal to the Defense of the unit he promotes**.
 - Because his main Signet is Arms, he is in the Arms promotion line, so he can promote a Graduate of Arms (Defense 1500).
-- **(?)** Does "the unit he promotes" mean its printed Defense, or its Defense with Equipment? (Placeholder: printed Defense. Practice Gear goes to the Grave when he promotes, since it only works on Grades 1 to 3, so the question only matters for future Equipment that can stay on a Grade 4.)
+- **Equipment on the promoted unit (confirmed by Dyllan):** if that unit's Equipment stays on through the promotion, Drazel takes its **total** Defense, Equipment included. Practice Gear never stays (it's Grades 1 to 3 only), so this applies to future Equipment.
+  - Placeholder: the Equipment's Defense bonus is already part of that total, so it isn't added a second time while it stays on Drazel. Its Attack bonus still applies.
 
 ### Official sample units (School of Arms, from Dyllan)
 | Grade | Name | Attack | Defense |
