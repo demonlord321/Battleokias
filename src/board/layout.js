@@ -3,7 +3,7 @@
 //   col:   1      2     3     4      5
 //   row 1:       [SDZ] [SDZ] [SDZ] [SDZ]      Special Deck Zones (toward the centre)
 //   row 2:       [UPS] [UPS] [UPS] [Grave]
-//   row 3:       [UPS] [UPS] [UPS]
+//   row 3: [FRM] [UPS] [UPS] [UPS]            Formation Zone, above the FEZ
 //   row 4: [FEZ] [UPS] [UPS] [UPS] [Draw]     Field Effect Zone sits bottom-left
 //
 // That's your half. The opponent's half is the same thing rotated 180 degrees
@@ -27,6 +27,7 @@ export const PLAYER_SLOTS = [
   })),
   { zone: "grave", index: 0, row: 2, col: 5, label: "Grave" },
   { zone: "draw", index: 0, row: 4, col: 5, label: "Draw" },
+  { zone: "formation", index: 0, row: 3, col: 1, label: "Formation" },
   { zone: "fez", index: 0, row: 4, col: 1, label: "Field" },
 ];
 

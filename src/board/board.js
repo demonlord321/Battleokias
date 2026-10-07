@@ -119,7 +119,7 @@ function fillSlot(slot, card) {
 const PHASE_NAMES = { setup: "Setup", draw: "Draw Phase", prep1: "Preparation Phase I" };
 
 // Draws everything the state holds: hands, pile counts, and the cards in the
-// Unit Position Slots, Special Deck Zones and Field Effect Zone.
+// Unit Position Slots, Special Deck Zones, Formation Zone and Field Effect Zone.
 export function renderBoard(game, viewer = 0) {
   game.players.forEach((p, owner) => {
     const side = owner === viewer ? 0 : 1;
@@ -127,6 +127,7 @@ export function renderBoard(game, viewer = 0) {
     p.ups.forEach((card, i) => fillSlot(getSlot(side, "ups", i), card));
     p.specialZones.forEach((card, i) => fillSlot(getSlot(side, "sdz", i), card));
     fillSlot(getSlot(side, "fez"), p.fieldEffect);
+    fillSlot(getSlot(side, "formation"), p.formationZone ?? null);
     const hand = els.hands[owner === viewer ? 0 : 1];
     hand.innerHTML = "";
     p.hand.forEach((card) => hand.append(cardEl(card, owner === viewer)));

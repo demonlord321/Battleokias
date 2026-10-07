@@ -467,3 +467,6 @@ html, body {
 .stat-atk { color: #ffb38a !important; }
 .stat-def { color: #8fd3ff !important; }
 .hand-player .card-face:hover .card-formation { display: block; }
+
+.slot-formation { border-color: rgba(90, 111, 208, 0.7); background: rgba(40, 50, 120, 0.4); }
+.slot-formation .slot-label { letter-spacing: 0; font-size: calc(var(--h) * 0.105); }
