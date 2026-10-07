@@ -347,7 +347,7 @@
       "arms",
       "mercenary"
     ],
-    "cost": 1,
+    "cost": 2,
     "boost": {
       "attack": 500
     },
@@ -355,7 +355,8 @@
       "ARM-MER-001"
     ],
     "hitRule": "highestTotal",
-    "text": "Equip to Drazel, Instructor of the Blade only. He gets +500 Attack. Drazel does not conform to slaying the weak: while he is in your attacking Formation and its attack lands, the opponent's unit destroyed is the one with the highest Attack plus Defense.",
-    "image": "images/eqp-002.png"
+    "text": "Only 1 per deck. Equip to Drazel, Instructor of the Blade only. He gets +500 Attack. Drazel does not conform to slaying the weak: while he is in your attacking Formation and its attack lands, the opponent's unit destroyed is the one with the highest Attack plus Defense.",
+    "image": "images/eqp-002.png",
+    "maxCopies": 1
   }
 ]
