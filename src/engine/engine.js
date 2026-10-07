@@ -51,6 +51,20 @@ export function cardCost(card) {
   return card.grade ?? card.cost ?? 0;
 }
 
+// A player's set Formation, added up (RULES.md, Formations). Only the units in
+// the Formation's own slots count. Frontal Assault ("sum") adds their Attack and
+// Defense. Returns null if no Formation is set.
+export function formationStats(game, playerIndex) {
+  const p = game.players[playerIndex];
+  const f = p.formationZone;
+  if (!f) return null;
+  const units = f.slots.map((slot) => p.ups[slot]).filter(Boolean);
+  const missing = f.slots.length - units.length;
+  const attack = units.reduce((total, u) => total + u.attack, 0);
+  const defense = units.reduce((total, u) => total + u.defense, 0);
+  return { name: f.name, attack, defense, missing, complete: missing === 0 };
+}
+
 function handIndex(player, card) {
   if (typeof card === "number") return Number.isInteger(card) && card >= 0 && card < player.hand.length ? card : -1;
   return player.hand.findIndex((c) => c.id === card);
@@ -184,6 +198,30 @@ const ACTIONS = {
     },
   },
 
+  // { type: "setFormation", player, card }: put a Formation card from hand into the
+  // Formation Zone during Preparation Phase I. Placeholder until Dyllan decides:
+  // it costs the card's cost (0 for now), and a new one replaces the old, which goes to the Grave.
+  setFormation: {
+    check(game, action) {
+      const p = game.players[game.activePlayer];
+      if (game.phase !== "prep1") return "You can only set a Formation in Preparation Phase I.";
+      const i = handIndex(p, action.card);
+      if (i < 0) return "That card isn't in your hand.";
+      const card = p.hand[i];
+      if (card.type !== "formation") return "That isn't a Formation card.";
+      if (cardCost(card) > p.energy) return `${card.name} costs ${cardCost(card)} Energy and you have ${p.energy}.`;
+      return null;
+    },
+    apply(game, action) {
+      const p = game.players[game.activePlayer];
+      const [card] = p.hand.splice(handIndex(p, action.card), 1);
+      spendEnergy(p, cardCost(card));
+      if (p.formationZone) p.graveyard.push(p.formationZone);
+      p.formationZone = card;
+      game.log.push(`${p.name} sets the Formation ${card.name}.`);
+    },
+  },
+
   // { type: "attack", player, slot }: the unit in that slot attacks down its column.
   attack: {
     check(game, action) {
@@ -267,6 +305,7 @@ export function legalActions(game) {
   const p = game.players[player];
   const candidates = [{ type: "endTurn", player }, { type: "nextPhase", player }];
   p.hand.forEach((card, i) => {
+    candidates.push({ type: "setFormation", player, card: i });
     p.ups.forEach((_, slot) => {
       candidates.push({ type: "summon", player, card: i, slot });
       candidates.push({ type: "promote", player, card: i, slot });
