@@ -114,8 +114,17 @@ Built as `FRM-001` (all three Signets, `"slots": [0,1,2]`, `"combine": "sum"`).
 - If your Attack is **greater than or equal to** their Defense, the attack goes through and the opponent gains a **Damage Counter**.
 - If your Attack is lower, the attack fails.
 
+### Damage Grade and Defense Grade (confirmed by Dyllan)
+Every Formation card has two extra numbers:
+- **Damage Grade:** how many Damage Counters the Formation deals when its attack goes through. Damage Grade 1 deals 1 counter, and Damage Grade 3 deals 3.
+- **Defense Grade:** most Formations have **0 or 1**. It is subtracted from the incoming Formation's Damage Grade.
+- **Counters dealt** = attacker's Damage Grade minus defender's Defense Grade.
+  - Example: a Damage Grade 3 attack into a Defense Grade 1 Formation deals 2 counters.
+- **(?)** Frontal Assault's Damage Grade and Defense Grade. Placeholder: 1 and 0.
+- **(?)** Can the result drop below 1, so a hit deals no counters (e.g. Damage Grade 1 into Defense Grade 1)? Placeholder: it can drop to 0, never below.
+- **(?)** Does an incomplete Formation still give its Defense Grade? Placeholder: no, so it counts as Defense Grade 0.
+
 Open questions:
-- **(?)** Is it always **1** Damage Counter per successful attack, or can a big gap give more?
 - **(?)** If the opponent has no Formation (or it's broken), does your attack go through automatically?
 - **(?)** Does a failed attack do anything to the attacker, and are any units destroyed in a Formation battle?
 - **(?)** How many times can a Formation attack per Battle Phase? (Placeholder: once.)
@@ -146,7 +155,7 @@ Shown alongside each player's **Hand** (the zone where drawn cards go).
 - **Player Name**
 - **Damage Counters** (replace Defense Points, confirmed by Dyllan)
   - Each player starts at **0** Damage Counters and the maximum is **10**.
-  - You gain one when an opponent's Formation attack goes through.
+  - You gain counters when an opponent's Formation attack goes through: their Damage Grade minus your Defense Grade.
   - **Reaching 10 Damage Counters means you lose.**
 - **Energy:** the currency for playing higher-level cards.
   - Works like Hearthstone mana. Max Energy starts at **1** and rises by **1** at the
