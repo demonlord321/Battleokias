@@ -18,7 +18,9 @@ export const PLAYER_SLOTS = [
   ...[0, 1, 2, 3].map((i) => ({ zone: "sdz", index: i, row: 1, col: 2 + i, label: "Special" })),
   ...[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => ({
     zone: "ups",
-    index: i, // 0..8, reading order from the centre row outward: row = 1 + floor(i/3)
+    // Matches the engine's ups[] (index = row * 3 + col): row 0 is the front row,
+    // nearest the centre; col 0 is the left column as that player sees it.
+    index: i,
     row: 2 + Math.floor(i / 3),
     col: 2 + (i % 3),
     label: "",

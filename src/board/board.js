@@ -82,10 +82,23 @@ function cardEl(card, faceUp) {
   return el;
 }
 
-// Draws the parts of the state the board can show today: hands and pile counts.
-// Field cards get drawn into their slots once the engine places them (Milestone 1).
+// Puts a card (or nothing) into a slot, keeping the slot's label.
+function fillSlot(slot, card) {
+  slot.querySelector(".card")?.remove();
+  slot.classList.toggle("is-filled", !!card);
+  if (card) slot.prepend(cardEl(card, !card.faceDown));
+}
+
+const PHASE_NAMES = { setup: "Setup", draw: "Draw Phase", prep1: "Preparation Phase I" };
+
+// Draws everything the state holds: hands, pile counts, and the cards in the
+// Unit Position Slots, Special Deck Zones and Field Effect Zone.
 export function renderBoard(game, viewer = 0) {
   game.players.forEach((p, owner) => {
+    const side = owner === viewer ? 0 : 1;
+    p.ups.forEach((card, i) => fillSlot(getSlot(side, "ups", i), card));
+    p.specialZones.forEach((card, i) => fillSlot(getSlot(side, "sdz", i), card));
+    fillSlot(getSlot(side, "fez"), p.fieldEffect);
     const hand = els.hands[owner === viewer ? 0 : 1];
     hand.innerHTML = "";
     p.hand.forEach((card) => hand.append(cardEl(card, owner === viewer)));
@@ -93,6 +106,8 @@ export function renderBoard(game, viewer = 0) {
     els.counts[slotKey(owner === viewer ? 0 : 1, "grave", 0)].textContent = p.graveyard.length;
   });
   const banner = document.querySelector("#turn-banner");
-  banner.textContent = game.activePlayer === viewer ? "Your turn" : "Opponent's turn";
+  const who = game.activePlayer === viewer ? "Your turn" : "Opponent's turn";
+  const phase = PHASE_NAMES[game.phase] ?? game.phase;
+  banner.textContent = game.turn > 0 ? `Turn ${game.turn} · ${who} · ${phase}` : who;
   banner.classList.toggle("is-opponent", game.activePlayer !== viewer);
 }

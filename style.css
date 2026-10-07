@@ -334,3 +334,7 @@ html, body {
 .tutorial-card p { line-height: 1.5; margin: 0 0 0.9rem; }
 .tutorial-card p:last-child { margin-bottom: 0; }
 .tutorial-soon { color: var(--text-dim); font-size: 0.95rem; }
+
+/* Cards sitting in a field slot fill it exactly. */
+.slot .card { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; }
+.slot.is-filled .slot-label { display: none; }
