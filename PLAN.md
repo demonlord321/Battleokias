@@ -10,7 +10,7 @@ Mapmaker (game board and screens), Advisor (balance reviews), Planner (plan and 
 - [x] Project skeleton: `index.html`, `style.css`, `src/` with a simple screen switcher, Mapmaker
 - [x] Main menu screen: game title "Battle'O'Kias" and a New Game button, Mapmaker
 - [x] New Game opens an empty game screen stub (placeholder for the board), Mapmaker
-- [ ] Tutorial button on the menu, opening a placeholder Tutorial screen, Mapmaker
+- [x] Tutorial button on the menu, opening a placeholder Tutorial screen, Mapmaker
 - [ ] Load, Settings and Quit come later
 
 ## Milestone 0: Rules on one page (Dyllan, with Planner)
