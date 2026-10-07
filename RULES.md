@@ -17,7 +17,8 @@ Written up from Dyllan's notes. Open questions are marked **(?)**. Rules are ref
    - **(?)** Is there a limit or cost on how many units can be summoned per turn?
    - **(?)** Are traps and spells set face-down until triggered or activated?
 3. **Battle Phase:** you can attack only if you have a **Formation** set (details still to come).
-4. _(further phases to come)_
+4. **Preparation Phase II:** at the start, choose one of your four Special Decks and draw from it (see Special Decks).
+5. _(further phases to come)_
 
 ## Still to define
 - ~~Win condition~~ (10 Damage Counters, see Player stats)
@@ -48,6 +49,26 @@ The game simulates medieval warfare: your units are your army, and armies need n
 - **(?)** Is that spread a deck-building rule (minimums, or exact numbers), or just how the starter and test decks are built?
 - **(?)** What fills the other 25 cards? With 3 Frontal Assault and 3 Arms Academy, 19 slots are still open.
 
+## Special Decks (confirmed by Dyllan)
+Alongside the 60-card main deck, each player has **four Special Decks**, one in each Special Deck Zone.
+- Each Special Deck holds up to **15 cards**, all of **one card type**.
+- **Equipment does not go in the main deck.** It goes in a Special Deck.
+- Example setup:
+  1. Equipment
+  2. Artifacts
+  3. Monsters
+  4. Items (a new card type, details to come)
+- **Spells and Traps** can go in the main deck **or** have their own Special Deck. If you choose a Spell or Trap Special Deck, you **can't have any Spells or Traps in your main deck**.
+- **Preparation Phase II:** at the start of it, you choose one of your four Special Decks to draw from.
+
+Open questions (placeholders in brackets):
+- **(?)** How many cards do you draw in Preparation Phase II? (1.)
+- **(?)** What can you do in Preparation Phase II: play and equip cards? Can you summon, promote, move or retire units? (Play Spells, Traps, Equipment and other Special Deck cards only. Moving and retiring stay in Preparation Phase I, as Advisor suggested.)
+- **(?)** Are Artifacts, Monsters and Items also Special Deck only, like Equipment? (Yes.)
+- **(?)** Does a Spell Special Deck ban only Spells from your main deck, or Traps too? (Both, as written above.)
+- **(?)** Can two Special Decks be the same type, and must you fill all four? (No, and no.)
+- **(?)** Does the 3-copy limit apply inside Special Decks? (Yes.)
+
 ## Card types
 | Type | What it does | Where it goes |
 |---|---|---|
@@ -55,9 +76,10 @@ The game simulates medieval warfare: your units are your army, and armies need n
 | **Spell** | Spells with effects | (?) |
 | **Field Spell** | Affects the field | Field Effect Zone (?) |
 | **Trap** | Set face-down, activated on the opponent's turn | (?) |
-| **Equipment** | Placed over a unit with a shared Signet; boosts or changes it (see Equipment) | On a unit in the grid |
+| **Equipment** | Placed over a unit with a shared Signet; boosts or changes it (see Equipment). Special Deck only | On a unit in the grid |
 | **Artifact** | (?) | (?) |
 | **Monster** | Deferred: defined once unit attacks are designed | (?) |
+| **Item** | New type, details to come. Special Deck | (?) |
 | **Formation** | Names a pattern of filled grid slots and gives its Attack and Defense for battle (see Formations) | Formation Zone |
 
 Build order: **Units, Spells and Traps first**, then Field Spells, Equipment, Artifacts
@@ -65,7 +87,6 @@ and Monsters one at a time.
 
 Open questions:
 - **(?)** What do Artifacts do?
-- **(?)** Which card types go in the Special Deck Zones?
 - **(?)** Which card types cost Energy, and how do card levels map to cost?
 
 ## Unit cards
@@ -280,12 +301,11 @@ Full board as seen by the player:
 - **Unit Position Slots (UPS):** a 3x3 grid of 9 slots for units.
 - **Draw Pile:** bottom right (top left for the opponent).
 - **Grave Pile:** directly above the Draw Pile; the discard zone.
-- **Special Deck Zones (SDZ):** four zones above the 3x3 grid.
+- **Special Deck Zones (SDZ):** four zones above the 3x3 grid. Each holds one of your Special Decks.
 - **Field Effect Zone (FEZ):** bottom left of the grid.
 - **Formation Zone (FZ):** directly above the Field Effect Zone; holds Formation cards.
 
 Open questions:
-- **(?)** What goes in the Special Deck Zones, and how are they used?
 - **(?)** What goes in the Field Effect Zone? One field card at a time?
 - **(?)** Where are spells and traps set: in the UPS grid or elsewhere?
 
