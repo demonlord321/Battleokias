@@ -109,6 +109,8 @@ export function formationStats(game, playerIndex) {
 // - Against an active Formation: it lands if Attack >= their Defense, deals
 //   Damage Grade minus their Defense Grade (at least 1), and destroys their
 //   lowest-Grade unit in the Formation. `destroys` lists the tied candidates.
+//   With Drazel's Katana (hitRule "highestTotal") working on a unit in the attacking
+//   Formation, it destroys their unit with the highest Attack + Defense instead.
 // - Against no active Formation: it always lands, deals exactly 1 counter, and destroys nothing.
 export function attackPreview(game, playerIndex = game.activePlayer) {
   const mine = formationStats(game, playerIndex);
@@ -122,9 +124,29 @@ export function attackPreview(game, playerIndex = game.activePlayer) {
   if (hits && !guarded) counters = 1;
   if (hits && guarded) {
     counters = Math.max(MIN_COUNTERS, mine.damageGrade - theirs.defenseGrade);
-    destroys = lowestGradeSlots(game, 1 - playerIndex);
+    destroys = attackerHitRule(game, playerIndex) === "highestTotal" ? highestTotalSlots(game, 1 - playerIndex) : lowestGradeSlots(game, 1 - playerIndex);
   }
   return { attack, defense, hits, counters, destroys, mine, theirs: guarded ? theirs : null };
+}
+
+// A hit rule from working Equipment on a unit in the player's Formation (Drazel's Katana), or null.
+// Placeholder (Planner): the unit has to be in the attacking Formation.
+function attackerHitRule(game, playerIndex) {
+  const p = game.players[playerIndex];
+  for (const slot of p.formationZone?.slots ?? []) {
+    const gear = p.ups[slot]?.equipment;
+    if (gear?.hitRule && !gear.readyNextTurn) return gear.hitRule;
+  }
+  return null;
+}
+
+// The Formation slots holding the player's unit(s) with the highest Attack + Defense, Equipment included.
+export function highestTotalSlots(game, playerIndex) {
+  const p = game.players[playerIndex];
+  const slots = (p.formationZone?.slots ?? []).filter((slot) => p.ups[slot]);
+  const total = (slot) => { const s = unitStats(game, playerIndex, slot); return s.attack + s.defense; };
+  const top = Math.max(...slots.map(total));
+  return slots.filter((slot) => total(slot) === top);
 }
 
 // The Formation slots holding the player's lowest-Grade unit(s).
@@ -515,6 +537,7 @@ const ACTIONS = {
       const unit = isSlot(p, action.slot) ? p.ups[action.slot] : null;
       if (!unit) return "There's no unit there to equip.";
       if (!(card.signets ?? []).some((s) => (unit.signets ?? []).includes(s))) return `${card.name} can only go on a unit with the same Signet.`;
+      if (card.onlyOn && !card.onlyOn.includes(catalogueId(unit))) return `${card.name} can't go on ${unit.name}.`;
       if (!fitsGrade(card, unit)) return `${card.name} only goes on Grade ${card.maxGrade} or lower.`;
       if (unit.equipment) return `${unit.name} already has ${unit.equipment.name}.`;
       if (cardCost(card) > p.energy) return `${card.name} costs ${cardCost(card)} Energy and you have ${p.energy}.`;

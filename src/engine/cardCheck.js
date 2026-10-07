@@ -84,6 +84,14 @@ export function checkCards(cards) {
     }
     if ("maxGrade" in card && (card.type !== "equipment" || !Number.isInteger(card.maxGrade) || card.maxGrade < 1))
       problems.push(`${where}: "maxGrade" goes on Equipment and should be a whole number from 1 up.`);
+    if ("onlyOn" in card) {
+      // Specialised Equipment (Drazel's Katana): only these unit ids can hold it.
+      const ids = new Set(cards.filter((c) => c.type === "unit").map((c) => c.id));
+      if (card.type !== "equipment" || !Array.isArray(card.onlyOn) || !card.onlyOn.length) problems.push(`${where}: "onlyOn" goes on Equipment and should be a list of unit ids.`);
+      else for (const id of card.onlyOn) if (!ids.has(id)) problems.push(`${where}: "onlyOn" names "${id}", which isn't a unit in cards.json.`);
+    }
+    if ("hitRule" in card && (card.type !== "equipment" || !["highestTotal"].includes(card.hitRule)))
+      problems.push(`${where}: "hitRule" goes on Equipment and can be "highestTotal".`);
     if (card.type === "equipment" && "boost" in card) {
       // An Equipment boost (Practice Gear): flat { attack, defense } and/or { attackPercent, defensePercent }, whole numbers.
       const b = card.boost;

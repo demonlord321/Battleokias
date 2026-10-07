@@ -3,7 +3,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { newGame, applyAction, unitStats } from "../src/engine/engine.js";
+import { newGame, applyAction, checkAction, attackPreview, unitStats } from "../src/engine/engine.js";
 import { checkCards } from "../src/engine/cardCheck.js";
 
 const cards = JSON.parse(readFileSync(new URL("../data/cards.json", import.meta.url)));
@@ -57,4 +57,41 @@ test("if the Equipment stays on, he takes the total Defense, and its Defense bon
   // Back in the Grave, the Equipment is an ordinary card again.
   assert.equal(applyAction(game, { type: "retire", player: 0, slot: 0 }).ok, true);
   assert.equal(p.graveyard.find((c) => c.id === "ARMOUR#1").defenseCopied, undefined);
+});
+
+// Drazel's Katana (RULES.md 9c73e90): Drazel only, +500 Attack, and while he's in the attacking
+// Formation a landed hit destroys the defender's unit with the highest Attack + Defense.
+test("the Katana only goes on Drazel and gives him +500 Attack", () => {
+  const game = start();
+  const p = game.players[0];
+  p.ups[0] = copy("ARM-012");
+  p.ups[1] = { ...copy("ARM-MER-001"), defense: 1000 }; // as if summoned
+  p.hand.push(copy("EQP-002"));
+  const k = p.hand.length - 1;
+  assert.equal(checkAction(game, { type: "equip", player: 0, card: k, slot: 0 }), "Drazel's Katana can't go on Graduate of Arms.");
+  assert.equal(applyAction(game, { type: "equip", player: 0, card: k, slot: 1 }).ok, true);
+  assert.deepEqual(unitStats(game, 0, 1), { attack: 4500, defense: 1000 });
+});
+
+test("with the Katana in the attacking Formation, a hit picks the highest Attack + Defense", () => {
+  const game = start();
+  const [me, them] = game.players;
+  const formation = byId["FRM-001"];
+  me.formationZone = formation;
+  them.formationZone = formation;
+  const slots = formation.slots;
+  slots.forEach((s, i) => (me.ups[s] = i === 0 ? { ...copy("ARM-MER-001"), defense: 1000 } : copy("ARM-012", i)));
+  // Defender: Students everywhere except one Graduate, which is the strongest.
+  slots.forEach((s, i) => (them.ups[s] = copy(i === 1 ? "ARM-012" : "ARM-010", i)));
+  assert.equal(attackPreview(game, 0).hits, true);
+  assert.equal(attackPreview(game, 0).destroys.length > 1, true); // lowest Grade: the Students
+  me.ups[slots[0]].equipment = copy("EQP-002");
+  assert.deepEqual(attackPreview(game, 0).destroys, [slots[1]]);
+  // Set in Phase II, it isn't working yet.
+  me.ups[slots[0]].equipment.readyNextTurn = true;
+  assert.notDeepEqual(attackPreview(game, 0).destroys, [slots[1]]);
+});
+
+test("the card check rejects onlyOn ids that aren't units", () => {
+  assert.ok(checkCards([{ ...byId["EQP-002"], onlyOn: ["NOPE-001"] }]).some((m) => /onlyOn/.test(m)));
 });
