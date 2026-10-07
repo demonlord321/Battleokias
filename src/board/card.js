@@ -1,5 +1,5 @@
 // Card faces. One frame for every card, coloured by type, reading the fields
-// from cards.json: { id, name, type, cost, level, text, ... }.
+// from cards.json: { id, name, type, grade (falls back to cost), text, ... }.
 // Unit cards (RULES.md): the unit image fills the card as its background, with an
 // Attack stat, a Defense stat and a Formation Effect. Fields: image, attack, defense, formation.
 
@@ -41,6 +41,7 @@ export function renderCard(card, faceUp = true) {
     return el;
   }
   const type = CARD_TYPES[card?.type] ?? { label: card?.type ?? "Card", color: "#9a92b8" };
+  const grade = card?.grade ?? card?.cost ?? null;
   el.className = `card card-face type-${card?.type ?? "unknown"}`;
   el.style.setProperty("--type-color", type.color);
   el.dataset.cardId = card?.id ?? "";
@@ -51,11 +52,11 @@ export function renderCard(card, faceUp = true) {
   el.innerHTML = `
     <div class="card-top">
       <span class="card-signets">${signetIcons(card?.signets)}</span>
-      ${card?.cost != null ? `<span class="card-cost" title="Energy cost">${esc(card.cost)}</span>` : ""}
+      ${grade != null ? `<span class="card-cost card-grade" data-grade="${esc(Math.min(grade, 6))}" title="Grade ${esc(grade)}: costs ${esc(grade)} Energy">${esc(grade)}</span>` : ""}
     </div>
     <div class="card-name">${esc(card?.name ?? "Card")}</div>
     <div class="card-art"></div>
-    <div class="card-type">${esc(type.label)}${card?.level ? ` <span class="card-level">${"★".repeat(card.level)}</span>` : ""}</div>
+    <div class="card-type">${esc(type.label)}</div>
     ${isUnit && card?.formation ? `<div class="card-formation"><b>Formation:</b> ${esc(card.formation)}</div>` : ""}
     <div class="card-text">${esc(card?.text)}</div>
     ${isUnit ? `<div class="card-stats">
