@@ -157,6 +157,8 @@ Open questions:
 - **(?)** Must the Grade 3 be an Arms unit? Which slot does it go into, and what if your grid is full?
 - **(?)** What does Arms Academy cost to play, and in which phase?
 - **(?)** Can the arriving Grade 3 attack that turn? (It would count toward a Formation straight away.)
+- **(?)** Does Arms Academy also allow extra promotions per turn, or is that left to other Field Spells?
+- Advisor suggests a limit of one unit in the Academy at a time, so it doesn't give a free Grade 3 every turn.
 
 ## Placeholder rules for the first Arms vs Arms test game
 These are **temporary** so a units-only game can be played and tuned. Dyllan will replace them.
