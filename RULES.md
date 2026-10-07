@@ -2,6 +2,8 @@
 
 Written up from Dyllan's notes. Open questions are marked **(?)**. Rules are refined as we go, and balance is tuned as cards are added.
 
+**The world (Dyllan):** a war-torn world where institutes (the Schools) train warriors to fight for their ambitions.
+
 **Balance approach (Dyllan):** deck building is most of the battle in a TCG. Exact mirror matches (both players with identical decks) are not a fair way to judge balance. Test with different deck builds from the same card pool instead.
 
 ## Setup
@@ -114,6 +116,15 @@ A Unit card shows:
 Open questions:
 - A Grade N unit costs **N Energy** to summon normally.
 - **(?)** What is the Grade range (Energy caps at 10)?
+
+### Named units (Grade 4 and up, from Dyllan)
+- From **Grade 4 upward**, units are **named** characters rather than generic ranks like Student or Graduate.
+- Named units also carry **flavour text** (story only, no rules effect) and a new typing called a **Class**.
+- Grades 1 to 3 have no name, flavour text or Class.
+- **(?)** What Classes are there?
+- **(?)** Does a unit's Class do anything in play (for example, a Formation or Field Spell that needs a certain Class), or is it just a label for now?
+- **(?)** Is each named unit one of a kind? (Placeholder: only one copy of the same named unit on your field at a time, but still no deck limit.)
+- **(?)** Where does the Class show on the card? (Placeholder: under the name, next to the Signet symbols.)
 
 ### Official sample units (School of Arms, from Dyllan)
 | Grade | Name | Attack | Defense |

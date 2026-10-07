@@ -49,6 +49,7 @@ Uses the placeholder rules in `RULES.md`; Dyllan refines them as we play.
 - [x] Promotion: exactly one Grade up, costs the difference, one per turn, Developer (`promote` move) + Mapmaker (highlight valid units)
 - [x] Win screen when Defense hits 0, Mapmaker
 - [x] Hot-seat play so Dyllan can test both sides, Mapmaker
+- [ ] Named units (Grade 4+): flavour text and Class fields in `data/cards.json`, shown on the card face, Developer + Mapmaker (waiting on Dyllan's first named units and Class list)
 - [ ] Dyllan playtests and replaces placeholder rules, Planner updates `RULES.md`
 
 ## Milestone 2: Playable board
@@ -61,8 +62,8 @@ Uses the placeholder rules in `RULES.md`; Dyllan refines them as we play.
 - [ ] Board rendering wired to the engine state, Mapmaker + Developer
 - [ ] Click or drag to play and attack, End Turn button, game log
 - [ ] Hot-seat play
-- [ ] Computer opponent (Dyllan's request): Player 2 played by a bot that picks from `legalActions`, starting simple (fill the Formation, promote, attack when the hit lands), Developer
-- [ ] Start screen choice: Play vs Computer or Hot-seat; the computer's moves play out with a short delay and show in the game log; no handover screen in vs Computer mode, Mapmaker
+- [x] Computer opponent (Dyllan's request; `9850f13`, decisions use `playerView`, so it can't see your hand or decks): Player 2 played by a bot that picks from `legalActions`, starting simple (fill the Formation, promote, attack when the hit lands), Developer
+- [x] Start screen choice (`f6006b5`): Play vs Computer or Hot-seat; the computer's moves play out with a short delay and show in the game log; no handover screen in vs Computer mode, Mapmaker
 
 ## Milestone 2.5: Tutorial (also our demo)
 - [ ] Tutorial script written from the Milestone 0 rules: one step per rule (win condition, resource, playing a card, attacking, end turn), Planner drafts, Dyllan approves
