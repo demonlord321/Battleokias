@@ -780,12 +780,13 @@ export function applyAction(game, action) {
   return { ok: true };
 }
 
-// Player Grade (RULES.md a923370): the highest unit Grade on your field right now, 0 when it's
-// empty. You can't bring out a unit more than one Grade above it, however cheap it is.
-// Placeholders: it drops when your top unit leaves the field, and Arms Academy's Graduate ignores it.
-// Stored as p.playerGrade after every action for the board; checks work it out fresh.
+// Player Grade (RULES.md 163018e): the highest unit Grade you've had on the field this game,
+// starting at 0. It never drops, even when that unit is destroyed. You can't bring out a unit
+// more than one Grade above it, however cheap it is. Placeholder: Arms Academy's Graduate ignores it.
+// Stored as p.playerGrade after every action, for the board.
 export function playerGrade(game, playerIndex) {
-  return Math.max(0, ...game.players[playerIndex].ups.filter(Boolean).map((u) => u.grade ?? 0));
+  const p = game.players[playerIndex];
+  return Math.max(p.playerGrade ?? 0, ...p.ups.filter(Boolean).map((u) => u.grade ?? 0));
 }
 function updatePlayerGrades(game) {
   game.players.forEach((p, i) => (p.playerGrade = playerGrade(game, i)));

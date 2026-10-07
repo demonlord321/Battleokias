@@ -33,11 +33,14 @@ test("even a cheap unit can't come out more than one Grade above your Player Gra
   assert.equal(checkAction(game, { type: "summon", player: 0, card: "ARM-MER-001#1", slot: 1 }), null);
 });
 
-test("Player Grade drops when the top unit leaves the field (placeholder)", () => {
+test("Player Grade never drops: lose your Grade 3 and you can still bring out a Grade 4", () => {
   const game = newGame({ seed: 4, decks: [filler(), filler()], startingPlayer: 0 });
   const p = game.players[0];
+  p.energy = 10;
   p.ups[0] = copy("ARM-010");
   p.ups[1] = copy("ARM-012");
   assert.equal(applyAction(game, { type: "retire", player: 0, slot: 1 }).ok, true);
-  assert.equal(p.playerGrade, 1);
+  assert.equal(p.playerGrade, 3);
+  p.hand.push(copy("ARM-MER-001"));
+  assert.equal(checkAction(game, { type: "summon", player: 0, card: "ARM-MER-001#1", slot: 1 }), null);
 });
