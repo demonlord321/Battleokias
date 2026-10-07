@@ -58,6 +58,7 @@ export function buildBoard(container) {
   const centre = document.createElement("div");
   centre.className = "centre-line";
   centre.innerHTML = `<span class="turn-banner" id="turn-banner"></span>`;
+  buildPhaseTracker();
 
   const table = document.createElement("div");
   table.className = "table";
@@ -213,6 +214,7 @@ function renderAcademy(side, p, game, ui) {
 
 export const PHASE_NAMES = {
   setup: "Setup",
+  start: "Start Phase",
   draw: "Draw Phase",
   prep1: "Preparation Phase I",
   battle: "Battle Phase",
@@ -282,4 +284,47 @@ export function renderBoard(game, viewer = 0, ui = {}) {
   const phase = PHASE_NAMES[game.phase] ?? game.phase;
   banner.textContent = game.turn > 0 ? `Turn ${game.turn} · ${active.name} · ${phase}` : active.name;
   banner.classList.toggle("is-opponent", game.activePlayer !== viewer);
+  renderPhaseTracker(game, viewer);
+}
+
+// Phase tracker: the six phases of a turn in order, with the current one lit and what you
+// can do in it. Phases the engine doesn't have yet simply never light up.
+export const PHASES = [
+  { id: "start", short: "SPh", hint: "Activate set Spells or Traps" },
+  { id: "draw", short: "DPh", hint: "Draw from your main deck" },
+  { id: "prep1", short: "PPh1", hint: "Summon units and set cards" },
+  { id: "battle", short: "BPh", hint: "Attack your opponent" },
+  { id: "prep2", short: "PPh2", hint: "Draw from a Special Deck, set cards" },
+  { id: "end", short: "EPh", hint: "Activate set cards if needed" },
+];
+
+function buildPhaseTracker() {
+  document.querySelector("#phase-tracker")?.remove();
+  const el = document.createElement("ol");
+  el.id = "phase-tracker";
+  el.className = "phase-tracker";
+  el.innerHTML = PHASES.map((ph) =>
+    `<li class="phase-step" data-phase="${ph.id}" title="${PHASE_NAMES[ph.id]}: ${ph.hint}">` +
+    `<span class="phase-short">${ph.short}</span><span class="phase-name">${PHASE_NAMES[ph.id]}</span>` +
+    `<span class="phase-hint">${ph.hint}</span></li>`).join("");
+  document.querySelector("#game-screen")?.append(el);
+}
+
+// Ticks only the phases actually played this turn, so a phase the engine skips never looks done.
+let trackerTurn = null;
+const phasesSeen = new Set();
+
+function renderPhaseTracker(game, viewer) {
+  const el = document.querySelector("#phase-tracker");
+  if (!el) return;
+  const turnKey = `${game.turn}:${game.activePlayer}`;
+  if (turnKey !== trackerTurn) { trackerTurn = turnKey; phasesSeen.clear(); }
+  phasesSeen.add(game.phase);
+  const at = PHASES.findIndex((ph) => ph.id === game.phase);
+  el.hidden = game.turn === 0 || game.phase === "over";
+  el.classList.toggle("is-opponent", game.activePlayer !== viewer);
+  el.querySelectorAll(".phase-step").forEach((li, i) => {
+    li.classList.toggle("is-current", i === at);
+    li.classList.toggle("is-done", i !== at && phasesSeen.has(PHASES[i].id));
+  });
 }
