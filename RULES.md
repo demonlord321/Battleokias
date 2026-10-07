@@ -18,6 +18,7 @@ Written up from Dyllan's notes. Open questions are marked **(?)**. Rules are ref
    - **(?)** Are traps and spells set face-down until triggered or activated?
 3. **Battle Phase:** you can attack only if you have a **Formation** set (details still to come).
 4. **Preparation Phase II:** at the start, choose one of your four Special Decks and draw from it (see Special Decks).
+   - **(?)** Where does it sit? Built as a placeholder **between Preparation Phase I and the Battle Phase** (`698d902`), so Gear drawn there helps that turn's attack.
 5. _(further phases to come)_
 
 ## Still to define
@@ -68,6 +69,11 @@ Open questions (placeholders in brackets):
 - **(?)** Does a Spell Special Deck ban only Spells from your main deck, or Traps too? (Both, as written above.)
 - **(?)** Can two Special Decks be the same type, and must you fill all four? (No, and no.)
 - **(?)** Does the 3-copy limit apply inside Special Decks? (Yes.)
+- **(?)** Do Special Decks count toward the 60 cards, or are they on top of the main deck? (On top.)
+- **(?)** Are Special Decks shuffled, or do you pick the card you want? (Shuffled.)
+- **(?)** Does the player going first get a Special Deck draw on their first turn? (No.)
+- **(?)** Is there a hand limit, now that you draw 2 cards a turn? (No limit yet.)
+- Built placeholders (`698d902`): Equipment and Field Spells can be played in Phase I or II. Summoning, promoting, moving, retiring, Formations and the Academy stay in Phase I only.
 
 ## Card types
 | Type | What it does | Where it goes |
