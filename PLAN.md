@@ -10,6 +10,7 @@ Mapmaker (game board and screens), Advisor (balance reviews), Planner (plan and 
 - [x] Project skeleton: `index.html`, `style.css`, `src/` with a simple screen switcher, Mapmaker
 - [x] Main menu screen: game title "Battle'O'Kias" and a New Game button, Mapmaker
 - [x] New Game opens an empty game screen stub (placeholder for the board), Mapmaker
+- [ ] Tutorial button on the menu, opening a placeholder Tutorial screen, Mapmaker
 - [ ] Load, Settings and Quit come later
 
 ## Milestone 0: Rules on one page (Dyllan, with Planner)
@@ -33,6 +34,14 @@ Mapmaker (game board and screens), Advisor (balance reviews), Planner (plan and 
 - [ ] Board rendering wired to the engine state, Mapmaker + Developer
 - [ ] Click or drag to play and attack, End Turn button, game log
 - [ ] Hot-seat play
+
+## Milestone 2.5: Tutorial (also our demo)
+- [ ] Tutorial script written from the Milestone 0 rules: one step per rule (win condition, resource, playing a card, attacking, end turn), Planner drafts, Dyllan approves
+- [ ] Steps stored as data in `data/tutorial.json` (text, highlight target, allowed action), so wording changes need no code
+- [ ] Scripted match support in the engine: fixed decks, fixed seed, and only the step's allowed action is accepted, Developer
+- [ ] Tutorial overlay on the board: text box, highlighted zone or card, Next button, Mapmaker
+- [ ] Rules reference pages reachable from the tutorial, Mapmaker
+- [ ] Ends with a short free game against a simple opponent, so it doubles as the demo
 
 ## Milestone 3: Opponent AI
 - [ ] Heuristic AI, single-player against it
