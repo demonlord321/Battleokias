@@ -305,7 +305,8 @@ Open questions (placeholders in brackets):
 - **Drazel must be in your attacking Formation** for the Katana's effect to work (confirmed by Dyllan).
 - Placeholders until Dyllan decides:
   - Attack + Defense uses each unit's current stats, Equipment included. On a tie, the defender picks, as with the normal rule.
-  - Signets Arms and Mercenary, the same as Drazel; normal Equipment cost (1 Energy); Special Deck only like all Equipment; no Grade limit.
+  - Signets Arms and Mercenary, the same as Drazel; Special Deck only like all Equipment; no Grade limit.
+- **Cost 2 Energy** and **only 1 copy per deck** (confirmed by Dyllan, for testing). At 3 copies and cost 1 it won 79% of sims. Making the destroy need Drazel's Attack to beat the target's Defense was turned down, since Dyllan thinks it would swing balance too far the other way.
 - Specialised Equipment is a new idea: Equipment that names the one unit it can go on.
 
 ## Placeholder rules for the first Arms vs Arms test game
