@@ -43,7 +43,7 @@ Open questions:
 | **Equipment** | (?) | (?) |
 | **Artifact** | (?) | (?) |
 | **Monster** | Deferred: defined once unit attacks are designed | (?) |
-| **Formation** | (?) likely tied to unit placement in the 3x3 grid | (?) |
+| **Formation** | Uses the 3x3 grid; details to come | Formation Zone |
 
 Build order: **Units, Spells and Traps first**, then Field Spells, Equipment, Artifacts
 and Monsters one at a time.
@@ -92,6 +92,7 @@ Full board as seen by the player:
 
 ```
                               [FEZ]        <- opponent Field Effect Zone
+                              [FZ ]        <- opponent Formation Zone
  [Draw ]    [UPS][UPS][UPS]
             [UPS][UPS][UPS]               opponent
  [Grave]    [UPS][UPS][UPS]
@@ -101,6 +102,7 @@ Full board as seen by the player:
         [UPS][UPS][UPS]       [Grave]
         [UPS][UPS][UPS]                   player
         [UPS][UPS][UPS]       [Draw ]
+ [FZ ]                                   <- player Formation Zone
  [FEZ]                                   <- player Field Effect Zone
 ```
 
@@ -109,6 +111,7 @@ Full board as seen by the player:
 - **Grave Pile:** directly above the Draw Pile; the discard zone.
 - **Special Deck Zones (SDZ):** four zones above the 3x3 grid.
 - **Field Effect Zone (FEZ):** bottom left of the grid.
+- **Formation Zone (FZ):** directly above the Field Effect Zone; holds Formation cards.
 
 Open questions:
 - **(?)** What goes in the Special Deck Zones, and how are they used?
