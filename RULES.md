@@ -141,6 +141,23 @@ Open questions:
 - **(?)** Does playing a Formation card cost Energy? Can you swap it for another Formation? (Placeholders built: 0 Energy, and the old one goes to the Grave.)
 - **(?)** Do units that just arrived count toward the Formation on the turn they're summoned or promoted?
 
+## Field Spells
+A Field Spell goes in the **Field Effect Zone (FEZ)** and stays there, giving an ongoing effect.
+
+### Field Spell: Arms Academy (School of Arms, from Dyllan)
+- **Effect:** At the start of your turn, you may send a **Grade 1 Arms unit** to the Academy.
+- **After two turns**, a **Grade 3 unit** leaves the Academy and is **summoned to the field automatically at no cost**.
+- You choose that Grade 3 unit **from your hand** or **from your deck**. If you take it from your deck, **reshuffle** the deck afterwards.
+
+Open questions:
+- **(?)** Where does the Grade 1 unit come from: the field, your hand, or either?
+- **(?)** What happens to the Grade 1 unit when the Grade 3 comes out: does it go to the Grave, or is it stacked under the Grade 3 like a promotion?
+- **(?)** Does "two turns" mean two of your own turns? For example, sent on turn 3 and the Grade 3 arrives at the start of turn 5.
+- **(?)** Can more than one unit be in the Academy at a time?
+- **(?)** Must the Grade 3 be an Arms unit? Which slot does it go into, and what if your grid is full?
+- **(?)** What does Arms Academy cost to play, and in which phase?
+- **(?)** Can the arriving Grade 3 attack that turn? (It would count toward a Formation straight away.)
+
 ## Placeholder rules for the first Arms vs Arms test game
 These are **temporary** so a units-only game can be played and tuned. Dyllan will replace them.
 - **Deck:** 30 cards, up to 3 copies of a card (placeholder).
