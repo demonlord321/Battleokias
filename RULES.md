@@ -45,6 +45,8 @@ Deck rule:
 - A card can belong to **more than one** Signet, so it can appear in decks of any of them.
 - The card's Signet symbol(s) sit in the **top left** corner of the card.
 - **Main Signet and sub-Signets (confirmed by Dyllan):** a card's **first** Signet is its **main Signet**, and it decides the card's **promotion line**. Any Signets after it are **sub-Signets**: they let the card into those decks, but play no part in promotion.
+- **Support cards and Signets (confirmed by Dyllan):** Equipment, Artifacts and other cards that attach to or affect a unit can be used on it if they share **any** Signet, main or sub-Signet, unless the card says otherwise. So Practice Gear (Arms) can go on another academy's unit that has Arms as a sub-Signet.
+  - Placeholder: the same goes for Arms Academy's "Arms units" (its unlimited promotions), since it doesn't say otherwise.
 
 Open questions:
 - **(?)** How does a Signet shape its Units (stats, abilities, play style)?
@@ -256,7 +258,7 @@ Open questions:
 ## Equipment (confirmed by Dyllan)
 - An Equipment card is **placed over a unit** on the field, and that unit becomes **equipped**.
 - The Equipment's effect applies **once the unit is equipped**.
-- Equipment carries **Signets** too. It can only equip a unit that **shares a Signet** with it.
+- Equipment carries **Signets** too. It can only equip a unit that **shares a Signet** with it, main or sub-Signet, unless the Equipment says otherwise.
 - Equipped units' boosted stats count toward a Formation.
 - **Order of maths** (confirmed by Dyllan): apply each unit's Equipment first, then add up the Formation, then apply the Formation's multiplier or divisor (such as Vanguard Charge's x1.5 and /1.5) **at the end**, rounding down.
 

@@ -49,7 +49,7 @@ Uses the placeholder rules in `RULES.md`; Dyllan refines them as we play.
 - [x] Promotion: exactly one Grade up, costs the difference, one per turn, Developer (`promote` move) + Mapmaker (highlight valid units)
 - [x] Win screen when Defense hits 0, Mapmaker
 - [x] Hot-seat play so Dyllan can test both sides, Mapmaker
-- [ ] Promotion lines: a unit only promotes into the next unit of its own line, and the line comes from the card's first Signet (Student to Apprentice to Graduate of Arms). Retire the placeholder Arms units of Grades 1 to 3 (ARM-001, 003, 004, 005) from the test decks, since the Arms line has only those three, Developer
+- [x] Promotion lines (`d5c7f2e`, `9862607`; test deck still to rebuild): a unit only promotes into the next unit of its own line, and the line comes from the card's first Signet (Student to Apprentice to Graduate of Arms). Retire the placeholder Arms units of Grades 1 to 3 (ARM-001, 003, 004, 005) from the test decks, since the Arms line has only those three, Developer
 - [ ] Named units (Grade 4+): flavour text and Class fields in `data/cards.json`, shown on the card face, Developer + Mapmaker (waiting on Dyllan's first named units and Class list)
 - [ ] Dyllan playtests and replaces placeholder rules, Planner updates `RULES.md`
 
