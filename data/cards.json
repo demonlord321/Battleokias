@@ -338,5 +338,24 @@
     "formation": "Formation effect text",
     "text": "Drazel chose to halt his study of Defense and put it all into Attack. His Defense is 1000 when summoned, or equal to the Defense of the unit he promotes.",
     "image": "images/arm-mer-001.png"
+  },
+  {
+    "id": "EQP-002",
+    "name": "Drazel's Katana",
+    "type": "equipment",
+    "signets": [
+      "arms",
+      "mercenary"
+    ],
+    "cost": 1,
+    "boost": {
+      "attack": 500
+    },
+    "onlyOn": [
+      "ARM-MER-001"
+    ],
+    "hitRule": "highestTotal",
+    "text": "Equip to Drazel, Instructor of the Blade only. He gets +500 Attack. Drazel does not conform to slaying the weak: while he is in your attacking Formation and its attack lands, the opponent's unit destroyed is the one with the highest Attack plus Defense.",
+    "image": "images/eqp-002.png"
   }
 ]
