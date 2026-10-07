@@ -36,16 +36,18 @@ function win(game, playerIndex, why) {
 
 // Removes a unit from the field. It and any cards stacked under it go to the Grave.
 // Nothing destroys units yet; spells and effects will use this.
-export function destroyUnit(game, playerIndex, slot) {
+export function destroyUnit(game, playerIndex, slot, message = null) {
   const p = game.players[playerIndex];
   const unit = p.ups[slot];
   if (!unit) return null;
   const { under = [], ...card } = unit;
   p.ups[slot] = null;
   p.graveyard.push(...under, card);
-  game.log.push(`${unit.name} goes to the Grave.`);
+  game.log.push(message ?? `${unit.name} goes to the Grave.`);
   return unit;
 }
+
+const isSlot = (p, slot) => Number.isInteger(slot) && slot >= 0 && slot < p.ups.length;
 
 // The summon action names a hand card either by its hand index (a number) or by
 // its instance id (a string like "ARM-001#2"). Returns the hand index, or -1.
@@ -231,6 +233,42 @@ const ACTIONS = {
     },
   },
 
+  // { type: "move", player, from, to }: move your unit to another slot for free
+  // during Preparation Phase I. If `to` holds a unit, the two swap (placeholder).
+  move: {
+    check(game, action) {
+      const p = game.players[game.activePlayer];
+      if (game.phase !== "prep1") return "You can only move units in Preparation Phase I.";
+      if (!isSlot(p, action.from) || !p.ups[action.from]) return "There's no unit there to move.";
+      if (!isSlot(p, action.to)) return "Pick one of your Unit Position Slots.";
+      if (action.to === action.from) return "That unit is already there.";
+      return null;
+    },
+    apply(game, action) {
+      const p = game.players[game.activePlayer];
+      const moving = p.ups[action.from];
+      const other = p.ups[action.to];
+      p.ups[action.to] = moving;
+      p.ups[action.from] = other;
+      game.log.push(other ? `${p.name} swaps ${moving.name} and ${other.name}.` : `${p.name} moves ${moving.name}.`);
+    },
+  },
+
+  // { type: "retire", player, slot }: send your unit (and anything stacked under it)
+  // to the Grave during Preparation Phase I, freeing its slot.
+  retire: {
+    check(game, action) {
+      const p = game.players[game.activePlayer];
+      if (game.phase !== "prep1") return "You can only retire units in Preparation Phase I.";
+      if (!isSlot(p, action.slot) || !p.ups[action.slot]) return "There's no unit there to retire.";
+      return null;
+    },
+    apply(game, action) {
+      const p = game.players[game.activePlayer];
+      destroyUnit(game, game.activePlayer, action.slot, `${p.name} retires ${p.ups[action.slot].name} to the Grave.`);
+    },
+  },
+
   // { type: "setFormation", player, card }: put a Formation card from hand into the
   // Formation Zone during Preparation Phase I. Placeholder until Dyllan decides:
   // it costs the card's cost (0 for now), and a new one replaces the old, which goes to the Grave.
@@ -369,5 +407,9 @@ export function legalActions(game) {
     });
   });
   candidates.push({ type: "attack", player });
+  p.ups.forEach((_, from) => {
+    candidates.push({ type: "retire", player, slot: from });
+    p.ups.forEach((_, to) => candidates.push({ type: "move", player, from, to }));
+  });
   return candidates.filter((a) => checkAction(game, a) === null);
 }

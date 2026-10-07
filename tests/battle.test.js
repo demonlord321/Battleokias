@@ -110,3 +110,42 @@ test("a destroyed promoted unit takes its whole stack to the Grave", () => {
   assert.ok(grave.every((c) => c.under === undefined));
   assert.equal(game.players[0].ups[4], null);
 });
+
+// Moving and retiring (RULES.md): free during Preparation Phase I.
+test("move a unit to an empty slot, or swap it with another unit", () => {
+  const game = start();
+  const me = game.players[0];
+  const a = unit(1, 100, 100);
+  const b = unit(2, 200, 200);
+  place(game, 0, 0, a);
+  place(game, 0, 4, b);
+  assert.equal(act(game, { type: "move", from: 0, to: 2 }).ok, true);
+  assert.equal(me.ups[0], null);
+  assert.equal(me.ups[2].id, a.id);
+  assert.equal(act(game, { type: "move", from: 2, to: 4 }).ok, true);
+  assert.equal(me.ups[4].id, a.id);
+  assert.equal(me.ups[2].id, b.id);
+  assert.equal(me.energy, 1); // free
+});
+
+test("move is refused with a reason when it isn't allowed", () => {
+  const game = start();
+  place(game, 0, 0, unit(1, 100, 100));
+  assert.match(checkAction(game, { type: "move", player: 0, from: 1, to: 2 }), /no unit there/);
+  assert.match(checkAction(game, { type: "move", player: 0, from: 0, to: 9 }), /Unit Position Slots/);
+  assert.match(checkAction(game, { type: "move", player: 0, from: 0, to: 0 }), /already there/);
+  act(game, { type: "nextPhase" });
+  assert.match(checkAction(game, { type: "move", player: 0, from: 0, to: 1 }), /Preparation Phase I/);
+});
+
+test("retire sends a unit and its stack to the Grave and frees the slot", () => {
+  const { game, me, g2 } = promoteSetup();
+  act(game, { type: "promote", card: g2, slot: 4 });
+  assert.equal(act(game, { type: "retire", slot: 4 }).ok, true);
+  assert.equal(me.ups[4], null);
+  assert.equal(me.graveyard.length, 2);
+  assert.match(game.log.at(-1), /retires/);
+  assert.match(checkAction(game, { type: "retire", player: 0, slot: 4 }), /no unit there/);
+  act(game, { type: "nextPhase" });
+  assert.match(checkAction(game, { type: "retire", player: 0, slot: 5 }), /Preparation Phase I/);
+});
