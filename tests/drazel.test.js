@@ -95,3 +95,11 @@ test("with the Katana in the attacking Formation, a hit picks the highest Attack
 test("the card check rejects onlyOn ids that aren't units", () => {
   assert.ok(checkCards([{ ...byId["EQP-002"], onlyOn: ["NOPE-001"] }]).some((m) => /onlyOn/.test(m)));
 });
+
+test("only 1 Katana per deck", async () => {
+  const { checkDecks, copyLimit } = await import("../src/engine/cardCheck.js");
+  assert.equal(copyLimit(byId["EQP-002"]), 1);
+  const deck = [...Array(29).fill("ARM-010")];
+  assert.ok(checkDecks({ arms: [...deck, "EQP-002"] }, cards).every((m) => !/EQP-002/.test(m)));
+  assert.ok(checkDecks({ arms: [...deck.slice(1), "EQP-002", "EQP-002"] }, cards).some((m) => /2 copies of EQP-002, the limit is 1/.test(m)));
+});

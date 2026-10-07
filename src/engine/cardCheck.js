@@ -90,6 +90,8 @@ export function checkCards(cards) {
       if (card.type !== "equipment" || !Array.isArray(card.onlyOn) || !card.onlyOn.length) problems.push(`${where}: "onlyOn" goes on Equipment and should be a list of unit ids.`);
       else for (const id of card.onlyOn) if (!ids.has(id)) problems.push(`${where}: "onlyOn" names "${id}", which isn't a unit in cards.json.`);
     }
+    if ("maxCopies" in card && (!Number.isInteger(card.maxCopies) || card.maxCopies < 1))
+      problems.push(`${where}: "maxCopies" should be a whole number from 1 up.`);
     if ("hitRule" in card && (card.type !== "equipment" || !["highestTotal"].includes(card.hitRule)))
       problems.push(`${where}: "hitRule" goes on Equipment and can be "highestTotal".`);
     if (card.type === "equipment" && "boost" in card) {
@@ -146,6 +148,9 @@ export function checkCards(cards) {
 // RULES.md placeholder deck rules, until Dyllan sets deck size and copy limits.
 export const DECK_SIZE = 30;
 export const MAX_COPIES = 3;
+// A card's own "maxCopies" (Drazel's Katana: 1) overrides the usual limit, counted across the
+// whole deck once Special Decks are in decks.json.
+export const copyLimit = (card) => card?.maxCopies ?? MAX_COPIES;
 
 // Checks data/decks.json: { "<signet>": ["ARM-001", ...], ... }.
 // Every id must exist in cards, carry that Signet, appear at most 3 times, and the deck must have 30 cards.
@@ -169,7 +174,7 @@ export function checkDecks(decks, cards) {
       const card = byId[id];
       if (!card) problems.push(`${where}: unknown card "${id}".`);
       else if (!card.signets?.includes(signet)) problems.push(`${where}: ${id} doesn't carry the ${signet} Signet.`);
-      if (n > MAX_COPIES) problems.push(`${where}: ${n} copies of ${id}, the limit is ${MAX_COPIES}.`);
+      if (n > copyLimit(card)) problems.push(`${where}: ${n} copies of ${id}, the limit is ${copyLimit(card)}.`);
     }
   }
   return problems;
