@@ -297,6 +297,17 @@ Open questions (placeholders in brackets):
 - Example: a Student of Arms goes from 500/500 to 750/750, and an Apprentice from 1500/1000 to 1750/1250.
 - **Grades 1 to 3 only (confirmed by Dyllan):** a unit that has mastered its craft has no use for practice gear. Practice Gear can only be equipped to a Grade 1, 2 or 3 unit, and when its unit is promoted to Grade 4 or higher, the Gear goes to the Grave.
 
+### Equipment: Drazel's Katana (specialised Equipment, from Dyllan)
+- **Restricted:** can only be equipped to **Drazel, Instructor of the Blade**.
+- *"Drazel does not conform to slaying the weak."*
+- **+500 Attack** (no Defense bonus).
+- **Effect:** while Drazel holds his Katana, when your Formation's attack lands, the defender loses the unit in their Formation with the **highest Attack + Defense**, instead of their lowest-Grade unit.
+- Placeholders until Dyllan decides:
+  - Drazel has to be in your attacking Formation's slots for the effect to work.
+  - Attack + Defense uses each unit's current stats, Equipment included. On a tie, the defender picks, as with the normal rule.
+  - Signets Arms and Mercenary, the same as Drazel; normal Equipment cost (1 Energy); Special Deck only like all Equipment; no Grade limit.
+- Specialised Equipment is a new idea: Equipment that names the one unit it can go on.
+
 ## Placeholder rules for the first Arms vs Arms test game
 These are **temporary** so a units-only game can be played and tuned. Dyllan will replace them.
 - **Deck:** see **Deck building** (60 cards).
