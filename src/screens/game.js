@@ -83,6 +83,10 @@ function act(action) {
 
 const me = () => game.activePlayer;
 const legal = (action) => checkAction(game, action) === null;
+// A hand card can go to a slot by a normal summon, or by promoting the unit already there
+// (one Grade up, for the difference in Grade; see RULES.md).
+const canPlay = (card, slot) =>
+  legal({ type: "summon", player: me(), card, slot }) || legal({ type: "promote", player: me(), card, slot });
 
 // Which button the phase control is: the engine's nextPhase if it has one, else End Turn.
 function phaseAction() {
@@ -105,13 +109,17 @@ function render() {
   // Hand cards that could be summoned somewhere right now.
   ui.playable = new Set();
   p.hand.forEach((_, card) => {
-    if (p.ups.some((_, slot) => legal({ type: "summon", player: me(), card, slot }))) ui.playable.add(card);
+    if (p.ups.some((_, slot) => canPlay(card, slot))) ui.playable.add(card);
   });
   // Slots the selected card can go to.
   if (selectedHand !== null) {
     ui.legalSlots = new Set();
     p.ups.forEach((_, slot) => {
       if (legal({ type: "summon", player: me(), card: selectedHand, slot })) ui.legalSlots.add(slot);
+    });
+    ui.promoteSlots = new Set();
+    p.ups.forEach((u, slot) => {
+      if (u && legal({ type: "promote", player: me(), card: selectedHand, slot })) ui.promoteSlots.add(slot);
     });
   }
   // Units that can attack.
@@ -179,7 +187,7 @@ function onHandClick({ index }) {
   selectedHand = selectedHand === index ? null : index;
   if (selectedHand !== null) {
     const p = game.players[me()];
-    const anywhere = p.ups.some((_, slot) => legal({ type: "summon", player: me(), card: index, slot }));
+    const anywhere = p.ups.some((_, slot) => canPlay(index, slot));
     if (!anywhere) {
       // Ask the engine why, using the first empty slot, so the reason is useful.
       const empty = p.ups.findIndex((u) => !u);
@@ -196,7 +204,10 @@ function onSlotClick({ owner, zone, index }) {
   const unit = game.players[me()].ups[index];
   if (selectedHand !== null && !unit) {
     act({ type: "summon", player: me(), card: selectedHand, slot: index });
+  } else if (selectedHand !== null && legal({ type: "promote", player: me(), card: selectedHand, slot: index })) {
+    act({ type: "promote", player: me(), card: selectedHand, slot: index });
   } else if (unit) {
+    selectedHand = null;
     act({ type: "attack", player: me(), slot: index });
   }
 }

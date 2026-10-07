@@ -138,6 +138,7 @@ export const PHASE_NAMES = {
 //   legalSlots:   Set of ups indexes (viewer's side) the selected card can go to
 //   attackers:    Set of ups indexes (viewer's side) that can attack right now
 //   targets:      Set of ups indexes (other side) that can be targeted
+//   promoteSlots: Set of ups indexes (viewer's side) the selected card can promote
 export function renderBoard(game, viewer = 0, ui = {}) {
   game.players.forEach((p, owner) => {
     const side = owner === viewer ? 0 : 1;
@@ -146,6 +147,11 @@ export function renderBoard(game, viewer = 0, ui = {}) {
       const slot = getSlot(side, "ups", i);
       fillSlot(slot, card);
       slot.classList.toggle("is-legal", side === 0 && !!ui.legalSlots?.has(i));
+      slot.classList.toggle("can-promote", side === 0 && !!ui.promoteSlots?.has(i));
+      // Promoted units keep the card(s) underneath; show how many.
+      const under = card?.under?.length ?? card?.stack?.length ?? 0;
+      if (under) slot.dataset.stack = under;
+      else delete slot.dataset.stack;
       slot.classList.toggle("can-attack", side === 0 && !!ui.attackers?.has(i));
       slot.classList.toggle("is-target", side === 1 && !!ui.targets?.has(i));
       slot.classList.toggle("is-exhausted", !!card && side === 0 && ui.phase === "battle" && !ui.attackers?.has(i));

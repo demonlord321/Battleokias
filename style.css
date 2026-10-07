@@ -610,3 +610,17 @@ html, body {
 .card-grade[data-grade="2"] { background: radial-gradient(circle at 35% 30%, #ffffff, #c9cfdb 60%, #7d8496); }
 .card-grade[data-grade="3"], .card-grade[data-grade="4"] { background: radial-gradient(circle at 35% 30%, #fff3b8, #f2c45a 60%, #a67c22); }
 .card-grade[data-grade="5"], .card-grade[data-grade="6"] { color: #fff; background: radial-gradient(circle at 35% 30%, #e6d4ff, #9b6cf0 60%, #4b2a8a); box-shadow: 0 0 6px #b98cff; }
+/* Promotion: units the selected hand card can be played on top of. */
+.slot.can-promote { outline: 2px solid #f2c45a; outline-offset: 2px; animation: promote-pulse 0.9s ease-in-out infinite alternate; cursor: pointer; }
+.slot.can-promote::before {
+  content: "▲"; position: absolute; top: -0.6em; left: 50%; transform: translateX(-50%); z-index: 3;
+  font-size: 0.8em; color: #1b1530; background: #f2c45a; border-radius: 50%; width: 1.4em; height: 1.4em;
+  display: grid; place-items: center; box-shadow: 0 0 6px #f2c45a;
+}
+/* Stack count on promoted units (cards underneath). */
+.slot[data-stack]::after {
+  content: "+" attr(data-stack); position: absolute; top: 50%; left: -8px; transform: translateY(-50%); z-index: 3;
+  font-size: 0.65em; font-weight: bold; padding: 0 4px; border-radius: 6px;
+  background: rgba(20, 14, 40, 0.85); color: #f2c45a; border: 1px solid #f2c45a;
+}
+@keyframes promote-pulse { from { box-shadow: 0 0 6px rgba(242, 196, 90, 0.35); } to { box-shadow: 0 0 18px rgba(242, 196, 90, 0.8); } }
