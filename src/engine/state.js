@@ -21,6 +21,7 @@ export function createPlayer(name, deck = []) {
     ups: Array(UPS_SIZE).fill(null), // Unit Position Slots, null = empty
     specialZones: Array(SDZ_SIZE).fill(null), // Special Deck Zones
     fieldEffect: null, // Field Effect Zone
+    formationZone: null, // Formation Zone, above the Field Effect Zone
     graveyard: [], // the Grave Pile
   };
 }
