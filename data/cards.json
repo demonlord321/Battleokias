@@ -1,5 +1,47 @@
 [
   {
+    "id": "ARM-010",
+    "name": "Student of Arms",
+    "type": "unit",
+    "signets": [
+      "arms"
+    ],
+    "grade": 1,
+    "attack": 500,
+    "defense": 500,
+    "formation": "Formation effect text",
+    "text": "",
+    "image": "images/arm-010.png"
+  },
+  {
+    "id": "ARM-011",
+    "name": "Apprentice of Arms",
+    "type": "unit",
+    "signets": [
+      "arms"
+    ],
+    "grade": 2,
+    "attack": 1500,
+    "defense": 1000,
+    "formation": "Formation effect text",
+    "text": "",
+    "image": "images/arm-011.png"
+  },
+  {
+    "id": "ARM-012",
+    "name": "Graduate of Arms",
+    "type": "unit",
+    "signets": [
+      "arms"
+    ],
+    "grade": 3,
+    "attack": 2000,
+    "defense": 1500,
+    "formation": "Formation effect text",
+    "text": "",
+    "image": "images/arm-012.png"
+  },
+  {
     "id": "ARM-001",
     "name": "Iron Recruit",
     "type": "unit",
@@ -7,10 +49,10 @@
       "arms"
     ],
     "grade": 1,
-    "attack": 100,
-    "defense": 100,
+    "attack": 400,
+    "defense": 600,
     "formation": "Formation effect text",
-    "text": "",
+    "text": "Placeholder card until Dyllan's real cards replace it.",
     "image": "images/arm-001.png"
   },
   {
@@ -21,10 +63,10 @@
       "arms"
     ],
     "grade": 3,
-    "attack": 150,
-    "defense": 300,
+    "attack": 1200,
+    "defense": 2200,
     "formation": "Formation effect text",
-    "text": "",
+    "text": "Placeholder card until Dyllan's real cards replace it.",
     "image": "images/arm-002.png"
   },
   {
@@ -35,10 +77,10 @@
       "arms"
     ],
     "grade": 1,
-    "attack": 150,
-    "defense": 50,
+    "attack": 600,
+    "defense": 300,
     "formation": "Formation effect text",
-    "text": "",
+    "text": "Placeholder card until Dyllan's real cards replace it.",
     "image": "images/arm-003.png"
   },
   {
@@ -49,10 +91,10 @@
       "arms"
     ],
     "grade": 2,
-    "attack": 200,
-    "defense": 150,
+    "attack": 1300,
+    "defense": 1200,
     "formation": "Formation effect text",
-    "text": "",
+    "text": "Placeholder card until Dyllan's real cards replace it.",
     "image": "images/arm-004.png"
   },
   {
@@ -63,10 +105,10 @@
       "arms"
     ],
     "grade": 3,
-    "attack": 250,
-    "defense": 100,
+    "attack": 2200,
+    "defense": 1000,
     "formation": "Formation effect text",
-    "text": "",
+    "text": "Placeholder card until Dyllan's real cards replace it.",
     "image": "images/arm-005.png"
   },
   {
@@ -77,10 +119,10 @@
       "arms"
     ],
     "grade": 4,
-    "attack": 250,
-    "defense": 300,
+    "attack": 2000,
+    "defense": 2400,
     "formation": "Formation effect text",
-    "text": "",
+    "text": "Placeholder card until Dyllan's real cards replace it.",
     "image": "images/arm-006.png"
   },
   {
@@ -91,10 +133,10 @@
       "arms"
     ],
     "grade": 4,
-    "attack": 300,
-    "defense": 250,
+    "attack": 2500,
+    "defense": 1800,
     "formation": "Formation effect text",
-    "text": "",
+    "text": "Placeholder card until Dyllan's real cards replace it.",
     "image": "images/arm-007.png"
   },
   {
@@ -105,10 +147,10 @@
       "arms"
     ],
     "grade": 5,
-    "attack": 350,
-    "defense": 350,
+    "attack": 2800,
+    "defense": 2400,
     "formation": "Formation effect text",
-    "text": "",
+    "text": "Placeholder card until Dyllan's real cards replace it.",
     "image": "images/arm-008.png"
   },
   {
@@ -119,10 +161,10 @@
       "arms"
     ],
     "grade": 6,
-    "attack": 450,
-    "defense": 400,
+    "attack": 3300,
+    "defense": 2800,
     "formation": "Formation effect text",
-    "text": "",
+    "text": "Placeholder card until Dyllan's real cards replace it.",
     "image": "images/arm-009.png"
   },
   {
@@ -133,10 +175,10 @@
       "magic"
     ],
     "grade": 2,
-    "attack": 200,
-    "defense": 100,
+    "attack": 1600,
+    "defense": 800,
     "formation": "Formation effect text",
-    "text": "",
+    "text": "Placeholder card until Dyllan's real cards replace it.",
     "image": "images/mag-001.png"
   },
   {
@@ -158,10 +200,10 @@
       "alchemy"
     ],
     "grade": 2,
-    "attack": 150,
-    "defense": 150,
+    "attack": 1200,
+    "defense": 1200,
     "formation": "Formation effect text",
-    "text": "",
+    "text": "Placeholder card until Dyllan's real cards replace it.",
     "image": "images/alc-001.png"
   },
   {
@@ -184,10 +226,10 @@
       "alchemy"
     ],
     "grade": 2,
-    "attack": 120,
-    "defense": 120,
+    "attack": 1200,
+    "defense": 1000,
     "formation": "Formation effect text",
-    "text": "",
+    "text": "Placeholder card until Dyllan's real cards replace it.",
     "image": "images/arm-alc-001.png"
   }
 ]
