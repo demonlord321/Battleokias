@@ -20,7 +20,9 @@
     "signets": [
       "arms"
     ],
-    "promotesFrom": ["ARM-010"],
+    "promotesFrom": [
+      "ARM-010"
+    ],
     "grade": 2,
     "attack": 1500,
     "defense": 1000,
@@ -35,7 +37,9 @@
     "signets": [
       "arms"
     ],
-    "promotesFrom": ["ARM-011"],
+    "promotesFrom": [
+      "ARM-011"
+    ],
     "grade": 3,
     "attack": 2000,
     "defense": 1500,
@@ -312,5 +316,26 @@
     "formation": "Formation effect text",
     "text": "Placeholder card until Dyllan's real cards replace it.",
     "image": "images/arm-alc-001.png"
+  },
+  {
+    "id": "ARM-MER-001",
+    "name": "Drazel, Instructor of the Blade",
+    "type": "unit",
+    "signets": [
+      "arms",
+      "mercenary"
+    ],
+    "grade": 4,
+    "attack": 4000,
+    "defense": null,
+    "variableDefense": {
+      "summoned": 1000,
+      "promoted": "base"
+    },
+    "class": "Swordsmen",
+    "flavor": "Drazel found himself gifted with a blade. Upon graduation he chose to share that knowledge with the new recruits. When war came his unit was decimated, and Drazel joined the mercenaries to get stronger and make some money.",
+    "formation": "Formation effect text",
+    "text": "Drazel chose to halt his study of Defense and put it all into Attack. His Defense is 1000 when summoned, or equal to the Defense of the unit he promotes.",
+    "image": "images/arm-mer-001.png"
   }
 ]
