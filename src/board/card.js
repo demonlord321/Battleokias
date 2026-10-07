@@ -27,6 +27,7 @@ const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<
 
 // Formation cards (RULES.md): `slots` lists the Unit Position Slots the Formation needs,
 // as ups indexes on the owner's side (row*3+col, row 0 = front row). Frontal Assault is [0,1,2].
+// Damage Grade / Defense Grade (RULES.md) read from damageGrade / defenseGrade (placeholders 1 / 0).
 // Drawn as a mini 3x3 with the front row at the top, the way the owner sees their grid.
 export function formationPattern(slots) {
   const set = new Set(slots);
@@ -69,6 +70,10 @@ export function renderCard(card, faceUp = true) {
     <div class="card-type">${esc(type.label)}</div>
     ${isUnit && card?.formation ? `<div class="card-formation"><b>Formation:</b> ${esc(card.formation)}</div>` : ""}
     <div class="card-text">${esc(card?.text)}</div>
+    ${card?.type === "formation" ? `<div class="card-stats formation-grades">
+      <span class="stat-dmg-grade" title="Damage Grade: Damage Counters dealt when this Formation's attack lands">&#x1F4A5; ${esc(card?.damageGrade ?? 1)}</span>
+      <span class="stat-def-grade" title="Defense Grade: taken off the attacker's Damage Grade">&#x1F6E1; ${esc(card?.defenseGrade ?? 0)}</span>
+    </div>` : ""}
     ${isUnit ? `<div class="card-stats">
       <span class="stat-atk" title="Attack">&#x2694; ${esc(card?.attack ?? "?")}</span>
       <span class="stat-def" title="Defense">&#x1F6E1; ${esc(card?.defense ?? "?")}</span>

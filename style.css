@@ -663,3 +663,5 @@ html, body {
 .attack-btn:disabled { opacity: 0.55; cursor: default; background: linear-gradient(#4d4566, #2c2640); border-color: #6e678c; }
 .attack-btn:not(:disabled):hover { filter: brightness(1.08); transform: translateY(-1px); }
 .attack-btn[hidden] { display: none; }
+.formation-grades .stat-dmg-grade { color: #ff9a9a; }
+.formation-grades .stat-def-grade { color: #8fd0ff; }
