@@ -60,16 +60,17 @@ export function cardCost(card) {
   return card.grade ?? card.cost ?? 0;
 }
 
-// A unit's Attack and Defense with its Equipment (RULES.md, Equipment). A boost
-// like Practice Gear's { attackPercent: 25, defensePercent: 25 } adds that share
-// of the unit's own numbers, rounded down. Returns null for an empty slot.
+// A unit's Attack and Defense with its Equipment (RULES.md, Equipment). A boost can be
+// flat, like Practice Gear's { attack: 500, defense: 500 }, or a share of the unit's own
+// numbers, like { attackPercent: 25 } (rounded down). Percent applies first, then flat.
+// Returns null for an empty slot.
 export function unitStats(game, playerIndex, slot) {
   const unit = game.players[playerIndex].ups[slot];
   if (!unit) return null;
   const boost = unit.equipment?.boost ?? {};
   return {
-    attack: Math.floor((unit.attack * (100 + (boost.attackPercent ?? 0))) / 100),
-    defense: Math.floor((unit.defense * (100 + (boost.defensePercent ?? 0))) / 100),
+    attack: Math.floor((unit.attack * (100 + (boost.attackPercent ?? 0))) / 100) + (boost.attack ?? 0),
+    defense: Math.floor((unit.defense * (100 + (boost.defensePercent ?? 0))) / 100) + (boost.defense ?? 0),
   };
 }
 

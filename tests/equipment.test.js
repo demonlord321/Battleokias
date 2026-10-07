@@ -1,11 +1,12 @@
-// Equipment (RULES.md): goes over a unit sharing one of its Signets; Practice Gear gives +25% Attack and Defense.
+// Equipment (RULES.md): goes over a unit sharing one of its Signets; Practice Gear gives +500 Attack and +500 Defense.
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { newGame, applyAction, checkAction, legalActions, unitStats, formationStats } from "../src/engine/engine.js";
 
 let n = 0;
 const unit = (grade, attack, defense, signet = "arms") => ({ id: `U-${++n}`, name: `Unit${n}`, type: "unit", signets: [signet], grade, attack, defense });
-const gear = () => ({ id: `EQP-001#${++n}`, cardId: "EQP-001", name: "Practice Gear", type: "equipment", signets: ["arms"], cost: 1, boost: { attackPercent: 25, defensePercent: 25 } });
+const gear = () => ({ id: `EQP-001#${++n}`, cardId: "EQP-001", name: "Practice Gear", type: "equipment", signets: ["arms"], cost: 1, boost: { attack: 500, defense: 500 } });
+const pctGear = () => ({ ...gear(), name: "Percent Gear", boost: { attackPercent: 25, defensePercent: 25 } });
 const deckOf = () => Array.from({ length: 30 }, () => unit(1, 500, 500));
 
 function start() {
@@ -16,22 +17,22 @@ function start() {
 const lastCard = (game) => game.players[0].hand.length - 1;
 const equip = (game, slot) => applyAction(game, { type: "equip", player: 0, card: lastCard(game), slot });
 
-test("Practice Gear makes a Student 625/625 and costs 1 Energy", () => {
+test("Practice Gear makes a Student 1000/1000 and costs 1 Energy", () => {
   const game = start();
   game.players[0].ups[0] = unit(1, 500, 500);
   game.players[0].hand.push(gear());
   assert.ok(legalActions(game).some((a) => a.type === "equip" && a.slot === 0));
   assert.equal(equip(game, 0).ok, true);
   assert.equal(game.players[0].ups[0].equipment.name, "Practice Gear");
-  assert.deepEqual(unitStats(game, 0, 0), { attack: 625, defense: 625 });
+  assert.deepEqual(unitStats(game, 0, 0), { attack: 1000, defense: 1000 });
   assert.equal(game.players[0].energy, 4);
   assert.equal(game.players[0].ups[0].attack, 500); // the card itself is unchanged
 });
 
-test("rounds down: 1500/1000 becomes 1875/1250, 333 becomes 416", () => {
+test("percent boosts round down: 1500/333 at +25% becomes 1875/416", () => {
   const game = start();
   game.players[0].ups[1] = unit(2, 1500, 333);
-  game.players[0].hand.push(gear());
+  game.players[0].hand.push(pctGear());
   equip(game, 1);
   assert.deepEqual(unitStats(game, 0, 1), { attack: 1875, defense: 416 });
 });
@@ -62,13 +63,13 @@ test("boosts count toward the Formation, before it adds up and scales", () => {
   [0, 1, 2].forEach((s) => (p.ups[s] = unit(1, 500, 500)));
   p.hand.push(gear());
   equip(game, 0);
-  assert.equal(formationStats(game, 0).attack, 1625);
-  assert.equal(formationStats(game, 0).defense, 1625);
-  // Vanguard Charge: (625 + 500 + 500 + 333) x 1.5 = 2937; (625 + 500 + 500 + 333) / 1.5 = 1305.
+  assert.equal(formationStats(game, 0).attack, 2000);
+  assert.equal(formationStats(game, 0).defense, 2000);
+  // Vanguard Charge: (1000 + 500 + 500 + 333) x 1.5 = 3499; 2333 / 1.5 = 1555, rounded down.
   p.formationZone = { name: "Vanguard Charge", type: "formation", slots: [0, 1, 2, 4], combine: "scaled", attackMultiplier: 1.5, defenseDivisor: 1.5, damageGrade: 2, defenseGrade: 0 };
   p.ups[4] = unit(1, 333, 333);
-  assert.equal(formationStats(game, 0).attack, 2937);
-  assert.equal(formationStats(game, 0).defense, 1305);
+  assert.equal(formationStats(game, 0).attack, 3499);
+  assert.equal(formationStats(game, 0).defense, 1555);
 });
 
 test("Equipment stays on through promotion and moves, and goes to the Grave with its unit", () => {
@@ -81,7 +82,7 @@ test("Equipment stays on through promotion and moves, and goes to the Grave with
   assert.equal(applyAction(game, { type: "promote", player: 0, card: lastCard(game), slot: 0 }).ok, true);
   assert.equal(p.ups[0].equipment.name, "Practice Gear");
   assert.equal(p.ups[0].under[0].equipment, undefined);
-  assert.deepEqual(unitStats(game, 0, 0), { attack: 1875, defense: 1250 });
+  assert.deepEqual(unitStats(game, 0, 0), { attack: 2000, defense: 1500 });
   applyAction(game, { type: "move", player: 0, from: 0, to: 4 });
   assert.equal(p.ups[4].equipment.name, "Practice Gear");
   applyAction(game, { type: "retire", player: 0, slot: 4 });

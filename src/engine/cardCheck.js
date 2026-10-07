@@ -82,11 +82,11 @@ export function checkCards(cards) {
       }
     }
     if (card.type === "equipment" && "boost" in card) {
-      // An Equipment boost (Practice Gear): { attackPercent, defensePercent }, whole numbers.
+      // An Equipment boost (Practice Gear): flat { attack, defense } and/or { attackPercent, defensePercent }, whole numbers.
       const b = card.boost;
       if (typeOf(b) !== "object") problems.push(`${where}: "boost" should be an object in { }.`);
       else for (const [k, v] of Object.entries(b)) {
-        if (!["attackPercent", "defensePercent"].includes(k)) problems.push(`${where}: unknown boost "${k}". Use attackPercent or defensePercent.`);
+        if (!["attack", "defense", "attackPercent", "defensePercent"].includes(k)) problems.push(`${where}: unknown boost "${k}". Use attack, defense, attackPercent or defensePercent.`);
         else if (!Number.isInteger(v)) problems.push(`${where}: boost.${k} should be a whole number.`);
       }
     }
