@@ -27,13 +27,16 @@ const instances = (ids) => {
   return ids.map((id) => ({ ...byId[id], cardId: id, id: `${id}#${(seen[id] = (seen[id] ?? 0) + 1)}` }));
 };
 
+// "special": up to four { type, cards: [ids] } Special Decks (RULES.md, Preparation Phase II).
+const specials = (spec) => (spec.special ?? []).map((d) => (d ? { type: d.type, cards: instances(d.cards) } : null));
+
 function play(a, b, seed) {
-  const game = newGame({ seed, decks: [instances(a), instances(b)] });
+  const game = newGame({ seed, decks: [instances(a.main), instances(b.main)], specialDecks: [specials(a.spec), specials(b.spec)] });
   for (let guard = 0; game.winner === null && guard < 5000; guard++) applyAction(game, chooseAction(game));
   return game.winner;
 }
 
-const lists = styles.map(([name, spec]) => [name, build(spec)]);
+const lists = styles.map(([name, spec]) => [name, { main: build(spec), spec }]);
 const names = lists.map(([n]) => n);
 const wins = names.map(() => names.map(() => null));
 for (let i = 0; i < lists.length; i++)

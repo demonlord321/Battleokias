@@ -1,5 +1,5 @@
 {
-  "_note": "Deck styles for npm run sim. Each list starts from the arms test deck and swaps a few cards. Edit freely; every deck plays every other deck.",
+  "_note": "Deck styles for npm run sim. Each list starts from the arms test deck and swaps a few cards; \"special\" adds Special Decks. Edit freely; every deck plays every other deck.",
   "Frontal": {
     "from": "arms",
     "swap": []
@@ -42,6 +42,26 @@
         "ARM-MER-001",
         3
       ]
+    ]
+  },
+  "Katana": {
+    "from": "arms",
+    "swap": [
+      [
+        "ARM-006",
+        "ARM-MER-001",
+        3
+      ]
+    ],
+    "special": [
+      {
+        "type": "equipment",
+        "cards": [
+          "EQP-002",
+          "EQP-002",
+          "EQP-002"
+        ]
+      }
     ]
   }
 }
