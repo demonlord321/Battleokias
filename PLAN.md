@@ -35,7 +35,7 @@ Mapmaker (game board and screens), Advisor (balance reviews), Planner (plan and 
 - [x] Board wired to engine state (`ups`, `specialZones`, `fieldEffect`), turn and phase banner, Mapmaker + Developer
 - [x] Hand zone with player stats panels (Name, Defense, Energy), Mapmaker
 - [x] Energy engine: max starts 1, +1 per own turn to 10, refills each turn, Developer
-- [ ] Starting Defense Points: 1000 placeholder, Developer
+- [x] Starting Defense Points: 1000 placeholder (`STARTING_DEFENSE` in `src/engine/state.js`), Developer
 - [ ] Damage formula, waiting on Dyllan's design
 - [ ] Board rendering wired to the engine state, Mapmaker + Developer
 - [ ] Click or drag to play and attack, End Turn button, game log
