@@ -23,21 +23,29 @@ Written up from Dyllan's notes. Open questions are marked **(?)**.
 - Board zones: see **Field layout** below
 
 ## Field layout
-Each player has their own half of the table. The opponent's half is a mirror image
-(their Draw Pile is top right from our view).
+Each player has their own half of the table. The opponent's half is the player's half
+rotated 180 degrees (a true mirror across the table), so from our view their Draw Pile
+is **top left**, their Grave Pile sits below it, their Special Deck Zones face the centre,
+and their Field Effect Zone is top right.
 
-Player's half (bottom of the screen):
+Full board as seen by the player:
 
 ```
-        [SDZ][SDZ][SDZ][SDZ]        <- Special Deck Zones (4)
+                              [FEZ]        <- opponent Field Effect Zone
+ [Draw ]    [UPS][UPS][UPS]
+            [UPS][UPS][UPS]               opponent
+ [Grave]    [UPS][UPS][UPS]
+            [SDZ][SDZ][SDZ][SDZ]         <- opponent Special Deck Zones
+ ------------------------------------------ centre
+        [SDZ][SDZ][SDZ][SDZ]             <- player Special Deck Zones
         [UPS][UPS][UPS]       [Grave]
-        [UPS][UPS][UPS]
+        [UPS][UPS][UPS]                   player
         [UPS][UPS][UPS]       [Draw ]
- [FEZ]                              <- Field Effect Zone (bottom left of grid)
+ [FEZ]                                   <- player Field Effect Zone
 ```
 
 - **Unit Position Slots (UPS):** a 3x3 grid of 9 slots for units.
-- **Draw Pile:** bottom right (top right for the opponent).
+- **Draw Pile:** bottom right (top left for the opponent).
 - **Grave Pile:** directly above the Draw Pile; the discard zone.
 - **Special Deck Zones (SDZ):** four zones above the 3x3 grid.
 - **Field Effect Zone (FEZ):** bottom left of the grid.
