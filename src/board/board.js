@@ -195,6 +195,7 @@ export const PHASE_NAMES = {
   setup: "Setup",
   draw: "Draw Phase",
   prep1: "Preparation Phase I",
+  prep2: "Preparation Phase II",
   battle: "Battle Phase",
   prep2: "Preparation Phase II",
   end: "End Phase",
@@ -237,7 +238,7 @@ export function renderBoard(game, viewer = 0, ui = {}) {
       slot.classList.toggle("is-exhausted", !!card && side === 0 && ui.phase === "battle" && !!ui.attackers && !ui.attackers.has(i));
     });
     renderFormation(side, p, ui, ui.formationStats?.[owner]);
-    p.specialZones.forEach((card, i) => fillSlot(getSlot(side, "sdz", i), card));
+    p.specialDecks.forEach((deck, i) => fillSlot(getSlot(side, "sdz", i), null)); // piles still to draw (Mapmaker)
     fillSlot(getSlot(side, "fez"), p.fieldEffect);
     renderAcademy(side, p, game, ui);
     fillSlot(getSlot(side, "formation"), p.formationZone ?? null);
