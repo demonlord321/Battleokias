@@ -101,6 +101,8 @@ function buildStats(cls) {
   return el;
 }
 
+const gradeReached = new WeakMap(); // player object -> highest unit Grade seen on their field
+
 function renderStats(el, p, active) {
   el.querySelector(".stats-name").textContent = p.name;
   // Damage Counters (RULES.md): start at 0, lose at 10. Reads p.damage.
@@ -116,12 +118,16 @@ function renderStats(el, p, active) {
   el.querySelectorAll(".pip").forEach((pip, i) => {
     pip.className = "pip" + (i < (p.energy ?? 0) ? " is-full" : hasMax && i < p.maxEnergy ? " is-spent" : "");
   });
-  // Player Grade (RULES.md): the highest Grade among your units on the field. You can bring
+  // Player Grade (RULES.md): the highest Grade you've had on the field this game. You can bring
   // out units up to one Grade above it. Uses the engine's p.playerGrade when it has one.
-  const pg = typeof p.playerGrade === "number" ? p.playerGrade : Math.max(0, ...(p.ups ?? []).map((u) => u?.grade ?? 0));
+  // Player Grade never drops, so until the engine stores it, remember each player's highest.
+  const onField = Math.max(0, ...(p.ups ?? []).map((u) => u?.grade ?? 0));
+  const seen = Math.max(gradeReached.get(p) ?? 0, onField);
+  gradeReached.set(p, seen);
+  const pg = typeof p.playerGrade === "number" ? p.playerGrade : seen;
   const pgEl = el.querySelector(".stat-pgrade");
   pgEl.querySelector(".stat-value").textContent = pg;
-  pgEl.title = `Player Grade ${pg}: the highest Grade on your field. You can bring out units up to Grade ${pg + 1}.`;
+  pgEl.title = `Player Grade ${pg}: the highest Grade you have had on the field this game. You can bring out units up to Grade ${pg + 1}.`;
   el.classList.toggle("is-active", active);
 }
 
