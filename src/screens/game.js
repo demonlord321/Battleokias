@@ -1,5 +1,5 @@
 import { registerScreen, showScreen } from "../screens.js";
-import { newGame, applyAction, checkAction, formationStats } from "../engine/engine.js";
+import { newGame, applyAction, checkAction, attackPreview } from "../engine/engine.js";
 import { buildBoard, renderBoard, PHASE_NAMES } from "../board/board.js";
 
 // ---------- Cards and decks ----------
@@ -146,20 +146,13 @@ function renderAttackButton(canAttack) {
   const inBattle = game.phase === "battle" && game.winner === null;
   attackBtn.hidden = !inBattle;
   if (!inBattle) return;
-  const mine = formationStats(game, me());
-  const theirs = formationStats(game, 1 - me());
-  const theirDef = theirs?.complete ? theirs.defense : 0; // no complete Formation counts as 0 Defense
-  const atk = mine?.complete ? mine.attack : 0;
-  const hits = atk >= theirDef;
-  // Damage Counters dealt: attacker's Damage Grade minus a complete defender's Defense Grade, never below 0.
-  const myF = game.players[me()].formationZone;
-  const theirF = game.players[1 - me()].formationZone;
-  const counters = Math.max(0, (myF?.damageGrade ?? 1) - (theirs?.complete ? theirF?.defenseGrade ?? 0 : 0));
+  // The engine's own preview, so the button always matches what the attack will do.
+  const { attack: atk, defense: theirDef, hits, counters } = attackPreview(game, me());
   attackBtn.disabled = !canAttack;
   attackBtn.classList.toggle("will-hit", canAttack && hits);
   attackBtn.classList.toggle("will-miss", canAttack && !hits);
   attackBtn.innerHTML = canAttack
-    ? `&#x2694; Attack <small>${atk} vs &#x1F6E1; ${theirDef}${hits ? ` · hits for ${counters}` : " · blocked"}</small>`
+    ? `&#x2694; Attack <small>${atk} vs &#x1F6E1; ${theirDef}${hits ? (counters ? ` · hits for ${counters}` : " · lands, 0 counters") : " · blocked"}</small>`
     : `&#x2694; Attack <small>${checkAction(game, { type: "attack", player: me() }) ?? ""}</small>`;
 }
 
