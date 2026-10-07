@@ -93,6 +93,13 @@ These three form a promotion line (Student to Apprentice to Graduate). Under the
 - **(?)** What triggers a Formation Effect (a pattern of units in the 3x3 grid, adjacency, same Signet)?
 - **(?)** How does the Formation card type relate to a unit's Formation Effect?
 
+## Moving and retiring units (confirmed by Dyllan)
+- **Moving:** during Preparation Phase I, you can move your units to any of your slots, with no cost or penalty.
+- **Retiring:** at any time during Preparation Phase I, you can retire one of your units. It goes to the Grave and its slot opens up.
+- **Any unit that leaves the field goes to the Grave.**
+- **(?)** Can two units swap slots in one move? Placeholder: yes.
+- **(?)** When a promoted unit is retired, do the cards stacked under it go to the Grave too? Placeholder: yes, the whole stack goes.
+
 ## Formations
 A **Formation** card goes in the **Formation Zone**. It names a pattern of Unit Position Slots.
 While those slots are filled, the Formation has its own **Attack** and **Defense** for the Battle Phase.
@@ -145,16 +152,15 @@ Open questions:
 A Field Spell goes in the **Field Effect Zone (FEZ)** and stays there, giving an ongoing effect.
 
 ### Field Spell: Arms Academy (School of Arms, from Dyllan)
-- **Effect:** At the start of your turn, you may send a **Grade 1 Arms unit** to the Academy.
-- **After two turns**, a **Grade 3 unit** leaves the Academy and is **summoned to the field automatically at no cost**.
+- **Effect:** In your **Preparation Phase I**, you may send a **Grade 1 Arms unit from your hand** to the Academy.
+- **Two of your turns later**, in your Preparation Phase I, a **Grade 3 unit** leaves the Academy and is **summoned to the field at no cost**, in **any empty slot you choose**.
+  - Example: send the Grade 1 in Preparation Phase I of your 3rd turn, and the Grade 3 arrives in Preparation Phase I of your 5th turn.
 - You choose that Grade 3 unit **from your hand** or **from your deck**. If you take it from your deck, **reshuffle** the deck afterwards.
 
 Open questions:
-- **(?)** Where does the Grade 1 unit come from: the field, your hand, or either?
 - **(?)** What happens to the Grade 1 unit when the Grade 3 comes out: does it go to the Grave, or is it stacked under the Grade 3 like a promotion?
-- **(?)** Does "two turns" mean two of your own turns? For example, sent on turn 3 and the Grade 3 arrives at the start of turn 5.
 - **(?)** Can more than one unit be in the Academy at a time?
-- **(?)** Must the Grade 3 be an Arms unit? Which slot does it go into, and what if your grid is full?
+- **(?)** Must the Grade 3 be an Arms unit? If your grid is full when it arrives, can you retire a unit to make room first?
 - **(?)** What does Arms Academy cost to play, and in which phase?
 - **(?)** Can the arriving Grade 3 attack that turn? (It would count toward a Formation straight away.)
 - **(?)** Does Arms Academy also allow extra promotions per turn, or is that left to other Field Spells?
