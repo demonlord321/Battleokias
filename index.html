@@ -37,6 +37,31 @@
     </header>
     <!-- The board is built by src/board/board.js from the layout in src/board/layout.js. -->
     <main id="board" class="board"></main>
+
+    <!-- Hot-seat play: game controls and overlays -->
+    <button id="phase-btn" class="phase-btn">End Turn</button>
+    <aside id="game-log" class="game-log" aria-live="polite"></aside>
+    <div id="toast" class="toast" role="status"></div>
+
+    <div id="curtain" class="overlay" hidden>
+      <div class="overlay-card">
+        <h2 id="curtain-title">Player 2's turn</h2>
+        <p>Pass the device, then press start. The other player's hand stays hidden.</p>
+        <button id="curtain-btn" class="menu-btn">Start turn</button>
+      </div>
+    </div>
+
+    <div id="win-screen" class="overlay" hidden>
+      <div class="overlay-card win-card">
+        <p class="win-kicker">Victory</p>
+        <h2 id="win-title">Player 1 wins!</h2>
+        <p id="win-detail"></p>
+        <div class="overlay-buttons">
+          <button id="rematch-btn" class="menu-btn">Play again</button>
+          <button id="win-menu-btn" class="menu-btn">Main menu</button>
+        </div>
+      </div>
+    </div>
   </section>
 
   <section id="tutorial-screen" class="screen">

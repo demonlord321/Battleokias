@@ -1,71 +1,237 @@
 import { registerScreen, showScreen } from "../screens.js";
-import { newGame } from "../engine/engine.js";
-import { buildBoard, renderBoard } from "../board/board.js";
+import { newGame, applyAction, checkAction } from "../engine/engine.js";
+import { buildBoard, renderBoard, PHASE_NAMES } from "../board/board.js";
+
+// ---------- Cards and decks ----------
 
 // Cards come from data/cards.json, the master list Dyllan edits.
-let cardsPromise = null;
-function loadCards() {
-  cardsPromise ??= fetch("data/cards.json").then((r) => {
-    if (!r.ok) throw new Error(`Couldn't load data/cards.json (${r.status})`);
-    return r.json();
+const cache = {};
+function loadJson(path, optional = false) {
+  cache[path] ??= fetch(path).then((r) => {
+    if (r.ok) return r.json();
+    if (optional) return null;
+    throw new Error(`Couldn't load ${path} (${r.status})`);
   });
-  return cardsPromise;
+  return cache[path];
 }
 
-// Decks are single-Signet (RULES.md): take every card carrying the Signet and
-// repeat them up to DECK_SIZE. Each copy gets its own instance id ("ARM-001#3")
-// while cardId keeps pointing at the catalogue entry.
-// DECK_SIZE is a placeholder until RULES.md sets deck size and copy limits;
-// the real decks will come from the deck builder.
-const DECK_SIZE = 40;
-function buildDeck(cards, signet) {
+// Each copy in a deck gets its own instance id ("ARM-001#3"); cardId keeps the catalogue id.
+function instance(card, n) {
+  return { ...card, cardId: card.id, id: `${card.id}#${n}` };
+}
+
+// RULES.md placeholder: 30-card decks, up to 3 copies of a card, single Signet.
+const DECK_SIZE = 30;
+const MAX_COPIES = 3;
+
+// If data/decks.json has a deck list for this Signet (an array of card ids), use it.
+// Otherwise build one: every card carrying the Signet, up to 3 copies each, to 30 cards.
+function buildDeck(cards, decks, signet) {
+  const byId = Object.fromEntries(cards.map((c) => [c.id, c]));
+  const list = decks?.[signet];
+  if (Array.isArray(list)) {
+    const seen = {};
+    return list.map((id) => {
+      if (!byId[id]) throw new Error(`data/decks.json: unknown card "${id}" in the ${signet} deck.`);
+      seen[id] = (seen[id] ?? 0) + 1;
+      return instance(byId[id], seen[id]);
+    });
+  }
   const pool = cards.filter((c) => c.signets?.includes(signet));
   if (!pool.length) throw new Error(`No cards in data/cards.json carry the "${signet}" Signet.`);
-  return Array.from({ length: DECK_SIZE }, (_, i) => {
-    const c = pool[i % pool.length];
-    return { ...c, cardId: c.id, id: `${c.id}#${Math.floor(i / pool.length) + 1}` };
-  });
+  const deck = [];
+  for (let copy = 1; copy <= MAX_COPIES && deck.length < DECK_SIZE; copy++) {
+    for (const c of pool) if (deck.length < DECK_SIZE) deck.push(instance(c, copy));
+  }
+  return deck;
 }
 
-// For now you play School of Arms against School of Magic.
-const PLAYER_SIGNET = "arms";
-const OPPONENT_SIGNET = "magic";
+// The first test game: School of Arms against School of Arms, hot-seat.
+const SIGNETS = ["arms", "arms"];
+const NAMES = ["Player 1", "Player 2"];
 
-function showError(board, message) {
-  let el = board.querySelector(".board-error");
-  if (!el) {
-    el = document.createElement("div");
-    el.className = "board-error";
-    board.append(el);
+// ---------- Hot-seat game controller ----------
+
+let game = null;
+let viewer = 0; // whose side is at the bottom; follows the active player
+let selectedHand = null; // hand index picked to summon
+let board, phaseBtn, logEl, toastEl, curtain, winScreen;
+
+const $ = (sel) => document.querySelector(sel);
+
+function toast(message) {
+  toastEl.textContent = message;
+  toastEl.classList.add("show");
+  clearTimeout(toast.t);
+  toast.t = setTimeout(() => toastEl.classList.remove("show"), 2200);
+}
+
+// Sends an action to the engine. Shows the engine's reason if it says no.
+function act(action) {
+  const prevActive = game.activePlayer;
+  const result = applyAction(game, action);
+  if (!result.ok) {
+    toast(result.reason);
+    return false;
   }
-  el.textContent = message;
+  selectedHand = null;
+  if (game.winner !== null) return render(), showWin(), true;
+  if (game.activePlayer !== prevActive) showCurtain();
+  render();
+  return true;
+}
+
+const me = () => game.activePlayer;
+const legal = (action) => checkAction(game, action) === null;
+
+// Which button the phase control is: the engine's nextPhase if it has one, else End Turn.
+function phaseAction() {
+  const next = { type: "nextPhase", player: me() };
+  if (legal(next)) return next;
+  return { type: "endTurn", player: me() };
+}
+
+function phaseLabel(action) {
+  if (action.type === "endTurn") return "End Turn ▸";
+  if (game.phase === "prep1") return "To Battle ▸";
+  if (game.phase === "battle") return "End Battle ▸";
+  return "Next Phase ▸";
+}
+
+function render() {
+  const p = game.players[me()];
+  const ui = { phase: game.phase, selectedHand };
+
+  // Hand cards that could be summoned somewhere right now.
+  ui.playable = new Set();
+  p.hand.forEach((_, card) => {
+    if (p.ups.some((_, slot) => legal({ type: "summon", player: me(), card, slot }))) ui.playable.add(card);
+  });
+  // Slots the selected card can go to.
+  if (selectedHand !== null) {
+    ui.legalSlots = new Set();
+    p.ups.forEach((_, slot) => {
+      if (legal({ type: "summon", player: me(), card: selectedHand, slot })) ui.legalSlots.add(slot);
+    });
+  }
+  // Units that can attack.
+  ui.attackers = new Set();
+  p.ups.forEach((u, slot) => {
+    if (u && legal({ type: "attack", player: me(), slot })) ui.attackers.add(slot);
+  });
+
+  renderBoard(game, viewer, ui);
+
+  const pa = phaseAction();
+  phaseBtn.textContent = phaseLabel(pa);
+  phaseBtn.disabled = game.winner !== null;
+
+  logEl.innerHTML = game.log
+    .slice(-9)
+    .map((line) => `<div>${line.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c])}</div>`)
+    .join("");
+}
+
+function showCurtain() {
+  curtain.hidden = false;
+  $("#curtain-title").textContent = `${game.players[me()].name}'s turn`;
+  $("#curtain-btn").textContent = `I'm ${game.players[me()].name}, start`;
+  $("#curtain-btn").focus();
+}
+
+function hideCurtain() {
+  curtain.hidden = true;
+  viewer = me();
+  render();
+}
+
+function showWin() {
+  const winner = game.players[game.winner];
+  const loser = game.players[1 - game.winner];
+  $("#win-title").textContent = `${winner.name} wins!`;
+  $("#win-detail").textContent = `${loser.name}'s Defense fell to ${Math.max(0, loser.defense ?? 0)} on turn ${game.turn}.`;
+  winScreen.hidden = false;
+  $("#rematch-btn").focus();
+}
+
+async function startGame() {
+  winScreen.hidden = true;
+  curtain.hidden = true;
+  selectedHand = null;
+  try {
+    const [cards, decks] = await Promise.all([loadJson("data/cards.json"), loadJson("data/decks.json", true)]);
+    // The engine flips the coin, deals 4 and 5, and runs the first Draw Phase.
+    game = newGame({ decks: SIGNETS.map((s) => buildDeck(cards, decks, s)), names: NAMES });
+    window.game = game; // handy for poking at the state from the browser console
+    viewer = me();
+    render();
+    showCurtain();
+  } catch (err) {
+    console.error(err);
+    toast(err.message);
+  }
+}
+
+// ---------- Clicks ----------
+
+function onHandClick({ index }) {
+  if (curtain.hidden === false || game.winner !== null) return;
+  selectedHand = selectedHand === index ? null : index;
+  if (selectedHand !== null) {
+    const p = game.players[me()];
+    const anywhere = p.ups.some((_, slot) => legal({ type: "summon", player: me(), card: index, slot }));
+    if (!anywhere) {
+      // Ask the engine why, using the first empty slot, so the reason is useful.
+      const empty = p.ups.findIndex((u) => !u);
+      toast(checkAction(game, { type: "summon", player: me(), card: index, slot: Math.max(0, empty) }) ?? "Can't play that now.");
+      selectedHand = null;
+    }
+  }
+  render();
+}
+
+function onSlotClick({ owner, zone, index }) {
+  if (curtain.hidden === false || game.winner !== null) return;
+  if (owner !== 0 || zone !== "ups") return; // only your own unit slots do anything for now
+  const unit = game.players[me()].ups[index];
+  if (selectedHand !== null && !unit) {
+    act({ type: "summon", player: me(), card: selectedHand, slot: index });
+  } else if (unit) {
+    act({ type: "attack", player: me(), slot: index });
+  }
 }
 
 export function setupGame() {
-  const board = document.querySelector("#board");
-  buildBoard(board);
-  document.querySelector("#back-to-menu-btn").addEventListener("click", () => showScreen("menu"));
+  board = $("#board");
+  phaseBtn = $("#phase-btn");
+  logEl = $("#game-log");
+  toastEl = $("#toast");
+  curtain = $("#curtain");
+  winScreen = $("#win-screen");
 
-  board.addEventListener("slotclick", (e) => console.log("slot clicked", e.detail));
+  buildBoard(board);
+  board.addEventListener("handclick", (e) => onHandClick(e.detail));
+  board.addEventListener("slotclick", (e) => onSlotClick(e.detail));
+  board.addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+    selectedHand = null;
+    render();
+  });
+  phaseBtn.addEventListener("click", () => act(phaseAction()));
+  $("#curtain-btn").addEventListener("click", hideCurtain);
+  $("#rematch-btn").addEventListener("click", startGame);
+  $("#win-menu-btn").addEventListener("click", () => showScreen("menu"));
+  $("#back-to-menu-btn").addEventListener("click", () => showScreen("menu"));
 
   registerScreen("game", {
     el: "#game-screen",
-    onShow: async () => {
-      try {
-        const cards = await loadCards();
-        // The engine flips the coin, deals 4 and 5, and runs the first Draw Phase.
-        const game = newGame({
-          decks: [buildDeck(cards, PLAYER_SIGNET), buildDeck(cards, OPPONENT_SIGNET)],
-          names: ["You", "Opponent"],
-        });
-        renderBoard(game);
-      } catch (err) {
-        console.error(err);
-        showError(board, err.message);
-      }
-    },
+    onShow: startGame,
     onKey: (e) => {
-      if (e.key === "Escape") showScreen("menu");
+      if (e.key !== "Escape") return;
+      if (selectedHand !== null) {
+        selectedHand = null;
+        render();
+      } else showScreen("menu");
     },
   });
 }

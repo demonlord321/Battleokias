@@ -68,6 +68,11 @@ export function buildBoard(container) {
   container.append(oppHand, table, playerHand, ...els.stats);
 
   container.addEventListener("click", (e) => {
+    const handCard = e.target.closest(".hand-player .card");
+    if (handCard) {
+      container.dispatchEvent(new CustomEvent("handclick", { detail: { index: +handCard.dataset.handIndex } }));
+      return;
+    }
     const slot = e.target.closest(".slot");
     if (!slot) return;
     container.dispatchEvent(
@@ -116,27 +121,55 @@ function fillSlot(slot, card) {
   if (card) slot.prepend(cardEl(card, !card.faceDown));
 }
 
-const PHASE_NAMES = { setup: "Setup", draw: "Draw Phase", prep1: "Preparation Phase I" };
+export const PHASE_NAMES = {
+  setup: "Setup",
+  draw: "Draw Phase",
+  prep1: "Preparation Phase I",
+  battle: "Battle Phase",
+  prep2: "Preparation Phase II",
+  end: "End Phase",
+};
 
 // Draws everything the state holds: hands, pile counts, and the cards in the
 // Unit Position Slots, Special Deck Zones, Formation Zone and Field Effect Zone.
-export function renderBoard(game, viewer = 0) {
+// viewer is whose side is at the bottom (hot-seat flips it each turn).
+// ui carries what the screen wants highlighted:
+//   selectedHand: index of the hand card picked to summon
+//   legalSlots:   Set of ups indexes (viewer's side) the selected card can go to
+//   attackers:    Set of ups indexes (viewer's side) that can attack right now
+//   targets:      Set of ups indexes (other side) that can be targeted
+export function renderBoard(game, viewer = 0, ui = {}) {
   game.players.forEach((p, owner) => {
     const side = owner === viewer ? 0 : 1;
     renderStats(els.stats[side], p, game.activePlayer === owner);
-    p.ups.forEach((card, i) => fillSlot(getSlot(side, "ups", i), card));
+    p.ups.forEach((card, i) => {
+      const slot = getSlot(side, "ups", i);
+      fillSlot(slot, card);
+      slot.classList.toggle("is-legal", side === 0 && !!ui.legalSlots?.has(i));
+      slot.classList.toggle("can-attack", side === 0 && !!ui.attackers?.has(i));
+      slot.classList.toggle("is-target", side === 1 && !!ui.targets?.has(i));
+      slot.classList.toggle("is-exhausted", !!card && side === 0 && ui.phase === "battle" && !ui.attackers?.has(i));
+    });
     p.specialZones.forEach((card, i) => fillSlot(getSlot(side, "sdz", i), card));
     fillSlot(getSlot(side, "fez"), p.fieldEffect);
     fillSlot(getSlot(side, "formation"), p.formationZone ?? null);
-    const hand = els.hands[owner === viewer ? 0 : 1];
+    const hand = els.hands[side];
     hand.innerHTML = "";
-    p.hand.forEach((card) => hand.append(cardEl(card, owner === viewer)));
-    els.counts[slotKey(owner === viewer ? 0 : 1, "draw", 0)].textContent = p.deck.length;
-    els.counts[slotKey(owner === viewer ? 0 : 1, "grave", 0)].textContent = p.graveyard.length;
+    p.hand.forEach((card, i) => {
+      const el = cardEl(card, side === 0);
+      if (side === 0) {
+        el.dataset.handIndex = i;
+        el.classList.toggle("is-selected", ui.selectedHand === i);
+        el.classList.toggle("is-playable", !!ui.playable?.has(i));
+      }
+      hand.append(el);
+    });
+    els.counts[slotKey(side, "draw", 0)].textContent = p.deck.length;
+    els.counts[slotKey(side, "grave", 0)].textContent = p.graveyard.length;
   });
   const banner = document.querySelector("#turn-banner");
-  const who = game.activePlayer === viewer ? "Your turn" : "Opponent's turn";
+  const active = game.players[game.activePlayer];
   const phase = PHASE_NAMES[game.phase] ?? game.phase;
-  banner.textContent = game.turn > 0 ? `Turn ${game.turn} · ${who} · ${phase}` : who;
+  banner.textContent = game.turn > 0 ? `Turn ${game.turn} · ${active.name} · ${phase}` : active.name;
   banner.classList.toggle("is-opponent", game.activePlayer !== viewer);
 }
