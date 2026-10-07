@@ -9,17 +9,22 @@ Written up from Dyllan's notes. Open questions are marked **(?)**. Rules are ref
 2. The starting player draws **4** cards.
 3. The opponent draws **5** cards.
 
-## Turn structure
-1. **Draw Phase:** the active player draws 1 card. This includes the starting
-   player's very first turn, so the starting player begins their first main phase
-   with **5** cards, and the opponent begins their first turn with **6**.
-2. **Preparation Phase I:** the active player may summon units and set traps or spells.
-   - **(?)** Is there a limit or cost on how many units can be summoned per turn?
-   - **(?)** Are traps and spells set face-down until triggered or activated?
-3. **Battle Phase:** you can attack only if you have a **Formation** set (details still to come).
-4. **Preparation Phase II:** at the start, choose one of your four Special Decks and draw from it (see Special Decks).
-   - **(?)** Where does it sit? Built as a placeholder **between Preparation Phase I and the Battle Phase** (`698d902`), so Gear drawn there helps that turn's attack.
-5. _(further phases to come)_
+## Turn structure (confirmed by Dyllan)
+Each turn runs through six phases, shown on screen with their short names:
+
+| # | Phase | Short | What happens |
+|---|---|---|---|
+| 1 | **Start Phase** | SPh | You can activate any set Spells or Traps that help you going into your turn. |
+| 2 | **Draw Phase** | DPh | Draw 1 card from your main deck. |
+| 3 | **Preparation Phase I** | PPh1 | Summon, promote, move and retire units, set cards, play Formations and Field Spells. |
+| 4 | **Battle Phase** | BPh | Attack your opponent. You can only attack with an active Formation. |
+| 5 | **Preparation Phase II** | PPh2 | Draw 1 card from a Special Deck of your choice, and set cards (setting only). |
+| 6 | **End Phase** | EPh | You can activate set cards if needed. Then your opponent's turn begins. |
+
+- The Draw Phase includes the starting player's very first turn, so the starting player begins their first Preparation Phase I with **5** cards, and the opponent begins with **6**.
+- **(?)** Is there a limit on how many units can be summoned per turn? (Only Energy limits it for now.)
+- **(?)** Are Spells and Traps set face-down until activated? (Yes.)
+- **(?)** Can Spells and Traps be activated during your opponent's turn too, or only in your own Start and End Phases?
 
 ## Still to define
 - ~~Win condition~~ (10 Damage Counters, see Player stats)
