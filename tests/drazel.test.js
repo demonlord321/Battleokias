@@ -43,3 +43,18 @@ test("the card check accepts his empty Defense only with variableDefense", () =>
   assert.ok(checkCards([noRule]).some((m) => /defense/.test(m)));
   assert.ok(checkCards([{ ...byId["ARM-MER-001"], defense: 1000 }]).some((m) => /"defense": null/.test(m)));
 });
+
+test("if the Equipment stays on, he takes the total Defense, and its Defense bonus isn't counted twice", () => {
+  const game = start();
+  const p = game.players[0];
+  // An Equipment with no Grade limit, so it stays on through the promotion.
+  const armour = { ...copy("EQP-001"), id: "ARMOUR#1", maxGrade: undefined, boost: { attack: 300, defense: 400 } };
+  p.ups[0] = { ...copy("ARM-012"), equipment: armour };
+  p.hand.push(copy("ARM-MER-001"));
+  assert.equal(applyAction(game, { type: "promote", player: 0, card: p.hand.length - 1, slot: 0 }).ok, true);
+  assert.equal(p.ups[0].defense, 1900);
+  assert.deepEqual(unitStats(game, 0, 0), { attack: 4300, defense: 1900 });
+  // Back in the Grave, the Equipment is an ordinary card again.
+  assert.equal(applyAction(game, { type: "retire", player: 0, slot: 0 }).ok, true);
+  assert.equal(p.graveyard.find((c) => c.id === "ARMOUR#1").defenseCopied, undefined);
+});

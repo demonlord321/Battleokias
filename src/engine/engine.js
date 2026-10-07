@@ -46,7 +46,7 @@ export function destroyUnit(game, playerIndex, slot, message = null) {
   if (!unit) return null;
   const { under = [], equipment = null, ...card } = unit;
   p.ups[slot] = null;
-  const { readyNextTurn, ...gear } = equipment ?? {};
+  const { readyNextTurn, defenseCopied, ...gear } = equipment ?? {};
   p.graveyard.push(...under, card, ...(equipment ? [gear] : []));
   game.log.push(message ?? `${unit.name} goes to the Grave.`);
   return unit;
@@ -70,9 +70,11 @@ export function unitStats(game, playerIndex, slot) {
   if (!unit) return null;
   // Equipment set in Preparation Phase II (equipment.readyNextTurn) does nothing until your next Phase I.
   const boost = (!unit.equipment?.readyNextTurn && unit.equipment?.boost) || {};
+  // Drazel copied a Defense that already counted this Equipment, so it isn't added twice.
+  const defBoost = unit.equipment?.defenseCopied ? {} : boost;
   return {
     attack: Math.floor((unit.attack * (100 + (boost.attackPercent ?? 0))) / 100) + (boost.attack ?? 0),
-    defense: Math.floor((unit.defense * (100 + (boost.defensePercent ?? 0))) / 100) + (boost.defense ?? 0),
+    defense: Math.floor((unit.defense * (100 + (defBoost.defensePercent ?? 0))) / 100) + (defBoost.defense ?? 0),
   };
 }
 
@@ -163,17 +165,20 @@ const catalogueId = (c) => c.cardId ?? c.id;
 // named units fit: a card without it goes on any unit one Grade lower in the same line.
 export const promotionLine = (card) => card.signets?.[0] ?? null;
 
-// The Defense a unit has when it arrives on the field. Most use their printed number. A unit
-// with variableDefense (Drazel) has variableDefense.summoned when summoned, and copies the
-// printed Defense of the unit it promotes (not Equipment bonuses; those stay on top).
 // Equipment with maxGrade (Practice Gear: 3) only goes on, and only stays on, units up to that Grade.
 const fitsGrade = (equipment, unit) => !Number.isInteger(equipment.maxGrade) || unit.grade <= equipment.maxGrade;
 
-function arrivingDefense(card, base = null) {
+// The Defense a unit has when it arrives on the field. Most use their printed number. A unit
+// with variableDefense (Drazel) has variableDefense.summoned when summoned, and copies the
+// Defense of the unit it promotes: the printed number, or, when that unit's Equipment stays on
+// (RULES.md f6fc20c), its total Defense with the Equipment (baseTotal from unitStats).
+function arrivingDefense(card, base = null, baseTotal = null) {
   const v = card.variableDefense;
   if (!v) return card.defense;
-  return base && v.promoted === "base" ? base.defense : v.summoned;
+  if (!base || v.promoted !== "base") return v.summoned;
+  return baseTotal ?? base.defense;
 }
+
 export function inPromotionLine(base, card) {
   if (card.promotesFrom) return card.promotesFrom.includes(catalogueId(base));
   return promotionLine(base) !== null && promotionLine(base) === promotionLine(card);
@@ -402,10 +407,14 @@ const ACTIONS = {
       // (Practice Gear: Grades 1-3), and then it goes to the Grave.
       const { under = [], equipment, ...baseCard } = base;
       const outgrown = equipment && !fitsGrade(equipment, card);
-      p.ups[action.slot] = { ...card, defense: arrivingDefense(card, base), under: [...under, baseCard], ...(equipment && !outgrown ? { equipment } : {}) };
+      const kept = equipment && !outgrown ? equipment : null;
+      // Drazel takes the total Defense when the Equipment stays on (and it's already working).
+      const copiesTotal = kept && !kept.readyNextTurn && card.variableDefense?.promoted === "base";
+      const defense = arrivingDefense(card, base, copiesTotal ? unitStats(game, game.activePlayer, action.slot).defense : null);
+      p.ups[action.slot] = { ...card, defense, under: [...under, baseCard], ...(kept ? { equipment: copiesTotal ? { ...kept, defenseCopied: true } : kept } : {}) };
       game.log.push(`${p.name} promotes ${base.name} to ${card.name}.`);
       if (outgrown) {
-        const { readyNextTurn, ...gear } = equipment;
+        const { readyNextTurn, defenseCopied, ...gear } = equipment;
         p.graveyard.push(gear);
         game.log.push(`${card.name} has outgrown ${gear.name}, and it goes to the Grave.`);
       }
