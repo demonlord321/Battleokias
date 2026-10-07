@@ -69,8 +69,14 @@ export function formationStats(game, playerIndex) {
   if (!f) return null;
   const units = f.slots.map((slot) => p.ups[slot]).filter(Boolean);
   const missing = f.slots.length - units.length;
-  const attack = units.reduce((total, u) => total + u.attack, 0);
-  const defense = units.reduce((total, u) => total + u.defense, 0);
+  let attack = units.reduce((total, u) => total + u.attack, 0);
+  let defense = units.reduce((total, u) => total + u.defense, 0);
+  // "scaled" (Vanguard Charge): Attack times attackMultiplier, Defense divided by
+  // defenseDivisor, rounded down (placeholder until Dyllan confirms rounding).
+  if (f.combine === "scaled") {
+    attack = Math.floor(attack * (f.attackMultiplier ?? 1));
+    defense = Math.floor(defense / (f.defenseDivisor ?? 1));
+  }
   return {
     name: f.name, attack, defense, missing, complete: missing === 0,
     damageGrade: f.damageGrade ?? 1, // Damage Counters dealt when its attack lands

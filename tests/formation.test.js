@@ -270,3 +270,19 @@ test("deckFormation isn't allowed with a Formation in hand, a non-Formation card
   applyAction(game, { type: "nextPhase", player: 0 });
   assert.match(checkAction(game, { type: "deckFormation", player: 0, card: fid }), /Preparation Phase I/);
 });
+
+test("Vanguard Charge: front centre plus the middle row, Attack x1.5 and Defense /1.5, rounded down", () => {
+  const game = start();
+  game.players[0].formationZone = {
+    id: "FRM-002#1", cardId: "FRM-002", name: "Vanguard Charge", type: "formation", cost: 0,
+    slots: [1, 3, 4, 5], combine: "scaled", attackMultiplier: 1.5, defenseDivisor: 1.5, damageGrade: 2, defenseGrade: 0,
+  };
+  place(game, 0, 1, unit(1, 500, 500)); // Student, front centre
+  place(game, 0, 3, unit(2, 1500, 1000)); // Apprentice
+  place(game, 0, 4, unit(3, 2000, 1500)); // Graduate
+  assert.equal(formationStats(game, 0).complete, false);
+  place(game, 0, 5, unit(1, 500, 500)); // Student
+  place(game, 0, 0, unit(3, 2000, 1500)); // front corner doesn't count
+  // 4500 x 1.5 = 6750 Attack; 3500 / 1.5 = 2333.3, rounded down to 2333 Defense.
+  assert.deepEqual(formationStats(game, 0), { name: "Vanguard Charge", attack: 6750, defense: 2333, missing: 0, complete: true, damageGrade: 2, defenseGrade: 0 });
+});

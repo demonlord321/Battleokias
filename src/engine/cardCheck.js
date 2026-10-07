@@ -14,8 +14,9 @@ const BY_TYPE = {
   // slots: the Unit Position Slots (0 to 8, front row 0-2) the Formation draws from.
   formation: { cost: "number", slots: "array", combine: "string", damageGrade: "number", defenseGrade: "number" },
 };
-// How a Formation adds up its units. Only "sum" (Frontal Assault) so far.
-export const COMBINE_RULES = ["sum"];
+// How a Formation adds up its units: "sum" (Frontal Assault), or "scaled" (Vanguard
+// Charge), which sums and then uses attackMultiplier and defenseDivisor.
+export const COMBINE_RULES = ["sum", "scaled"];
 const DEFAULT_FIELDS = { cost: "number" };
 
 // IDs look like ARM-001, or ARM-ALC-001 for a card with more than one Signet.
@@ -66,6 +67,11 @@ export function checkCards(cards) {
       }
       for (const g of ["damageGrade", "defenseGrade"]) {
         if (typeof card[g] === "number" && (card[g] < 0 || !Number.isInteger(card[g]))) problems.push(`${where}: ${g} should be a whole number, 0 or more.`);
+      }
+      if (card.combine === "scaled") {
+        for (const k of ["attackMultiplier", "defenseDivisor"]) {
+          if (typeof card[k] !== "number" || card[k] <= 0) problems.push(`${where}: "scaled" Formations need ${k} as a number above 0.`);
+        }
       }
       if (typeof card.combine === "string" && !COMBINE_RULES.includes(card.combine)) {
         problems.push(`${where}: unknown combine "${card.combine}". Use one of: ${COMBINE_RULES.join(", ")}.`);
