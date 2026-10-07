@@ -63,6 +63,8 @@ Alongside the 60-card main deck, each player has **four Special Decks**, one in 
 - **Preparation Phase II:** at the start of it, you choose one of your four Special Decks and draw **one card** from it. That is the only Special Deck draw.
 - **In Preparation Phase II you can only set cards.**
 - **Equipment set in Phase II** goes on its unit, but the unit only **becomes equipped at the start of your next Preparation Phase I**, so the bonus doesn't apply until then.
+  - Set Equipment gives **nothing during your opponent's turn**, so the unit can be destroyed with its Gear still waiting. That risk is intended (confirmed by Dyllan).
+- **You don't have to use a drawn card straight away.** You can hold it. Equipment held in hand can be equipped in Preparation Phase I and works immediately.
 - **Artifacts and Monsters** are Special Deck only, like Equipment.
 - A **Spell Special Deck** blocks only Spells from your main deck, and a **Trap Special Deck** blocks only Traps.
 
