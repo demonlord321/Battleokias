@@ -38,7 +38,9 @@ Mapmaker (game board and screens), Advisor (balance reviews), Planner (plan and 
 ## Milestone 1.5: First Arms vs Arms test game (current focus)
 Uses the placeholder rules in `RULES.md`; Dyllan refines them as we play.
 - [x] Arms-only sample cards in `data/cards.json`: 10 units, Grades 1 to 6, Developer (Dyllan to refine)
-- [ ] Add Dyllan's Student/Apprentice/Graduate of Arms (Grades 1-3) to `data/cards.json` and the test decks, Developer
+- [x] Formations: Frontal Assault, Damage/Defense Grade, Damage Counters (lose at 10), unit destruction to the Grave, Developer + Mapmaker
+- [x] Formation battles balanced in bot games (first player wins 49%, median 15 turns)
+- [x] Add Dyllan's Student/Apprentice/Graduate of Arms (Grades 1-3) to `data/cards.json` and the test decks, Developer
 - [x] Unit `grade` field replaces `cost`/`level`, Developer + Mapmaker
 - [x] Two 30-card Arms decks built from them, Developer
 - [x] Summon a unit from hand to an empty UPS slot, paying Energy, Developer (engine) + Mapmaker (click/drag)

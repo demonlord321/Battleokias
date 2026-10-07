@@ -1,6 +1,6 @@
 # Battle'O'Kias — Rules (Milestone 0, in progress)
 
-Written up from Dyllan's notes. Open questions are marked **(?)**.
+Written up from Dyllan's notes. Open questions are marked **(?)**. Rules are refined as we go, and balance is tuned as cards are added.
 
 ## Setup
 1. A coin flip decides who goes first.
@@ -87,7 +87,7 @@ These three form a promotion line (Student to Apprentice to Graduate). Under the
   The units don't need to be related.
 - **One promotion per turn.** Field Spells can allow extra promotions in the same turn.
 - Placeholder until Dyllan decides: the card underneath stays stacked beneath the new unit and both go to the Grave when the unit is destroyed.
-- Built (`8eb3c65`) with these placeholders. Bot games: first player wins 77% (62% if the first player skips their first draw). Dyllan to decide on a fix.
+- First-player edge: with Formations and unit destruction in (`58d4e06`), bot games show the first player winning 49%, so no extra fix is needed for now.
 - Placeholder until Dyllan decides: a promoted unit can attack this turn if the unit beneath was already on the field at the start of the turn.
 - **(?)** How does Grade map to rarity names, if any (e.g. Common, Rare, Legendary)?
 - **(?)** What triggers a Formation Effect (a pattern of units in the 3x3 grid, adjacency, same Signet)?
@@ -134,9 +134,9 @@ Open questions:
 - **If there is no opposing Formation**, your attack deals exactly **1 Damage Counter**, whatever your Damage Grade, and **no units are destroyed**.
 
 Open questions:
-- **(?)** If several units tie for lowest Grade, who picks which one is destroyed? Placeholder: the defender picks.
-- **(?)** Does an inactive Formation count as "no opposing Formation" (1 counter, no units destroyed)? Placeholder: yes.
-- **(?)** Does a failed attack do anything to the attacker? Placeholder: no.
+- If several units tie for lowest Grade, the defender picks which one is destroyed. (Accepted for now.)
+- An inactive Formation counts as no opposing Formation: 1 counter, no units destroyed. (Accepted for now.)
+- A failed attack does nothing to the attacker. (Accepted for now.)
 - **(?)** How many times can a Formation attack per Battle Phase? (Placeholder: once.)
 - **(?)** Does playing a Formation card cost Energy? Can you swap it for another Formation? (Placeholders built: 0 Energy, and the old one goes to the Grave.)
 - **(?)** Do units that just arrived count toward the Formation on the turn they're summoned or promoted?
