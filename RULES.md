@@ -63,10 +63,13 @@ A Unit card shows:
 - **Defense** stat
 - A **Formation Effect**
 
+- **Grade** (top right of the card): the unit's Energy cost and its rarity in one number.
+
 Open questions:
+- **(?)** Does Grade N cost exactly N Energy? What is the Grade range (Energy caps at 10)?
+- **(?)** How does Grade map to rarity names, if any (e.g. Common, Rare, Legendary)?
 - **(?)** What triggers a Formation Effect (a pattern of units in the 3x3 grid, adjacency, same Signet)?
 - **(?)** How does the Formation card type relate to a unit's Formation Effect?
-- **(?)** Do Units also show an Energy cost and a level on the card?
 
 ## Placeholder rules for the first Arms vs Arms test game
 These are **temporary** so a units-only game can be played and tuned. Dyllan will replace them.
