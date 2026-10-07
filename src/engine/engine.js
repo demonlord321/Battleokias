@@ -107,7 +107,9 @@ export function lowestGradeSlots(game, playerIndex) {
 }
 
 // Arms Academy (RULES.md, Field Spells). An Academy Field Spell card carries
-//   academy: { signet, enrollGrade, emergeGrade, turns, capacity }
+//   academy: { enroll, emerge, turns, capacity }
+// where enroll and emerge are card ids (RULES.md: Student of Arms ARM-010 goes in,
+// Graduate of Arms ARM-012 comes out; no other card and no other promotion).
 // While it sits in your Field Effect Zone, fieldEffect.enrolled lists the units
 // in it as { card, ready }, where ready is the turn number they graduate on
 // (sent on your turn 3 with turns: 2 means ready on your turn 5).
@@ -116,13 +118,16 @@ export function academyOf(game, playerIndex) {
   return field?.academy ? field : null;
 }
 
-// What a graduating unit could become right now: every unit of the Academy's
-// emergeGrade and Signet in your hand or deck (one entry per card name and
-// place, so the choice list stays short), and your empty slots.
+// The catalogue id of a card (deck copies are "ARM-010#2" with cardId "ARM-010").
+const catalogueId = (c) => c.cardId ?? c.id;
+
+// What a graduating unit could become right now: every copy of the Academy's
+// emerge card in your hand or deck (one entry per place, so the choice list
+// stays short), and your empty slots.
 export function graduateOptions(game, playerIndex) {
   const p = game.players[playerIndex];
   const { academy } = academyOf(game, playerIndex);
-  const fits = (c) => c.type === "unit" && c.grade === academy.emergeGrade && (c.signets ?? []).includes(academy.signet);
+  const fits = (c) => catalogueId(c) === academy.emerge;
   const cards = [];
   const seen = new Set();
   for (const [from, pile] of [["hand", p.hand], ["deck", p.deck]]) {
@@ -154,7 +159,7 @@ function nextGraduation(game) {
       return;
     }
     student.due = false;
-    const why = slots.length ? `there's no Grade ${field.academy.emergeGrade} to call` : "there's no empty slot";
+    const why = slots.length ? "there's no card to call out of your hand or deck" : "there's no empty slot";
     game.log.push(`${student.card.name} stays in ${field.name} for now: ${why}.`);
   }
 }
@@ -376,7 +381,7 @@ const ACTIONS = {
     },
   },
 
-  // { type: "enroll", player, card }: send a Grade 1 Arms unit from hand into your
+  // { type: "enroll", player, card }: send a Student of Arms from hand into your
   // Academy during Preparation Phase I. It costs the unit's Grade in Energy, and
   // the Academy holds up to 2 units (RULES.md, Arms Academy).
   enroll: {
@@ -390,9 +395,7 @@ const ACTIONS = {
       const i = handIndex(p, action.card);
       if (i < 0) return "That card isn't in your hand.";
       const card = p.hand[i];
-      if (card.type !== "unit" || card.grade !== academy.enrollGrade || !(card.signets ?? []).includes(academy.signet)) {
-        return `Only Grade ${academy.enrollGrade} ${academy.signet} units can enroll in ${field.name}.`;
-      }
+      if (catalogueId(card) !== academy.enroll) return `Only ${academy.enrollName ?? academy.enroll} can enroll in ${field.name}.`;
       if (cardCost(card) > p.energy) return `Enrolling ${card.name} costs ${cardCost(card)} Energy and you have ${p.energy}.`;
       return null;
     },
@@ -407,14 +410,14 @@ const ACTIONS = {
   },
 
   // { type: "graduate", player, card, slot }: answer the Academy's pending choice.
-  // `card` is the id of a Grade 3 from game.pending.cards (hand or deck), `slot` an
-  // empty slot from game.pending.slots. The Grade 3 is summoned there for free,
-  // the Grade 1 goes to the Grave, and the deck is reshuffled if the card came from it.
-  // Placeholders until Dyllan decides: it must be an Arms unit, and it can attack that turn.
+  // `card` is the id of a Graduate of Arms from game.pending.cards (hand or deck), `slot`
+  // an empty slot from game.pending.slots. It's summoned there for free, the Student
+  // goes to the Grave, and the deck is reshuffled if the card came from it.
+  // RULES.md: it can attack that turn if it's in your Formation.
   graduate: {
     check(game, action) {
       if (game.pending?.type !== "graduate") return "Nobody is graduating right now.";
-      if (!game.pending.cards.some((c) => c.id === action.card)) return "Pick one of the Grade 3 units on offer.";
+      if (!game.pending.cards.some((c) => c.id === action.card)) return "Pick one of the cards on offer.";
       if (!game.pending.slots.includes(action.slot)) return "Pick one of your empty slots.";
       return null;
     },

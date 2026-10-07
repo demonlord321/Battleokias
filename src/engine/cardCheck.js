@@ -72,12 +72,13 @@ export function checkCards(cards) {
       }
     }
     if (card.type === "field_spell" && "academy" in card) {
-      // An Academy Field Spell (Arms Academy): which units enroll, what comes out, after how many turns, and how many fit.
+      // An Academy Field Spell (Arms Academy): which card enrolls, which card comes out, after how many turns, and how many fit.
       const a = card.academy;
       if (typeOf(a) !== "object") problems.push(`${where}: "academy" should be an object in { }.`);
       else {
-        if (!SIGNETS.includes(a.signet)) problems.push(`${where}: academy.signet should be one of: ${SIGNETS.join(", ")}.`);
-        for (const k of ["enrollGrade", "emergeGrade", "turns", "capacity"]) {
+        const ids = new Set(cards.map((c) => c?.id));
+        for (const k of ["enroll", "emerge"]) if (!ids.has(a[k])) problems.push(`${where}: academy.${k} should be the id of a card in the list.`);
+        for (const k of ["turns", "capacity"]) {
           if (!Number.isInteger(a[k]) || a[k] < 1) problems.push(`${where}: academy.${k} should be a whole number, 1 or more.`);
         }
       }
