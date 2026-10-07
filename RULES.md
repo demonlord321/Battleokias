@@ -22,6 +22,18 @@ Written up from Dyllan's notes. Open questions are marked **(?)**.
 - Card types: **Units**, **Spells**, **Traps** (details to come)
 - Board zones: see **Field layout** below
 
+## Player stats
+Shown alongside each player's **Hand** (the zone where drawn cards go).
+- **Player Name**
+- **Defense Points (DP)**
+  - **(?)** Starting DP? Is reducing the opponent to 0 DP the win condition?
+- **Energy:** the currency for playing higher-level cards.
+  - **(?)** Starting Energy, how much is gained each turn, and is there a cap?
+  - **(?)** Do lower-level cards cost nothing, and what does each level cost?
+
+## Empty Draw Pile
+- **(?)** What happens when a player must draw from an empty Draw Pile (lose, take damage, reshuffle the Grave)?
+
 ## Field layout
 Each player has their own half of the table. The opponent's half is the player's half
 rotated 180 degrees (a true mirror across the table), so from our view their Draw Pile

@@ -24,13 +24,16 @@ Mapmaker (game board and screens), Advisor (balance reviews), Planner (plan and 
 ## Milestone 1: Headless rules engine (Developer)
 - [x] Engine skeleton in `src/engine/`: seeded RNG, per-player deck/hand/field/graveyard state, `applyAction()` (End Turn only), `npm test`
 - [ ] `cards.json` card definitions
-- [ ] Deck, seeded shuffle, draw, hand limits
+- [x] Coin flip, opening deal (4 and 5), Draw Phase each turn, seeded shuffle
+- [ ] Hand limits, empty Draw Pile rule
 - [ ] Game state; every move is an action passed to one `applyAction` function
 - [ ] Turn phases, playing cards, resources, combat, win check
 - [ ] Two random bots play full games in Node; unit tests
 
 ## Milestone 2: Playable board
-- [ ] Board layout mock-up: hands, fields, decks, graveyards, HP and resources, Mapmaker
+- [x] Board layout: 3x3 UPS, Special Deck Zones, Grave, Draw, Field Effect Zone, mirrored opponent, Mapmaker
+- [x] Board wired to engine state (`ups`, `specialZones`, `fieldEffect`), turn and phase banner, Mapmaker + Developer
+- [ ] Hand zone with player stats beside it: Player Name, Defense Points, Energy, Mapmaker + Developer
 - [ ] Board rendering wired to the engine state, Mapmaker + Developer
 - [ ] Click or drag to play and attack, End Turn button, game log
 - [ ] Hot-seat play
