@@ -11,6 +11,9 @@ import { createGame, createPlayer, MAX_ENERGY_CAP } from "./state.js";
 // the starting player to 5 cards and the opponent to 6.
 export const STARTING_HAND = { first: 4, second: 5 };
 
+// RULES.md, Promotion: one per turn unless a Field Spell allows more.
+export const PROMOTIONS_PER_TURN = 1;
+
 // Moves the top card of a player's Draw Pile into their hand.
 // Returns the card, or null if the pile is empty.
 export function drawCard(game, playerIndex) {
@@ -73,6 +76,8 @@ function startTurn(game) {
   if (game.activePlayer === game.startingPlayer) game.turn += 1;
   const p = game.players[game.activePlayer];
   refreshEnergy(p);
+  // RULES.md: one promotion per turn (Field Spells may raise this later).
+  game.promotionsLeft = PROMOTIONS_PER_TURN;
   // Your units shake off summoning sickness and get their attack back.
   for (const unit of p.ups) {
     if (unit) {
@@ -147,6 +152,38 @@ const ACTIONS = {
     },
   },
 
+  // { type: "promote", player, card, slot }: play a unit from hand on top of your
+  // unit in that slot. It must be exactly one Grade higher, and it costs the
+  // difference (1 Energy). The old unit stays stacked underneath in `under`.
+  promote: {
+    check(game, action) {
+      const p = game.players[game.activePlayer];
+      if (game.phase !== "prep1") return "You can only promote in Preparation Phase I.";
+      const i = handIndex(p, action.card);
+      if (i < 0) return "That card isn't in your hand.";
+      const card = p.hand[i];
+      if (card.type !== "unit") return "Only units can promote.";
+      const base = p.ups[action.slot];
+      if (!base) return "There's no unit there to promote.";
+      if (card.grade !== base.grade + 1) return `${card.name} is Grade ${card.grade} and can only promote a Grade ${card.grade - 1} unit.`;
+      if (game.promotionsLeft <= 0) return "You've already promoted this turn.";
+      const cost = card.grade - base.grade;
+      if (cost > p.energy) return `Promoting costs ${cost} Energy and you have ${p.energy}.`;
+      return null;
+    },
+    apply(game, action) {
+      const p = game.players[game.activePlayer];
+      const [card] = p.hand.splice(handIndex(p, action.card), 1);
+      const base = p.ups[action.slot];
+      spendEnergy(p, card.grade - base.grade);
+      game.promotionsLeft -= 1;
+      const { under = [], summonedThisTurn, hasAttacked, ...baseCard } = base;
+      // RULES.md placeholder: the promoted unit can attack this turn if the unit beneath was already on the field.
+      p.ups[action.slot] = { ...card, under: [...under, baseCard], summonedThisTurn, hasAttacked };
+      game.log.push(`${p.name} promotes ${base.name} to ${card.name}.`);
+    },
+  },
+
   // { type: "attack", player, slot }: the unit in that slot attacks down its column.
   attack: {
     check(game, action) {
@@ -173,8 +210,10 @@ const ACTIONS = {
       }
       const foe = enemy.ups[target];
       if (unit.attack > foe.defense) {
+        // The unit and any cards stacked under it go to the Grave.
+        const { under = [], summonedThisTurn, hasAttacked, ...foeCard } = foe;
         enemy.ups[target] = null;
-        enemy.graveyard.push(foe);
+        enemy.graveyard.push(...under, foeCard);
         game.log.push(`${unit.name} (${unit.attack}) destroys ${foe.name} (${foe.defense}).`);
       } else {
         game.log.push(`${unit.name} (${unit.attack}) can't break ${foe.name} (${foe.defense}).`);
@@ -228,7 +267,10 @@ export function legalActions(game) {
   const p = game.players[player];
   const candidates = [{ type: "endTurn", player }, { type: "nextPhase", player }];
   p.hand.forEach((card, i) => {
-    p.ups.forEach((_, slot) => candidates.push({ type: "summon", player, card: i, slot }));
+    p.ups.forEach((_, slot) => {
+      candidates.push({ type: "summon", player, card: i, slot });
+      candidates.push({ type: "promote", player, card: i, slot });
+    });
   });
   p.ups.forEach((_, slot) => candidates.push({ type: "attack", player, slot }));
   return candidates.filter((a) => checkAction(game, a) === null);

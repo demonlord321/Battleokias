@@ -124,3 +124,73 @@ test("random legal play always finishes with a winner", () => {
     assert.notEqual(game.winner, null);
   }
 });
+
+// Promotion (RULES.md): exactly one Grade up, costs the difference, one per turn.
+function promoteSetup() {
+  const game = start();
+  const me = game.players[0];
+  place(game, 0, 4, unit(1, 100, 100));
+  place(game, 0, 5, unit(1, 100, 100));
+  me.hand.push(unit(2, 200, 200), unit(2, 200, 200), unit(3, 300, 300));
+  me.energy = me.maxEnergy = 5;
+  return { game, me, g2: me.hand.length - 3, g3: me.hand.length - 1 };
+}
+
+test("promote: a Grade 2 on a Grade 1 costs 1 Energy and stacks the old unit under it", () => {
+  const { game, me, g2 } = promoteSetup();
+  const base = me.ups[4];
+  const card = me.hand[g2];
+  assert.equal(act(game, { type: "promote", card: g2, slot: 4 }).ok, true);
+  assert.equal(me.energy, 4);
+  assert.equal(me.ups[4].id, card.id);
+  assert.deepEqual(me.ups[4].under.map((c) => c.id), [base.id]);
+  assert.equal(me.ups[4].under[0].summonedThisTurn, undefined); // just the card, no field flags
+});
+
+test("promote: exactly one Grade up, one per turn, only in Preparation Phase I", () => {
+  const { game, g2, g3 } = promoteSetup();
+  assert.match(checkAction(game, { type: "promote", player: 0, card: g3, slot: 4 }), /only promote a Grade 2/);
+  assert.match(checkAction(game, { type: "promote", player: 0, card: g2, slot: 0 }), /no unit there/);
+  act(game, { type: "promote", card: g2, slot: 4 });
+  assert.match(checkAction(game, { type: "promote", player: 0, card: g2, slot: 5 }), /already promoted this turn/);
+  assert.equal(checkAction(game, { type: "promote", player: 0, card: g2 + 1, slot: 4 }), "You've already promoted this turn.");
+  act(game, { type: "nextPhase" });
+  assert.match(checkAction(game, { type: "promote", player: 0, card: g2, slot: 5 }), /Preparation Phase I/);
+});
+
+test("promote: the count resets next turn, and a Grade 3 can then promote the Grade 2", () => {
+  const { game, me, g2 } = promoteSetup();
+  act(game, { type: "promote", card: g2, slot: 4 });
+  act(game, { type: "endTurn" });
+  act(game, { type: "endTurn" });
+  const g3 = me.hand.findIndex((c) => c.grade === 3);
+  assert.equal(act(game, { type: "promote", card: g3, slot: 4 }).ok, true);
+  assert.equal(me.ups[4].under.length, 2);
+});
+
+test("a promoted unit can attack if the unit beneath was already on the field, but not if it was just summoned", () => {
+  const { game, me, g2 } = promoteSetup();
+  act(game, { type: "promote", card: g2, slot: 4 }); // slot 4 was already there
+  act(game, { type: "endTurn" });
+  act(game, { type: "endTurn" });
+  me.energy = 5;
+  me.hand.push(unit(1, 100, 100), unit(2, 200, 200));
+  act(game, { type: "summon", card: me.hand.length - 2, slot: 0 });
+  act(game, { type: "promote", card: me.hand.length - 1, slot: 0 });
+  act(game, { type: "nextPhase" });
+  assert.match(checkAction(game, { type: "attack", player: 0, slot: 0 }), /summoned this turn/);
+  assert.equal(checkAction(game, { type: "attack", player: 0, slot: 4 }), null);
+});
+
+test("a destroyed promoted unit takes its whole stack to the Grave", () => {
+  const { game, g2 } = promoteSetup();
+  act(game, { type: "promote", card: g2, slot: 4 });
+  act(game, { type: "endTurn" });
+  place(game, 1, 4, unit(1, 999, 100)); // their middle column faces my middle column
+  act(game, { type: "nextPhase" });
+  act(game, { type: "attack", slot: 4 });
+  const grave = game.players[0].graveyard;
+  assert.equal(grave.length, 2);
+  assert.ok(grave.every((c) => c.under === undefined));
+  assert.equal(game.players[0].ups[4], null);
+});
