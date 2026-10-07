@@ -3,7 +3,9 @@
     "id": "ARM-001",
     "name": "Iron Recruit",
     "type": "unit",
-    "signets": ["arms"],
+    "signets": [
+      "arms"
+    ],
     "cost": 1,
     "level": 1,
     "attack": 100,
@@ -16,9 +18,11 @@
     "id": "ARM-002",
     "name": "Shield Sergeant",
     "type": "unit",
-    "signets": ["arms"],
+    "signets": [
+      "arms"
+    ],
     "cost": 3,
-    "level": 2,
+    "level": 3,
     "attack": 150,
     "defense": 300,
     "formation": "Formation effect text",
@@ -26,12 +30,119 @@
     "image": "images/arm-002.png"
   },
   {
+    "id": "ARM-003",
+    "name": "Spear Militia",
+    "type": "unit",
+    "signets": [
+      "arms"
+    ],
+    "cost": 1,
+    "level": 1,
+    "attack": 150,
+    "defense": 50,
+    "formation": "Formation effect text",
+    "text": "",
+    "image": "images/arm-003.png"
+  },
+  {
+    "id": "ARM-004",
+    "name": "Squire",
+    "type": "unit",
+    "signets": [
+      "arms"
+    ],
+    "cost": 2,
+    "level": 2,
+    "attack": 200,
+    "defense": 150,
+    "formation": "Formation effect text",
+    "text": "",
+    "image": "images/arm-004.png"
+  },
+  {
+    "id": "ARM-005",
+    "name": "Crossbow Sniper",
+    "type": "unit",
+    "signets": [
+      "arms"
+    ],
+    "cost": 3,
+    "level": 3,
+    "attack": 250,
+    "defense": 100,
+    "formation": "Formation effect text",
+    "text": "",
+    "image": "images/arm-005.png"
+  },
+  {
+    "id": "ARM-006",
+    "name": "Banner Bearer",
+    "type": "unit",
+    "signets": [
+      "arms"
+    ],
+    "cost": 4,
+    "level": 4,
+    "attack": 250,
+    "defense": 300,
+    "formation": "Formation effect text",
+    "text": "",
+    "image": "images/arm-006.png"
+  },
+  {
+    "id": "ARM-007",
+    "name": "Veteran Swordsman",
+    "type": "unit",
+    "signets": [
+      "arms"
+    ],
+    "cost": 4,
+    "level": 4,
+    "attack": 300,
+    "defense": 250,
+    "formation": "Formation effect text",
+    "text": "",
+    "image": "images/arm-007.png"
+  },
+  {
+    "id": "ARM-008",
+    "name": "Pike Captain",
+    "type": "unit",
+    "signets": [
+      "arms"
+    ],
+    "cost": 5,
+    "level": 5,
+    "attack": 350,
+    "defense": 350,
+    "formation": "Formation effect text",
+    "text": "",
+    "image": "images/arm-008.png"
+  },
+  {
+    "id": "ARM-009",
+    "name": "War Knight",
+    "type": "unit",
+    "signets": [
+      "arms"
+    ],
+    "cost": 6,
+    "level": 6,
+    "attack": 450,
+    "defense": 400,
+    "formation": "Formation effect text",
+    "text": "",
+    "image": "images/arm-009.png"
+  },
+  {
     "id": "MAG-001",
     "name": "Apprentice Mage",
     "type": "unit",
-    "signets": ["magic"],
+    "signets": [
+      "magic"
+    ],
     "cost": 2,
-    "level": 1,
+    "level": 2,
     "attack": 200,
     "defense": 100,
     "formation": "Formation effect text",
@@ -42,7 +153,9 @@
     "id": "MAG-002",
     "name": "Arcane Bolt",
     "type": "spell",
-    "signets": ["magic"],
+    "signets": [
+      "magic"
+    ],
     "cost": 2,
     "text": "Spell effect text",
     "image": "images/mag-002.png"
@@ -51,9 +164,11 @@
     "id": "ALC-001",
     "name": "Flask Thrower",
     "type": "unit",
-    "signets": ["alchemy"],
+    "signets": [
+      "alchemy"
+    ],
     "cost": 2,
-    "level": 1,
+    "level": 2,
     "attack": 150,
     "defense": 150,
     "formation": "Formation effect text",
@@ -64,7 +179,9 @@
     "id": "ALC-002",
     "name": "Caustic Snare",
     "type": "trap",
-    "signets": ["alchemy"],
+    "signets": [
+      "alchemy"
+    ],
     "cost": 1,
     "text": "Trap effect text",
     "image": "images/alc-002.png"
@@ -73,9 +190,12 @@
     "id": "ARM-ALC-001",
     "name": "Goblin Scout",
     "type": "unit",
-    "signets": ["arms", "alchemy"],
+    "signets": [
+      "arms",
+      "alchemy"
+    ],
     "cost": 2,
-    "level": 1,
+    "level": 2,
     "attack": 120,
     "defense": 120,
     "formation": "Formation effect text",

@@ -54,3 +54,35 @@ export function checkCards(cards) {
   });
   return problems;
 }
+
+// RULES.md placeholder deck rules, until Dyllan sets deck size and copy limits.
+export const DECK_SIZE = 30;
+export const MAX_COPIES = 3;
+
+// Checks data/decks.json: { "<signet>": ["ARM-001", ...], ... }.
+// Every id must exist in cards, carry that Signet, appear at most 3 times, and the deck must have 30 cards.
+export function checkDecks(decks, cards) {
+  if (typeof decks !== "object" || decks === null || Array.isArray(decks)) {
+    return ['decks.json should be an object like { "arms": ["ARM-001", ...] }.'];
+  }
+  const byId = Object.fromEntries(cards.map((c) => [c.id, c]));
+  const problems = [];
+  for (const [signet, list] of Object.entries(decks)) {
+    const where = `The ${signet} deck`;
+    if (!SIGNETS.includes(signet)) problems.push(`${where}: unknown Signet "${signet}".`);
+    if (!Array.isArray(list)) {
+      problems.push(`${where}: should be a list of card ids.`);
+      continue;
+    }
+    if (list.length !== DECK_SIZE) problems.push(`${where}: has ${list.length} cards, needs ${DECK_SIZE}.`);
+    const counts = {};
+    for (const id of list) counts[id] = (counts[id] ?? 0) + 1;
+    for (const [id, n] of Object.entries(counts)) {
+      const card = byId[id];
+      if (!card) problems.push(`${where}: unknown card "${id}".`);
+      else if (!card.signets?.includes(signet)) problems.push(`${where}: ${id} doesn't carry the ${signet} Signet.`);
+      if (n > MAX_COPIES) problems.push(`${where}: ${n} copies of ${id}, the limit is ${MAX_COPIES}.`);
+    }
+  }
+  return problems;
+}

@@ -19,3 +19,9 @@ test("the checker catches common mistakes", () => {
   assert.equal(checkCards([{ ...good, type: "unit" }]).length, 4); // unit fields missing
   assert.equal(checkCards([{ ...good, cost: "2" }]).length, 1);
 });
+
+test("data/decks.json decks are legal", async () => {
+  const { checkDecks } = await import("../src/engine/cardCheck.js");
+  const read = (f) => JSON.parse(readFileSync(new URL(`../data/${f}`, import.meta.url), "utf8"));
+  assert.deepEqual(checkDecks(read("decks.json"), read("cards.json")), []);
+});
