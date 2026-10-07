@@ -2,7 +2,7 @@
 // start of Phase II you pick one and draw its top card.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { newGame, applyAction, checkAction, legalActions, unitStats } from "../src/engine/engine.js";
+import { newGame, applyAction, checkAction, legalActions, unitStats, destroyUnit } from "../src/engine/engine.js";
 
 let n = 0;
 const unit = () => ({ id: `U-${++n}`, name: `Unit${n}`, type: "unit", signets: ["arms"], grade: 1, attack: 500, defense: 500 });
@@ -56,7 +56,7 @@ test("Phase II starts with a Special draw you must make, from a deck that still 
   assert.match(checkAction(game, { type: "specialDraw", player: 1, deck: 0 }), /start of Preparation Phase II/);
 });
 
-test("Gear drawn in Phase II can be equipped right away, before the battle", () => {
+test("Gear set in Phase II waits until your next Phase I, and gives nothing on the opponent's turn", () => {
   const game = start();
   next(game);
   next(game);
@@ -66,8 +66,34 @@ test("Gear drawn in Phase II can be equipped right away, before the battle", () 
   next(game);
   applyAction(game, { type: "specialDraw", player: 1, deck: 0 });
   assert.equal(applyAction(game, { type: "equip", player: 1, card: p.hand.length - 1, slot: 0 }).ok, true);
-  assert.deepEqual(unitStats(game, 1, 0), { attack: 750, defense: 750 });
+  assert.equal(p.ups[0].equipment.readyNextTurn, true);
+  assert.deepEqual(unitStats(game, 1, 0), { attack: 500, defense: 500 });
   assert.match(checkAction(game, { type: "summon", player: 1, card: 0, slot: 1 }), /Preparation Phase I/);
+  next(game);
+  next(game); // player 1's turn: the Gear isn't on yet
+  assert.equal(game.activePlayer, 0);
+  assert.deepEqual(unitStats(game, 1, 0), { attack: 500, defense: 500 });
+  applyAction(game, { type: "endTurn", player: 0 }); // player 2's turn 2, Phase I
+  assert.equal(game.phase, "prep1");
+  assert.equal(p.ups[0].equipment.readyNextTurn, undefined);
+  assert.deepEqual(unitStats(game, 1, 0), { attack: 750, defense: 750 });
+});
+
+test("Gear equipped in Phase I works straight away, and a waiting Gear goes to the Grave clean", () => {
+  const game = start();
+  const p = game.players[0];
+  p.ups[0] = unit();
+  p.ups[1] = unit();
+  p.energy = 5;
+  p.hand.push(gear());
+  applyAction(game, { type: "equip", player: 0, card: p.hand.length - 1, slot: 0 });
+  assert.deepEqual(unitStats(game, 0, 0), { attack: 750, defense: 750 });
+  next(game);
+  p.hand.push(gear());
+  applyAction(game, { type: "equip", player: 0, card: p.hand.length - 1, slot: 1 });
+  assert.deepEqual(unitStats(game, 0, 1), { attack: 500, defense: 500 });
+  destroyUnit(game, 0, 1);
+  assert.equal(p.graveyard.find((c) => c.type === "equipment").readyNextTurn, undefined);
 });
 
 test("no Special draw when every Special Deck is empty", () => {

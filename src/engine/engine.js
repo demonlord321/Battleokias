@@ -46,7 +46,8 @@ export function destroyUnit(game, playerIndex, slot, message = null) {
   if (!unit) return null;
   const { under = [], equipment = null, ...card } = unit;
   p.ups[slot] = null;
-  p.graveyard.push(...under, card, ...(equipment ? [equipment] : []));
+  const { readyNextTurn, ...gear } = equipment ?? {};
+  p.graveyard.push(...under, card, ...(equipment ? [gear] : []));
   game.log.push(message ?? `${unit.name} goes to the Grave.`);
   return unit;
 }
@@ -67,7 +68,8 @@ export function cardCost(card) {
 export function unitStats(game, playerIndex, slot) {
   const unit = game.players[playerIndex].ups[slot];
   if (!unit) return null;
-  const boost = unit.equipment?.boost ?? {};
+  // Equipment set in Preparation Phase II (equipment.readyNextTurn) does nothing until your next Phase I.
+  const boost = (!unit.equipment?.readyNextTurn && unit.equipment?.boost) || {};
   return {
     attack: Math.floor((unit.attack * (100 + (boost.attackPercent ?? 0))) / 100) + (boost.attack ?? 0),
     defense: Math.floor((unit.defense * (100 + (boost.defensePercent ?? 0))) / 100) + (boost.defense ?? 0),
@@ -232,12 +234,16 @@ function startTurn(game) {
   // RULES.md placeholder: a player who can't draw in their Draw Phase loses.
   if (!drawCard(game, game.activePlayer)) return win(game, 1 - game.activePlayer, `${p.name} couldn't draw.`);
   game.phase = "prep1";
+  for (const unit of p.ups) if (unit?.equipment?.readyNextTurn) {
+    delete unit.equipment.readyNextTurn;
+    game.log.push(`${unit.name}'s ${unit.equipment.name} takes effect.`);
+  }
   for (const student of academyOf(game, game.activePlayer)?.enrolled ?? []) student.due = student.ready <= game.turn;
   nextGraduation(game);
 }
 
-// Phases where Spells and Equipment can be played (placeholder: summoning, promoting,
-// moving, retiring, Formations and the Academy stay in Phase I only).
+// Phases where Equipment can be equipped (RULES.md: in Phase II you can only set cards;
+// Equipment set there waits until your next Phase I). Everything else stays in Phase I.
 const PREP = ["prep1", "prep2"];
 
 // Start of Preparation Phase II (RULES.md, Special Decks): you pick one of your
@@ -450,19 +456,26 @@ const ACTIONS = {
       const p = game.players[game.activePlayer];
       const [card] = p.hand.splice(handIndex(p, action.card), 1);
       spendEnergy(p, cardCost(card));
-      p.ups[action.slot].equipment = card;
-      game.log.push(`${p.name} equips ${p.ups[action.slot].name} with ${card.name}.`);
+      const unit = p.ups[action.slot];
+      if (game.phase === "prep2") {
+        // RULES.md: Equipment set in Phase II takes effect at the start of your next Phase I.
+        unit.equipment = { ...card, readyNextTurn: true };
+        game.log.push(`${p.name} sets ${card.name} on ${unit.name}. It takes effect next turn.`);
+      } else {
+        unit.equipment = card;
+        game.log.push(`${p.name} equips ${unit.name} with ${card.name}.`);
+      }
     },
   },
 
   // { type: "setField", player, card }: put a Field Spell from hand into your Field
-  // Effect Zone during Preparation Phase I or II, paying its cost (most cost 1).
+  // Effect Zone during Preparation Phase I, paying its cost (most cost 1).
   // Placeholder: a new Field Spell replaces the old one, which goes to the Grave
   // along with any units still in it.
   setField: {
     check(game, action) {
       const p = game.players[game.activePlayer];
-      if (!PREP.includes(game.phase)) return "You can only play a Field Spell in a Preparation Phase.";
+      if (game.phase !== "prep1") return "You can only play a Field Spell in Preparation Phase I.";
       const i = handIndex(p, action.card);
       if (i < 0) return "That card isn't in your hand.";
       const card = p.hand[i];
