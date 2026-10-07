@@ -131,6 +131,7 @@ You can only attack if you have a Formation set.
 - **Damage Grade 2**, **Defense Grade 0**, **cost 1 Energy** (see Formation cost).
 - Example: Student, Apprentice and Student across the front with a Graduate in the middle centre gives 4500 x 1.5 = **6750 Attack** and 3500 / 1.5 = **2333 Defense**.
 - **(?)** Which Signets does it carry? Placeholder: all three, the same as Frontal Assault.
+- Balance note: in bot games, a Vanguard Charge deck beats a Frontal Assault deck 89% of the time, because of Damage Grade 2. Suggested fix: give Frontal Assault Defense Grade 1 (about 43%). Dyllan is leaving this for now, since Equipment may balance it.
 
 ### Formation from the deck (confirmed by Dyllan)
 - If by **round three** you hold **no Formation**, you can **summon one directly from your deck**.
