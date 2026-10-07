@@ -35,6 +35,7 @@ export function createGame({ seed = Date.now(), players }) {
     phase: "setup", // "setup", then each turn: "draw" -> "prep1" -> "battle"; "over" once someone wins
     players,
     winner: null, // index of the winning player, or null while the game runs
+    pending: null, // a choice someone must make before play goes on, e.g. { type: "chooseLoss", player, slots }
     log: [], // human-readable history, shown in the game log later
   };
 }

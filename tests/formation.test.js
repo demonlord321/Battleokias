@@ -1,7 +1,7 @@
 // Formations (RULES.md): Frontal Assault sums the Attack and Defense of the units in its slots.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { newGame, applyAction, checkAction, legalActions, formationStats, attackPreview } from "../src/engine/engine.js";
+import { newGame, applyAction, checkAction, legalActions, formationStats, attackPreview, lowestGradeSlots } from "../src/engine/engine.js";
 
 let n = 0;
 const unit = (grade, attack, defense) => ({ id: `U-${++n}`, name: `Unit${n}`, type: "unit", grade, attack, defense });
@@ -93,7 +93,7 @@ test("Attack lower than their Defense fails", () => {
   assert.match(game.log.at(-1), /can't get through/);
 });
 
-test("an opponent with no complete Formation takes the hit (placeholder)", () => {
+test("an opponent with no complete Formation takes the hit", () => {
   const game = battleReady([100, 100]);
   game.players[1].formationZone = frontal(); // set, but no units in its slots
   attack(game);
@@ -154,9 +154,75 @@ test("an incomplete Formation gives no Defense Grade (placeholder)", () => {
 });
 
 test("a big Damage Grade can finish the game", () => {
-  const game = battleReady([500, 500]);
+  const game = battleReady([500, 500], [100, 100]);
   game.players[0].formationZone.damageGrade = 3;
   game.players[1].damage = 8;
   attack(game);
   assert.equal(game.winner, 0);
+});
+
+// The Grave (RULES.md): a landed hit destroys the defender's lowest-Grade unit in their Formation.
+function gradedBattle(theirGrades) {
+  const game = battleReady([1000, 1000], [100, 100]);
+  theirGrades.forEach((grade, slot) => (game.players[1].ups[slot] = { ...unit(grade, 100, 100), name: `G${grade}-${slot}` }));
+  return game;
+}
+
+test("a landed hit destroys the defender's lowest-Grade Formation unit", () => {
+  const game = gradedBattle([2, 1, 3]);
+  assert.deepEqual(attackPreview(game).destroys, [1]);
+  attack(game);
+  const them = game.players[1];
+  assert.equal(them.ups[1], null);
+  assert.equal(them.graveyard.at(-1).name, "G1-1");
+  assert.equal(formationStats(game, 1).complete, false); // now inactive
+});
+
+test("units outside the Formation are never the ones destroyed", () => {
+  const game = gradedBattle([2, 2, 3]);
+  game.players[1].ups[4] = unit(1, 100, 100); // Grade 1, but in the middle row
+  assert.deepEqual(lowestGradeSlots(game, 1), [0, 1]);
+});
+
+test("tied lowest Grades: the defender chooses, and nothing else can happen first", () => {
+  const game = gradedBattle([1, 3, 1]);
+  attack(game);
+  assert.deepEqual(game.pending, { type: "chooseLoss", player: 1, slots: [0, 2] });
+  assert.deepEqual(legalActions(game), [
+    { type: "chooseLoss", player: 1, slot: 0 },
+    { type: "chooseLoss", player: 1, slot: 2 },
+  ]);
+  assert.match(checkAction(game, { type: "nextPhase", player: 0 }), /has to choose/);
+  assert.match(checkAction(game, { type: "chooseLoss", player: 0, slot: 0 }), /choice/);
+  assert.match(checkAction(game, { type: "chooseLoss", player: 1, slot: 1 }), /highlighted/);
+  assert.equal(applyAction(game, { type: "chooseLoss", player: 1, slot: 2 }).ok, true);
+  assert.equal(game.players[1].ups[2], null);
+  assert.ok(game.players[1].ups[0]);
+  assert.equal(game.pending, null);
+  assert.equal(applyAction(game, { type: "nextPhase", player: 0 }).ok, true);
+});
+
+test("against no active Formation: exactly 1 counter whatever the Damage Grade, nothing destroyed", () => {
+  const game = battleReady([500, 500]);
+  game.players[0].formationZone.damageGrade = 3;
+  game.players[1].ups[0] = unit(1, 100, 100); // a lone unit with no Formation
+  const preview = attackPreview(game);
+  assert.deepEqual([preview.hits, preview.counters, preview.destroys], [true, 1, []]);
+  attack(game);
+  assert.equal(game.players[1].damage, 1);
+  assert.ok(game.players[1].ups[0]);
+});
+
+test("an inactive Formation counts as no Formation", () => {
+  const game = gradedBattle([1, 2, 3]);
+  game.players[1].ups[2] = null;
+  game.players[0].formationZone.damageGrade = 3;
+  attack(game);
+  assert.equal(game.players[1].damage, 1);
+  assert.equal(game.players[1].graveyard.length, 0);
+});
+
+test("chooseLoss is refused when there's nothing to choose", () => {
+  const game = start();
+  assert.match(checkAction(game, { type: "chooseLoss", player: 0, slot: 0 }), /nothing to choose/);
 });

@@ -74,8 +74,11 @@ export function formationStats(game, playerIndex) {
 
 // What the active player's Formation attack would do right now, so the UI can
 // show it before the click and the attack itself uses exactly the same numbers.
-// Placeholders (RULES.md): an opponent with no complete Formation has 0 Defense
-// and 0 Defense Grade. RULES.md: a hit that lands always deals at least 1 counter.
+// RULES.md: an inactive Formation (any slot empty) counts as no Formation.
+// - Against an active Formation: it lands if Attack >= their Defense, deals
+//   Damage Grade minus their Defense Grade (at least 1), and destroys their
+//   lowest-Grade unit in the Formation. `destroys` lists the tied candidates.
+// - Against no active Formation: it always lands, deals exactly 1 counter, and destroys nothing.
 export function attackPreview(game, playerIndex = game.activePlayer) {
   const mine = formationStats(game, playerIndex);
   const theirs = formationStats(game, 1 - playerIndex);
@@ -83,8 +86,22 @@ export function attackPreview(game, playerIndex = game.activePlayer) {
   const attack = mine?.complete ? mine.attack : 0;
   const defense = guarded ? theirs.defense : 0;
   const hits = !!mine?.complete && attack >= defense;
-  const counters = hits ? Math.max(MIN_COUNTERS, mine.damageGrade - (guarded ? theirs.defenseGrade : 0)) : 0;
-  return { attack, defense, hits, counters, mine, theirs: guarded ? theirs : null };
+  let counters = 0;
+  let destroys = [];
+  if (hits && !guarded) counters = 1;
+  if (hits && guarded) {
+    counters = Math.max(MIN_COUNTERS, mine.damageGrade - theirs.defenseGrade);
+    destroys = lowestGradeSlots(game, 1 - playerIndex);
+  }
+  return { attack, defense, hits, counters, destroys, mine, theirs: guarded ? theirs : null };
+}
+
+// The Formation slots holding the player's lowest-Grade unit(s).
+export function lowestGradeSlots(game, playerIndex) {
+  const p = game.players[playerIndex];
+  const slots = (p.formationZone?.slots ?? []).filter((slot) => p.ups[slot]);
+  const lowest = Math.min(...slots.map((slot) => p.ups[slot].grade));
+  return slots.filter((slot) => p.ups[slot].grade === lowest);
 }
 
 function handIndex(player, card) {
@@ -257,13 +274,34 @@ const ACTIONS = {
       const me = game.activePlayer;
       const p = game.players[me];
       const enemy = game.players[1 - me];
-      const { attack, defense, hits, counters, mine, theirs } = attackPreview(game, me);
+      const { attack, defense, hits, counters, destroys, mine, theirs } = attackPreview(game, me);
       game.formationAttacked = true;
-      const against = theirs ? `${theirs.name} (${defense})` : "an open field";
+      const against = theirs ? `${theirs.name} (${defense})` : "no active Formation";
       if (!hits) return game.log.push(`${p.name}'s ${mine.name} (${attack}) can't get through ${against}.`);
       enemy.damage += counters;
       game.log.push(`${p.name}'s ${mine.name} (${attack}) breaks through ${against} for ${counters} Damage Counter${counters === 1 ? "" : "s"}. ${enemy.name} has ${enemy.damage}.`);
-      if (enemy.damage >= MAX_DAMAGE) win(game, me, `${enemy.name} reached ${MAX_DAMAGE} Damage Counters.`);
+      if (enemy.damage >= MAX_DAMAGE) return win(game, me, `${enemy.name} reached ${MAX_DAMAGE} Damage Counters.`);
+      if (destroys.length === 1) destroyUnit(game, 1 - me, destroys[0]);
+      // Placeholder: when lowest Grades tie, the defender picks which unit goes.
+      if (destroys.length > 1) {
+        game.pending = { type: "chooseLoss", player: 1 - me, slots: destroys };
+        game.log.push(`${enemy.name} chooses which unit goes to the Grave.`);
+      }
+    },
+  },
+
+  // { type: "chooseLoss", player, slot }: the defender picks which of their tied
+  // lowest-Grade units goes to the Grave. Only allowed while game.pending asks for it.
+  chooseLoss: {
+    check(game, action) {
+      if (game.pending?.type !== "chooseLoss") return "There's nothing to choose right now.";
+      if (!game.pending.slots.includes(action.slot)) return "Pick one of the highlighted units.";
+      return null;
+    },
+    apply(game, action) {
+      const { player } = game.pending;
+      game.pending = null;
+      destroyUnit(game, player, action.slot);
     }
   },
 };
@@ -295,6 +333,13 @@ export function checkAction(game, action) {
   if (game.winner !== null) return "The game is over.";
   const rule = ACTIONS[action?.type];
   if (!rule) return `Unknown action "${action?.type}".`;
+  // While a choice is pending (game.pending), only that player's answer is allowed.
+  if (game.pending) {
+    const who = game.players[game.pending.player].name;
+    if (action.type !== game.pending.type) return `${who} has to choose which unit goes to the Grave first.`;
+    if (action.player !== undefined && action.player !== game.pending.player) return `It's ${who}'s choice.`;
+    return rule.check(game, action);
+  }
   if (action.player !== undefined && action.player !== game.activePlayer) return "It's not your turn.";
   return rule.check(game, action);
 }
@@ -309,6 +354,10 @@ export function applyAction(game, action) {
 
 // Every action the active player could take right now. The bots and AI pick from this.
 export function legalActions(game) {
+  if (game.pending?.type === "chooseLoss") {
+    const { player, slots } = game.pending;
+    return slots.map((slot) => ({ type: "chooseLoss", player, slot }));
+  }
   const player = game.activePlayer;
   const p = game.players[player];
   const candidates = [{ type: "endTurn", player }, { type: "nextPhase", player }];
