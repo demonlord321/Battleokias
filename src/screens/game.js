@@ -1,5 +1,5 @@
 import { registerScreen, showScreen } from "../screens.js";
-import { newGame, applyAction, checkAction } from "../engine/engine.js";
+import { newGame, applyAction, checkAction, formationStats } from "../engine/engine.js";
 import { buildBoard, renderBoard, PHASE_NAMES } from "../board/board.js";
 
 // ---------- Cards and decks ----------
@@ -55,7 +55,7 @@ const NAMES = ["Player 1", "Player 2"];
 let game = null;
 let viewer = 0; // whose side is at the bottom; follows the active player
 let selectedHand = null; // hand index picked to summon
-let board, phaseBtn, logEl, toastEl, curtain, winScreen;
+let board, phaseBtn, attackBtn, logEl, toastEl, curtain, winScreen;
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -124,22 +124,39 @@ function render() {
       if (u && legal({ type: "promote", player: me(), card: selectedHand, slot })) ui.promoteSlots.add(slot);
     });
   }
-  // Units that can attack.
-  ui.attackers = new Set();
-  p.ups.forEach((u, slot) => {
-    if (u && legal({ type: "attack", player: me(), slot })) ui.attackers.add(slot);
-  });
+  // RULES.md: in the Battle Phase your whole Formation attacks (its Attack vs their
+  // Formation Defense), so there's one Attack button rather than per-unit attacks.
+  ui.formationCanAttack = legal({ type: "attack", player: me() });
 
   renderBoard(game, viewer, ui);
 
   const pa = phaseAction();
   phaseBtn.textContent = phaseLabel(pa);
   phaseBtn.disabled = game.winner !== null;
+  renderAttackButton(ui.formationCanAttack);
 
   logEl.innerHTML = game.log
     .slice(-9)
     .map((line) => `<div>${line.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c])}</div>`)
     .join("");
+}
+
+// "⚔ Attack 2500 vs 🛡 2000": shown in the Battle Phase; says up front whether it hits.
+function renderAttackButton(canAttack) {
+  const inBattle = game.phase === "battle" && game.winner === null;
+  attackBtn.hidden = !inBattle;
+  if (!inBattle) return;
+  const mine = formationStats(game, me());
+  const theirs = formationStats(game, 1 - me());
+  const theirDef = theirs?.complete ? theirs.defense : 0; // no complete Formation counts as 0 Defense
+  const atk = mine?.complete ? mine.attack : 0;
+  const hits = atk >= theirDef;
+  attackBtn.disabled = !canAttack;
+  attackBtn.classList.toggle("will-hit", canAttack && hits);
+  attackBtn.classList.toggle("will-miss", canAttack && !hits);
+  attackBtn.innerHTML = canAttack
+    ? `&#x2694; Attack <small>${atk} vs &#x1F6E1; ${theirDef}${hits ? " · hits" : " · blocked"}</small>`
+    : `&#x2694; Attack <small>${checkAction(game, { type: "attack", player: me() }) ?? ""}</small>`;
 }
 
 function showCurtain() {
@@ -210,6 +227,7 @@ function onSlotClick({ owner, zone, index }) {
   if (owner !== 0) return; // only your own side does anything for now
   if (zone === "formation") {
     if (selectedHand !== null) act({ type: "setFormation", player: me(), card: selectedHand });
+    else if (game.phase === "battle") act({ type: "attack", player: me() });
     return;
   }
   if (zone !== "ups") return;
@@ -218,15 +236,19 @@ function onSlotClick({ owner, zone, index }) {
     act({ type: "summon", player: me(), card: selectedHand, slot: index });
   } else if (selectedHand !== null && legal({ type: "promote", player: me(), card: selectedHand, slot: index })) {
     act({ type: "promote", player: me(), card: selectedHand, slot: index });
-  } else if (unit) {
+  } else if (unit && game.phase === "battle") {
+    act({ type: "attack", player: me() }); // the Formation attacks as one
+  } else {
     selectedHand = null;
-    act({ type: "attack", player: me(), slot: index });
+    render();
   }
 }
 
 export function setupGame() {
   board = $("#board");
   phaseBtn = $("#phase-btn");
+  attackBtn = $("#attack-btn");
+  attackBtn.addEventListener("click", () => act({ type: "attack", player: me() }));
   logEl = $("#game-log");
   toastEl = $("#toast");
   curtain = $("#curtain");

@@ -139,6 +139,7 @@ function renderFormation(side, p, ui = {}) {
   });
   const zone = getSlot(side, "formation");
   zone.classList.toggle("is-legal", side === 0 && !!ui.formationReady);
+  zone.classList.toggle("can-attack", side === 0 && !!ui.formationCanAttack);
   zone.querySelector(".formation-total")?.remove();
   if (!slots.length) return;
   const units = slots.map((i) => p.ups[i]).filter(Boolean);
@@ -168,7 +169,8 @@ export const PHASE_NAMES = {
 // ui carries what the screen wants highlighted:
 //   selectedHand: index of the hand card picked to summon
 //   legalSlots:   Set of ups indexes (viewer's side) the selected card can go to
-//   attackers:    Set of ups indexes (viewer's side) that can attack right now
+//   attackers:    optional Set of ups indexes that can attack (unused since Formation attacks)
+//   formationCanAttack: the viewer's Formation can attack now (Formation Zone glows)
 //   targets:      Set of ups indexes (other side) that can be targeted
 //   promoteSlots: Set of ups indexes (viewer's side) the selected card can promote
 export function renderBoard(game, viewer = 0, ui = {}) {
@@ -186,7 +188,7 @@ export function renderBoard(game, viewer = 0, ui = {}) {
       else delete slot.dataset.stack;
       slot.classList.toggle("can-attack", side === 0 && !!ui.attackers?.has(i));
       slot.classList.toggle("is-target", side === 1 && !!ui.targets?.has(i));
-      slot.classList.toggle("is-exhausted", !!card && side === 0 && ui.phase === "battle" && !ui.attackers?.has(i));
+      slot.classList.toggle("is-exhausted", !!card && side === 0 && ui.phase === "battle" && !!ui.attackers && !ui.attackers.has(i));
     });
     renderFormation(side, p, ui);
     p.specialZones.forEach((card, i) => fillSlot(getSlot(side, "sdz", i), card));

@@ -651,3 +651,15 @@ html, body {
 .dpip.is-hit { background: #e0484f; border-color: #ff8a8a; box-shadow: 0 0 6px rgba(224, 72, 79, 0.7); }
 .stat-dmg .stat-value { color: #ff9a9a; }
 .stats.is-danger { border-color: #e0484f; box-shadow: 0 0 12px rgba(224, 72, 79, 0.5); }
+/* Formation attack button, left of the phase button; colour says whether it will hit. */
+.attack-btn {
+  position: absolute; right: 1rem; bottom: 4.6rem; z-index: 6;
+  padding: 0.6rem 1.1rem; font: inherit; font-size: 1rem; letter-spacing: 0.04em;
+  color: #fff; background: linear-gradient(#e0605a, #a8322e); border: 2px solid #ffb3a8; border-radius: 10px;
+  cursor: pointer; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.55); text-align: left; max-width: 16rem;
+}
+.attack-btn small { display: block; font-size: 0.72em; opacity: 0.9; letter-spacing: 0; }
+.attack-btn.will-miss { background: linear-gradient(#7a6f8f, #4d4566); border-color: #b9b4d6; }
+.attack-btn:disabled { opacity: 0.55; cursor: default; background: linear-gradient(#4d4566, #2c2640); border-color: #6e678c; }
+.attack-btn:not(:disabled):hover { filter: brightness(1.08); transform: translateY(-1px); }
+.attack-btn[hidden] { display: none; }
