@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Battle'O'Kias</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Each screen is a <section class="screen">. The screen switcher shows one at a time. -->
+
+  <section id="menu-screen" class="screen">
+    <div class="menu-backdrop" aria-hidden="true">
+      <div class="float-card c1"></div>
+      <div class="float-card c2"></div>
+      <div class="float-card c3"></div>
+      <div class="float-card c4"></div>
+      <div class="float-card c5"></div>
+    </div>
+    <div class="menu-content">
+      <h1 class="title">Battle<span class="apos">'</span>O<span class="apos">'</span>Kias</h1>
+      <p class="subtitle">A trading card game</p>
+      <nav class="menu-buttons">
+        <button id="new-game-btn" class="menu-btn">New Game</button>
+        <!-- Load Game, Settings and Quit come later -->
+      </nav>
+    </div>
+    <footer class="version">v0.1</footer>
+  </section>
+
+  <section id="game-screen" class="screen">
+    <header class="game-bar">
+      <button id="back-to-menu-btn" class="small-btn">&larr; Menu</button>
+      <span class="game-bar-title">Battle'O'Kias</span>
+      <span class="hint">Esc: back to menu</span>
+    </header>
+    <!-- The board goes here (Milestone 2). Empty for now. -->
+    <main id="board" class="board">
+      <p class="board-placeholder">The board will go here.</p>
+    </main>
+  </section>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
