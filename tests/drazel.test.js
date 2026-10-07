@@ -1,5 +1,5 @@
 // Drazel, Instructor of the Blade (RULES.md): Defense 1000 when summoned, or the
-// printed Defense of the unit he promotes. Equipment bonuses stay on top.
+// printed Defense of the unit he promotes, not any Equipment bonus.
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -25,7 +25,7 @@ test("summoned, Drazel has 4000 Attack and 1000 Defense", () => {
   assert.deepEqual(unitStats(game, 0, 0), { attack: 4000, defense: 1000 });
 });
 
-test("promoting a Graduate, he takes its printed 1500 Defense, and its Gear adds on top", () => {
+test("promoting a Graduate, he takes its printed 1500 Defense, and its Practice Gear goes to the Grave", () => {
   const game = start();
   const p = game.players[0];
   p.ups[0] = { ...copy("ARM-012"), equipment: { ...copy("EQP-001") } };
@@ -33,7 +33,7 @@ test("promoting a Graduate, he takes its printed 1500 Defense, and its Gear adds
   p.hand.push(copy("ARM-MER-001"));
   assert.equal(applyAction(game, { type: "promote", player: 0, card: p.hand.length - 1, slot: 0 }).ok, true);
   assert.equal(p.ups[0].defense, 1500);
-  assert.deepEqual(unitStats(game, 0, 0), { attack: 4250, defense: 1750 });
+  assert.deepEqual(unitStats(game, 0, 0), { attack: 4000, defense: 1500 });
   assert.equal(p.ups[0].under[0].name, "Graduate of Arms");
 });
 

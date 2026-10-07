@@ -166,6 +166,9 @@ export const promotionLine = (card) => card.signets?.[0] ?? null;
 // The Defense a unit has when it arrives on the field. Most use their printed number. A unit
 // with variableDefense (Drazel) has variableDefense.summoned when summoned, and copies the
 // printed Defense of the unit it promotes (not Equipment bonuses; those stay on top).
+// Equipment with maxGrade (Practice Gear: 3) only goes on, and only stays on, units up to that Grade.
+const fitsGrade = (equipment, unit) => !Number.isInteger(equipment.maxGrade) || unit.grade <= equipment.maxGrade;
+
 function arrivingDefense(card, base = null) {
   const v = card.variableDefense;
   if (!v) return card.defense;
@@ -395,10 +398,17 @@ const ACTIONS = {
       spendEnergy(p, card.grade - base.grade);
       // Promotions a Field Spell makes unlimited don't use up the normal one.
       if (!unlimitedPromotion(game, game.activePlayer, base)) game.promotionsLeft -= 1;
-      // Placeholder: Equipment stays on the unit through a promotion.
+      // Equipment stays on through a promotion, unless the new Grade is above its maxGrade
+      // (Practice Gear: Grades 1-3), and then it goes to the Grave.
       const { under = [], equipment, ...baseCard } = base;
-      p.ups[action.slot] = { ...card, defense: arrivingDefense(card, base), under: [...under, baseCard], ...(equipment ? { equipment } : {}) };
+      const outgrown = equipment && !fitsGrade(equipment, card);
+      p.ups[action.slot] = { ...card, defense: arrivingDefense(card, base), under: [...under, baseCard], ...(equipment && !outgrown ? { equipment } : {}) };
       game.log.push(`${p.name} promotes ${base.name} to ${card.name}.`);
+      if (outgrown) {
+        const { readyNextTurn, ...gear } = equipment;
+        p.graveyard.push(gear);
+        game.log.push(`${card.name} has outgrown ${gear.name}, and it goes to the Grave.`);
+      }
     },
   },
 
@@ -496,6 +506,7 @@ const ACTIONS = {
       const unit = isSlot(p, action.slot) ? p.ups[action.slot] : null;
       if (!unit) return "There's no unit there to equip.";
       if (!(card.signets ?? []).some((s) => (unit.signets ?? []).includes(s))) return `${card.name} can only go on a unit with the same Signet.`;
+      if (!fitsGrade(card, unit)) return `${card.name} only goes on Grade ${card.maxGrade} or lower.`;
       if (unit.equipment) return `${unit.name} already has ${unit.equipment.name}.`;
       if (cardCost(card) > p.energy) return `${card.name} costs ${cardCost(card)} Energy and you have ${p.energy}.`;
       return null;

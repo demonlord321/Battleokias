@@ -92,3 +92,27 @@ test("Equipment stays on through promotion and moves, and goes to the Grave with
   assert.deepEqual(p.graveyard.map((c) => c.type).sort(), ["equipment", "unit", "unit"]);
   assert.ok(p.graveyard.every((c) => !c.equipment && !c.under));
 });
+
+// RULES.md (5afd7af): Practice Gear only goes on Grades 1-3 and goes to the Grave if its unit
+// is promoted to Grade 4 or higher.
+import { readFileSync as readCards } from "node:fs";
+const realCards = Object.fromEntries(JSON.parse(readCards(new URL("../data/cards.json", import.meta.url))).map((c) => [c.id, c]));
+
+test("Practice Gear can't go on a Grade 4, and falls off into the Grave when its unit promotes to Grade 4", () => {
+  const card = (id, k) => ({ ...realCards[id], cardId: id, id: `${id}#${k}` });
+  const filler = Array.from({ length: 30 }, (_, i) => card("ARM-010", i + 10));
+  const game = newGame({ seed: 3, decks: [filler, [...filler]], startingPlayer: 0 });
+  const p = game.players[0];
+  p.energy = 20;
+  p.ups[0] = card("ARM-MER-001", 1);
+  p.ups[1] = card("ARM-012", 1);
+  p.hand.push(card("EQP-001", 1), card("EQP-001", 2), card("ARM-MER-001", 2));
+  const gear = () => p.hand.findIndex((c) => c.cardId === "EQP-001");
+  assert.match(checkAction(game, { type: "equip", player: 0, card: gear(), slot: 0 }), /Grade 3 or lower/);
+  assert.equal(applyAction(game, { type: "equip", player: 0, card: gear(), slot: 1 }).ok, true);
+  const drazel = p.hand.findIndex((c) => c.cardId === "ARM-MER-001");
+  assert.equal(applyAction(game, { type: "promote", player: 0, card: drazel, slot: 1 }).ok, true);
+  assert.equal(p.ups[1].equipment, undefined);
+  assert.equal(p.graveyard.at(-1).cardId, "EQP-001");
+  assert.deepEqual(unitStats(game, 0, 1), { attack: 4000, defense: 1500 });
+});

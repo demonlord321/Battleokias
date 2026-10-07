@@ -82,6 +82,8 @@ export function checkCards(cards) {
         problems.push(`${where}: unknown combine "${card.combine}". Use one of: ${COMBINE_RULES.join(", ")}.`);
       }
     }
+    if ("maxGrade" in card && (card.type !== "equipment" || !Number.isInteger(card.maxGrade) || card.maxGrade < 1))
+      problems.push(`${where}: "maxGrade" goes on Equipment and should be a whole number from 1 up.`);
     if (card.type === "equipment" && "boost" in card) {
       // An Equipment boost (Practice Gear): flat { attack, defense } and/or { attackPercent, defensePercent }, whole numbers.
       const b = card.boost;
