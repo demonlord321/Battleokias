@@ -430,3 +430,40 @@ html, body {
 }
 .pip.is-spent { border-color: #ffd66b; background: transparent; }
 .pip.is-full { background: #ffd66b; border-color: #ffd66b; box-shadow: 0 0 6px rgba(255, 214, 107, 0.6); }
+
+/* Unit cards: the unit image is the whole background, with text panels on top. */
+.card-face.is-unit {
+  background:
+    linear-gradient(rgba(0,0,0,0.05), rgba(0,0,0,0.55)),
+    var(--card-image, radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--type-color) 70%, #fff), var(--type-color) 45%, #2a1d10));
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+}
+.card-face.is-unit .card-art { background: none; }
+.card-face.is-unit .card-name { text-shadow: 0 1px 2px #000; }
+.card-face.is-unit .card-text { color: #f4ecd8; text-shadow: 0 1px 2px #000; }
+.card-formation {
+  display: none;
+  font-size: 0.72em;
+  line-height: 1.2;
+  padding: 2px 3px;
+  border-radius: 3px;
+  background: rgba(90, 111, 208, 0.75);
+  color: #fff;
+}
+.card-stats {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+.card-stats span {
+  padding: 0 3px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+}
+.stat-atk { color: #ffb38a !important; }
+.stat-def { color: #8fd3ff !important; }
+.hand-player .card-face:hover .card-formation { display: block; }

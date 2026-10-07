@@ -4,7 +4,7 @@ import { buildBoard, renderBoard } from "../board/board.js";
 
 // Placeholder cards until cards.json exists (Milestone 1). One of each type so the frames show.
 const SAMPLE = [
-  { name: "Goblin Scout", type: "unit", cost: 1, level: 1, text: "A quick little raider." },
+  { name: "Goblin Scout", type: "unit", cost: 1, level: 1, attack: 300, defense: 200, formation: "Placeholder until formations are designed.", text: "A quick little raider." },
   { name: "Ember Bolt", type: "spell", cost: 2, text: "Deal damage to a unit." },
   { name: "Mire of Ash", type: "field", cost: 3, text: "Affects the whole field." },
   { name: "Snare Pit", type: "trap", cost: 1, text: "Activate on your opponent's turn." },
