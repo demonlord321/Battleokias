@@ -1,10 +1,11 @@
 // Round-robin balance sim (Developer). Every deck style in tools/sim-decks.json
-// plays every other one with the same simple bot, swapping who goes first each game.
+// plays every other one with the computer player from src/engine/bot.js, swapping who goes first each game.
 //   npm run sim            (500 games per pairing)
 //   npm run sim -- 2000    (more games, steadier numbers)
 // A row's number is how often that deck beats the column's deck.
 import { readFileSync } from "node:fs";
-import { newGame, applyAction, legalActions } from "../src/engine/engine.js";
+import { newGame, applyAction } from "../src/engine/engine.js";
+import { chooseAction } from "../src/engine/bot.js"; // the same computer player the board uses
 
 const read = (f) => JSON.parse(readFileSync(new URL(f, import.meta.url)));
 const cards = read("../data/cards.json");
@@ -26,35 +27,9 @@ const instances = (ids) => {
   return ids.map((id) => ({ ...byId[id], cardId: id, id: `${id}#${(seen[id] = (seen[id] ?? 0) + 1)}` }));
 };
 
-// The bot: get a Formation and Field Spell out, promote, enroll Students, fill the
-// Formation's slots (biggest units first), equip, then attack.
-function pick(game) {
-  const options = legalActions(game);
-  const p = game.players[game.activePlayer];
-  const wanted = new Set(p.formationZone?.slots ?? p.hand.find((c) => c.type === "formation")?.slots ?? [0, 1, 2]);
-  const inFormation = (a) => (wanted.has(a.slot) ? 0 : 1);
-  const of = (type) => options.filter((a) => a.type === type);
-  const enroll = of("enroll")[0];
-  return (
-    of("graduate").sort((a, b) => inFormation(a) - inFormation(b))[0] ||
-    of("chooseLoss")[0] ||
-    (!p.formationZone && (of("setFormation")[0] || of("deckFormation")[0])) ||
-    (!p.fieldEffect && of("setField")[0]) ||
-    of("promote").sort((a, b) => inFormation(a) - inFormation(b))[0] ||
-    enroll ||
-    of("summon")
-      .filter((a) => !(enroll && p.hand[a.card].cardId === p.fieldEffect?.academy?.enroll))
-      .sort((a, b) => inFormation(a) - inFormation(b) || p.hand[b.card].grade - p.hand[a.card].grade || a.slot - b.slot)[0] ||
-    of("equip").sort((a, b) => inFormation(a) - inFormation(b) || p.ups[b.slot].grade - p.ups[a.slot].grade)[0] ||
-    of("attack")[0] ||
-    of("nextPhase")[0] ||
-    options[0]
-  );
-}
-
 function play(a, b, seed) {
   const game = newGame({ seed, decks: [instances(a), instances(b)] });
-  for (let guard = 0; game.winner === null && guard < 5000; guard++) applyAction(game, pick(game));
+  for (let guard = 0; game.winner === null && guard < 5000; guard++) applyAction(game, chooseAction(game));
   return game.winner;
 }
 
