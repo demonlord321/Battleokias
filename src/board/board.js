@@ -62,7 +62,9 @@ export function buildBoard(container) {
   table.className = "table";
   table.append(buildHalf(1), centre, buildHalf(0));
 
-  container.append(oppHand, table, playerHand);
+  els.stats = [buildStats("stats-player"), buildStats("stats-opponent")];
+
+  container.append(oppHand, table, playerHand, ...els.stats);
 
   container.addEventListener("click", (e) => {
     const slot = e.target.closest(".slot");
@@ -73,6 +75,25 @@ export function buildBoard(container) {
       }),
     );
   });
+}
+
+// Player stats panel that sits beside each hand: Name, Defense Points, Energy.
+function buildStats(cls) {
+  const el = document.createElement("div");
+  el.className = `stats ${cls}`;
+  el.innerHTML = `
+    <div class="stats-name"></div>
+    <div class="stat stat-dp"><span class="stat-icon" aria-hidden="true">&#x1F6E1;</span><span class="stat-label">Defense</span><span class="stat-value"></span></div>
+    <div class="stat stat-energy"><span class="stat-icon" aria-hidden="true">&#x26A1;</span><span class="stat-label">Energy</span><span class="stat-value"></span></div>`;
+  return el;
+}
+
+function renderStats(el, p, active) {
+  el.querySelector(".stats-name").textContent = p.name;
+  // The engine doesn't track these yet (starting values come from RULES.md), so show a dash.
+  el.querySelector(".stat-dp .stat-value").textContent = p.defense ?? "–";
+  el.querySelector(".stat-energy .stat-value").textContent = p.energy ?? "–";
+  el.classList.toggle("is-active", active);
 }
 
 function cardEl(card, faceUp) {
@@ -96,6 +117,7 @@ const PHASE_NAMES = { setup: "Setup", draw: "Draw Phase", prep1: "Preparation Ph
 export function renderBoard(game, viewer = 0) {
   game.players.forEach((p, owner) => {
     const side = owner === viewer ? 0 : 1;
+    renderStats(els.stats[side], p, game.activePlayer === owner);
     p.ups.forEach((card, i) => fillSlot(getSlot(side, "ups", i), card));
     p.specialZones.forEach((card, i) => fillSlot(getSlot(side, "sdz", i), card));
     fillSlot(getSlot(side, "fez"), p.fieldEffect);

@@ -338,3 +338,33 @@ html, body {
 /* Cards sitting in a field slot fill it exactly. */
 .slot .card { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; }
 .slot.is-filled .slot-label { display: none; }
+
+/* Player stats beside each hand: yours bottom-left, the opponent's top-right. */
+.stats {
+  position: absolute;
+  min-width: calc(var(--h) * 2.6);
+  padding: 0.55rem 0.8rem;
+  border-radius: 10px;
+  background: rgba(15, 11, 31, 0.82);
+  border: 2px solid var(--gold-dim);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.55);
+  font-size: calc(var(--h) * 0.2);
+  z-index: 3;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.stats-player { left: 1rem; bottom: 1rem; }
+.stats-opponent { right: 1rem; top: 1rem; }
+.stats.is-active { border-color: var(--gold); box-shadow: 0 0 16px rgba(242, 196, 90, 0.4); }
+.stats-name {
+  font-family: Georgia, serif;
+  font-size: 1.15em;
+  color: var(--gold);
+  margin-bottom: 0.35rem;
+  letter-spacing: 0.04em;
+}
+.stat { display: flex; align-items: center; gap: 0.45rem; line-height: 1.6; }
+.stat-icon { width: 1.2em; text-align: center; }
+.stat-label { flex: 1; color: var(--text-dim); text-transform: uppercase; font-size: 0.8em; letter-spacing: 0.08em; }
+.stat-value { font-weight: bold; min-width: 2ch; text-align: right; }
+.stat-dp .stat-value { color: #8fd3ff; }
+.stat-energy .stat-value { color: #ffd66b; }
