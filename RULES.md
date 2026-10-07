@@ -20,9 +20,32 @@ Written up from Dyllan's notes. Open questions are marked **(?)**.
 - Win condition
 - Resource system
 - Card types: **Units**, **Spells**, **Traps** (details to come)
-- Board zones:
-  - **Unit Position Slots:** each player's field is a **3×3 grid** of 9 slots for units.
-    - **(?)** Does a unit's row or column matter (front/back line, who can attack or be attacked)?
-    - **(?)** Where do set spells and traps go: separate slots, or in the same grid?
-  - Hand, deck, graveyard (to confirm)
+- Board zones: see **Field layout** below
+
+## Field layout
+Each player has their own half of the table. The opponent's half is a mirror image
+(their Draw Pile is top right from our view).
+
+Player's half (bottom of the screen):
+
+```
+        [SDZ][SDZ][SDZ][SDZ]        <- Special Deck Zones (4)
+        [UPS][UPS][UPS]       [Grave]
+        [UPS][UPS][UPS]
+        [UPS][UPS][UPS]       [Draw ]
+ [FEZ]                              <- Field Effect Zone (bottom left of grid)
+```
+
+- **Unit Position Slots (UPS):** a 3x3 grid of 9 slots for units.
+- **Draw Pile:** bottom right (top right for the opponent).
+- **Grave Pile:** directly above the Draw Pile; the discard zone.
+- **Special Deck Zones (SDZ):** four zones above the 3x3 grid.
+- **Field Effect Zone (FEZ):** bottom left of the grid.
+
+Open questions:
+- **(?)** What goes in the Special Deck Zones, and how are they used?
+- **(?)** What goes in the Field Effect Zone? One field card at a time?
+- **(?)** Where are spells and traps set: in the UPS grid or elsewhere?
+- **(?)** Does a unit's row or column in the UPS affect attacking or being attacked?
+
 - Deck size and card limits
