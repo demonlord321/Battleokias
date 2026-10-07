@@ -14,7 +14,8 @@ Written up from Dyllan's notes. Open questions are marked **(?)**.
 2. **Preparation Phase I:** the active player may summon units and set traps or spells.
    - **(?)** Is there a limit or cost on how many units can be summoned per turn?
    - **(?)** Are traps and spells set face-down until triggered or activated?
-3. _(next phases to come)_
+3. **Battle Phase:** you can attack only if you have a **Formation** set (details still to come).
+4. _(further phases to come)_
 
 ## Still to define
 - Win condition
