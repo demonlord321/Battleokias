@@ -114,10 +114,10 @@
     ],
     "cost": 1,
     "boost": {
-      "attack": 500,
-      "defense": 500
+      "attack": 250,
+      "defense": 250
     },
-    "text": "Equip to an Arms unit. The equipped unit gets +500 Attack and +500 Defense.",
+    "text": "Equip to an Arms unit. The equipped unit gets +250 Attack and +250 Defense.",
     "image": "images/eqp-001.png"
   },
   {

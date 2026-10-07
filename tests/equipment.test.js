@@ -1,4 +1,4 @@
-// Equipment (RULES.md): goes over a unit sharing one of its Signets; Practice Gear gives +500 Attack and +500 Defense.
+// Equipment (RULES.md): goes over a unit sharing one of its Signets; Practice Gear gives +250 Attack and +250 Defense (the tests use a +500 fixture).
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { newGame, applyAction, checkAction, legalActions, unitStats, formationStats } from "../src/engine/engine.js";
