@@ -665,3 +665,10 @@ html, body {
 .attack-btn[hidden] { display: none; }
 .formation-grades .stat-dmg-grade { color: #ff9a9a; }
 .formation-grades .stat-def-grade { color: #8fd0ff; }
+/* Grave: top card face up, count badge on top of it. */
+.slot.is-filled .pile-count {
+  position: absolute; z-index: 3; right: 2px; bottom: 2px; font-size: 0.7em; line-height: 1;
+  padding: 2px 5px; border-radius: 6px; background: rgba(15, 12, 35, 0.9); border: 1px solid var(--gold);
+}
+/* Inactive Formation: card dimmed until the missing slot is filled. */
+.slot.is-inactive .card { filter: grayscale(0.7) brightness(0.65); }

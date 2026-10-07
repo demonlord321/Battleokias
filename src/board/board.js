@@ -141,15 +141,18 @@ function renderFormation(side, p, ui = {}) {
   zone.classList.toggle("is-legal", side === 0 && !!ui.formationReady);
   zone.classList.toggle("can-attack", side === 0 && !!ui.formationCanAttack);
   zone.querySelector(".formation-total")?.remove();
+  zone.classList.remove("is-inactive");
   if (!slots.length) return;
   const units = slots.map((i) => p.ups[i]).filter(Boolean);
   const missing = slots.length - units.length;
   const atk = units.reduce((n, u) => n + (u.attack ?? 0), 0);
   const def = units.reduce((n, u) => n + (u.defense ?? 0), 0);
   const total = document.createElement("div");
+  // RULES.md: a Formation with an empty slot is inactive until the slot is filled again.
+  zone.classList.toggle("is-inactive", missing > 0);
   total.className = "formation-total" + (missing ? " is-incomplete" : " is-ready");
   total.innerHTML = missing
-    ? `<span>${missing} slot${missing > 1 ? "s" : ""} empty</span>`
+    ? `<span>Inactive · ${missing} slot${missing > 1 ? "s" : ""} empty</span>`
     : `<span class="stat-atk">&#x2694; ${atk}</span><span class="stat-def">&#x1F6E1; ${def}</span>`;
   zone.append(total);
 }
@@ -207,6 +210,8 @@ export function renderBoard(game, viewer = 0, ui = {}) {
     });
     els.counts[slotKey(side, "draw", 0)].textContent = p.deck.length;
     els.counts[slotKey(side, "grave", 0)].textContent = p.graveyard.length;
+    // The Grave shows its top card face up (the last unit destroyed or card discarded).
+    fillSlot(getSlot(side, "grave"), p.graveyard.at(-1) ?? null);
   });
   const banner = document.querySelector("#turn-banner");
   const active = game.players[game.activePlayer];
