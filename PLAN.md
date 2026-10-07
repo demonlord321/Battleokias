@@ -24,7 +24,9 @@ Mapmaker (game board and screens), Advisor (balance reviews), Planner (plan and 
 ## Milestone 1: Headless rules engine (Developer)
 - [x] Engine skeleton in `src/engine/`: seeded RNG, per-player deck/hand/field/graveyard state, `applyAction()` (End Turn only), `npm test`
 - [ ] `cards.json` card definitions (`id`, `name`, `type`, `cost`, `level`, `text` + per-type fields), Developer
-- [ ] Card faces with a frame colour per type, Mapmaker
+- [x] Card faces: frame colour per type, Signet symbols top left, cost top right, unit image/Attack/Defense/Formation panel, Mapmaker
+- [x] Single-Signet deck check (`checkDeck`), Developer
+- [ ] Card catalogue: master `data/cards.json` (IDs like `ARM-001`), checker script, generated `CARDS.md`; spreadsheet (CSV) source if Dyllan prefers, Developer + Planner
 - [ ] Card types stage 1: Units, Spells, Traps
 - [ ] Card types stage 2 (one at a time): Field Spells, Equipment, Artifacts, Monsters (after unit attacks are designed)
 - [x] Coin flip, opening deal (4 and 5), Draw Phase each turn, seeded shuffle
