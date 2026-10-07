@@ -37,6 +37,8 @@ test("summon also accepts the card's instance id", () => {
 
 test("summon is refused with a reason when it isn't allowed", () => {
   const game = start([deckOf(() => unit(3, 100, 100)), deckOf(() => unit(1, 100, 100))]);
+  assert.match(checkAction(game, { type: "summon", player: 0, card: 0, slot: 0 }), /Player Grade is 0, so you can only bring out units up to Grade 1/);
+  place(game, 0, 4, unit(2, 1, 1));
   assert.match(checkAction(game, { type: "summon", player: 0, card: 0, slot: 0 }), /costs 3 Energy and you have 1/);
   assert.match(checkAction(game, { type: "summon", player: 0, card: 99, slot: 0 }), /isn't in your hand/);
   assert.match(checkAction(game, { type: "summon", player: 0, card: 0, slot: 9 }), /Unit Position Slots/);

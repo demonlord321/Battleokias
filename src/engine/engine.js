@@ -385,6 +385,8 @@ const ACTIONS = {
       if (card.type !== "unit") return "Only units can be summoned.";
       if (!Number.isInteger(action.slot) || action.slot < 0 || action.slot >= p.ups.length) return "Pick one of your Unit Position Slots.";
       if (p.ups[action.slot]) return "That slot is taken.";
+      const pg = playerGrade(game, game.activePlayer);
+      if (card.grade > pg + 1) return `Your Player Grade is ${pg}, so you can only bring out units up to Grade ${pg + 1}.`;
       const cost = cardCost(card);
       if (cost > p.energy) return `${card.name} costs ${cost} Energy and you have ${p.energy}.`;
       return null;
@@ -746,6 +748,7 @@ export function newGame({ seed = Date.now(), decks, specialDecks = [], names = [
   for (let i = 0; i < STARTING_HAND.second; i++) drawCard(game, 1 - first);
 
   startTurn(game);
+  updatePlayerGrades(game);
   return game;
 }
 
@@ -773,7 +776,19 @@ export function applyAction(game, action) {
   const reason = checkAction(game, action);
   if (reason) return { ok: false, reason };
   ACTIONS[action.type].apply(game, action);
+  updatePlayerGrades(game);
   return { ok: true };
+}
+
+// Player Grade (RULES.md a923370): the highest unit Grade on your field right now, 0 when it's
+// empty. You can't bring out a unit more than one Grade above it, however cheap it is.
+// Placeholders: it drops when your top unit leaves the field, and Arms Academy's Graduate ignores it.
+// Stored as p.playerGrade after every action for the board; checks work it out fresh.
+export function playerGrade(game, playerIndex) {
+  return Math.max(0, ...game.players[playerIndex].ups.filter(Boolean).map((u) => u.grade ?? 0));
+}
+function updatePlayerGrades(game) {
+  game.players.forEach((p, i) => (p.playerGrade = playerGrade(game, i)));
 }
 
 // Every action the active player could take right now. The bots and AI pick from this.

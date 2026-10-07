@@ -20,6 +20,7 @@ function start() {
 test("summoned, Drazel has 4000 Attack and 1000 Defense", () => {
   const game = start();
   const p = game.players[0];
+  p.ups[1] = copy("ARM-012"); // Player Grade 3, so a Grade 4 can come out
   p.hand.push(copy("ARM-MER-001"));
   assert.equal(applyAction(game, { type: "summon", player: 0, card: p.hand.length - 1, slot: 0 }).ok, true);
   assert.deepEqual(unitStats(game, 0, 0), { attack: 4000, defense: 1000 });
