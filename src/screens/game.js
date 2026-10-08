@@ -179,7 +179,7 @@ const legal = (action) => checkAction(game, action) === null;
 // A hand card can go to a slot by a normal summon, or by promoting the unit already there
 // (one Grade up, for the difference in Grade; see RULES.md).
 const canEquip = (card, slot) => legal({ type: "equip", player: me(), card, slot });
-// Traps are set face-down in an empty Unit Position Slot (engine action setTrap).
+// Traps and Spells are set face-down in an empty Unit Position Slot (engine action setTrap).
 const canSetTrap = (card, slot) => legal({ type: "setTrap", player: me(), card, slot });
 const canPlay = (card, slot) =>
   legal({ type: "summon", player: me(), card, slot }) || legal({ type: "promote", player: me(), card, slot }) || canEquip(card, slot) || canSetTrap(card, slot);
@@ -501,8 +501,9 @@ function onSlotClick({ owner, zone, index }) {
   if (selectedHand !== null && unit && canEquip(selectedHand, index)) {
     act({ type: "equip", player: me(), card: selectedHand, slot: index });
   } else if (selectedHand !== null && !p.ups[index]) {
-    const trap = p.hand[selectedHand]?.type === "trap";
-    act({ type: trap ? "setTrap" : "summon", player: me(), card: selectedHand, slot: index });
+    // Traps and Spells are set face-down in an empty slot (RULES.md basic rule; engine setTrap).
+    const setsFaceDown = ["trap", "spell"].includes(p.hand[selectedHand]?.type);
+    act({ type: setsFaceDown ? "setTrap" : "summon", player: me(), card: selectedHand, slot: index });
   } else if (selectedHand !== null && legal({ type: "promote", player: me(), card: selectedHand, slot: index })) {
     act({ type: "promote", player: me(), card: selectedHand, slot: index });
   } else if (unit && game.phase === "battle") {
