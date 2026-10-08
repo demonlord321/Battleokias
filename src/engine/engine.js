@@ -84,6 +84,31 @@ export function unitStats(game, playerIndex, slot) {
   };
 }
 
+// The slots a player's Formation counts right now. Most Formations have fixed `slots`. One with
+// `slotOptions` (Line Defense: any one full row) uses the strongest full option, by its units'
+// Attack + Defense; if none is full, the one closest to full (placeholder, Planner). Ties go to the first.
+export function formationSlots(game, playerIndex) {
+  const p = game.players[playerIndex];
+  const f = p.formationZone;
+  if (!f) return [];
+  if (!f.slotOptions) return f.slots ?? [];
+  const score = (slots) => {
+    const missing = slots.filter((s) => !unitAt(p, s)).length;
+    const total = missing ? 0 : slots.reduce((t, s) => { const u = unitStats(game, playerIndex, s); return t + u.attack + u.defense; }, 0);
+    return { missing, total };
+  };
+  let best = f.slotOptions[0];
+  let top = score(best);
+  for (const slots of f.slotOptions.slice(1)) {
+    const sc = score(slots);
+    if (sc.missing < top.missing || (sc.missing === top.missing && sc.total > top.total)) { best = slots; top = sc; }
+  }
+  return best;
+}
+
+// Every slot a Formation card could count, whatever the board looks like.
+export const anyFormationSlots = (f) => (f ? f.slots ?? [...new Set(f.slotOptions.flat())] : []);
+
 // A player's set Formation, added up (RULES.md, Formations). Only the units in
 // the Formation's own slots count. Frontal Assault ("sum") adds their Attack and
 // Defense. Returns null if no Formation is set.
@@ -92,8 +117,9 @@ export function formationStats(game, playerIndex) {
   const f = p.formationZone;
   if (!f) return null;
   // Each unit's Equipment boost is applied and rounded down first, then the Formation adds them up.
-  const units = f.slots.filter((slot) => unitAt(p, slot)).map((slot) => unitStats(game, playerIndex, slot));
-  const missing = f.slots.length - units.length;
+  const slots = formationSlots(game, playerIndex);
+  const units = slots.filter((slot) => unitAt(p, slot)).map((slot) => unitStats(game, playerIndex, slot));
+  const missing = slots.length - units.length;
   // Blinding Beacon: a blinded Formation is deactivated, so it counts as no active Formation.
   const blinded = !!p.blinded;
   let attack = units.reduce((total, u) => total + u.attack, 0);
@@ -104,9 +130,16 @@ export function formationStats(game, playerIndex) {
     attack = Math.floor(attack * (f.attackMultiplier ?? 1));
     defense = Math.floor(defense / (f.defenseDivisor ?? 1));
   }
+  // "wall" (Line Defense): Attack 0, and Defense is the units' Attack and Defense added together.
+  if (f.combine === "wall") {
+    defense += attack;
+    attack = 0;
+  }
+  const damageGrade = f.damageGrade ?? 1;
   return {
-    name: f.name, attack, defense, missing, blinded, complete: missing === 0 && !blinded,
-    damageGrade: f.damageGrade ?? 1, // Damage Counters dealt when its attack lands
+    name: f.name, slots, attack, defense, missing, blinded, complete: missing === 0 && !blinded,
+    canAttack: damageGrade > 0, // Line Defense (Damage Grade 0) can't attack
+    damageGrade, // Damage Counters dealt when its attack lands
     defenseGrade: f.defenseGrade ?? 0, // taken off an incoming attack's Damage Grade
   };
 }
@@ -131,7 +164,7 @@ export function attackPreview(game, playerIndex = game.activePlayer, { artifact 
   const guarded = !!theirs?.complete;
   const attack = mine?.complete ? mine.attack : 0;
   const defense = guarded ? theirs.defense : 0;
-  const hits = !!mine?.complete && attack >= defense;
+  const hits = !!mine?.complete && mine.canAttack && attack >= defense;
   let counters = 0;
   let destroys = [];
   if (hits && !guarded) counters = 1;
@@ -146,7 +179,7 @@ export function attackPreview(game, playerIndex = game.activePlayer, { artifact 
 // Placeholder (Planner): the unit has to be in the attacking Formation.
 function attackerHitRule(game, playerIndex) {
   const p = game.players[playerIndex];
-  for (const slot of p.formationZone?.slots ?? []) {
+  for (const slot of formationSlots(game, playerIndex)) {
     const gear = p.ups[slot]?.equipment;
     if (gear?.hitRule && !gear.readyNextTurn) return gear.hitRule;
   }
@@ -156,7 +189,7 @@ function attackerHitRule(game, playerIndex) {
 // The Formation slots holding the player's unit(s) with the highest Attack + Defense, Equipment included.
 export function highestTotalSlots(game, playerIndex) {
   const p = game.players[playerIndex];
-  const slots = (p.formationZone?.slots ?? []).filter((slot) => unitAt(p, slot));
+  const slots = formationSlots(game, playerIndex).filter((slot) => unitAt(p, slot));
   const total = (slot) => { const s = unitStats(game, playerIndex, slot); return s.attack + s.defense; };
   const top = Math.max(...slots.map(total));
   return slots.filter((slot) => total(slot) === top);
@@ -172,7 +205,7 @@ function savingTraps(p) {
 // Whether the player's Formation already holds this Artifact (by card id), ignoring `exceptSlot`.
 // Attaching outside the Formation is always fine.
 function formationHas(p, cardId, slot) {
-  const slots = p.formationZone?.slots ?? [];
+  const slots = anyFormationSlots(p.formationZone);
   if (!slots.includes(slot)) return false;
   return slots.some((s) => s !== slot && p.ups[s]?.artifact && catalogueId(p.ups[s].artifact) === cardId);
 }
@@ -186,7 +219,7 @@ function artifactProblem(game, playerIndex, slot) {
   const a = unit?.artifact;
   if (!a) return "There's no Artifact there.";
   if (!a.activate) return `${a.name} can't be activated.`;
-  if (!(p.formationZone?.slots ?? []).includes(slot)) return `${unit.name} has to be in your Formation to use ${a.name}.`;
+  if (!formationSlots(game, playerIndex).includes(slot)) return `${unit.name} has to be in your Formation to use ${a.name}.`;
   if (a.readyNextTurn) return `${a.name} takes effect next turn.`;
   if (a.readyOnTurn > game.turn) return `${a.name} is cooling down until turn ${a.readyOnTurn}.`;
   return null;
@@ -219,7 +252,7 @@ function resolveLoss(game, playerIndex, slots) {
 
 export function lowestGradeSlots(game, playerIndex) {
   const p = game.players[playerIndex];
-  const slots = (p.formationZone?.slots ?? []).filter((slot) => unitAt(p, slot));
+  const slots = formationSlots(game, playerIndex).filter((slot) => unitAt(p, slot));
   const lowest = Math.min(...slots.map((slot) => p.ups[slot].grade));
   return slots.filter((slot) => p.ups[slot].grade === lowest);
 }
@@ -373,11 +406,36 @@ function startDraw(game) {
   nextGraduation(game);
 }
 
-// Whether a player has set Spells or Traps they could activate right now (Start and
-// End Phases, and later on the opponent's turn). There are none yet; when there are,
-// the Start and End Phases will wait for that player instead of passing on their own.
+// Whether a player has set Spells they could activate right now. While they do, the Start
+// and End Phases wait (nextPhase moves on) instead of passing on their own.
 function hasSetCardsToActivate(game, playerIndex) {
-  return false;
+  return readySetSpells(game, playerIndex).length > 0;
+}
+
+// Phases of your own turn in which a set Spell can be activated (RULES.md, Fire Arrow).
+const SPELL_PHASES = ["start", "prep1", "battle", "prep2", "end"];
+
+// Slots holding the player's set Spells that do something and can be activated now.
+// Placeholder (Planner): one set this turn waits until your next turn, like Equipment.
+export function readySetSpells(game, playerIndex) {
+  if (playerIndex !== game.activePlayer || !SPELL_PHASES.includes(game.phase) || game.pending) return [];
+  return game.players[playerIndex].ups.flatMap((c, slot) => (c?.faceDown && c.type === "spell" && spellDoes(c) && c.setTurn !== game.turn ? [slot] : []));
+}
+
+// Whether a Spell has an effect the engine knows (Fire Arrow: damage).
+const spellDoes = (card) => Number.isInteger(card.damage);
+
+// Resolves a Spell's effect, then it goes to the Grave. Fire Arrow: `damage` Damage Counters to the opponent.
+function resolveSpell(game, playerIndex, card) {
+  const p = game.players[playerIndex];
+  const enemy = game.players[1 - playerIndex];
+  const { faceDown, setTurn, ...clean } = card;
+  p.graveyard.push(clean);
+  if (card.damage) {
+    enemy.damage += card.damage;
+    game.log.push(`${card.name} hits ${enemy.name} for ${card.damage} Damage Counter${card.damage === 1 ? "" : "s"}. ${enemy.name} has ${enemy.damage}.`);
+    if (enemy.damage >= MAX_DAMAGE) win(game, playerIndex, `${enemy.name} reached ${MAX_DAMAGE} Damage Counters.`);
+  }
 }
 
 // End Phase (RULES.md): activate set cards if needed, then the opponent's turn begins.
@@ -531,7 +589,7 @@ const ACTIONS = {
       // Only one of each onePerFormation Artifact (Blinding Beacon) in your Formation, after the move.
       const after = [...p.ups];
       [after[action.to], after[action.from]] = [p.ups[action.from], p.ups[action.to]];
-      const ids = (p.formationZone?.slots ?? []).flatMap((s) => (after[s]?.artifact?.onePerFormation ? [catalogueId(after[s].artifact)] : []));
+      const ids = anyFormationSlots(p.formationZone).flatMap((s) => (after[s]?.artifact?.onePerFormation ? [catalogueId(after[s].artifact)] : []));
       if (new Set(ids).size < ids.length) return "Only one of each of those Artifacts can be in your Formation.";
       return null;
     },
@@ -796,6 +854,7 @@ const ACTIONS = {
       if (game.phase !== "battle") return "You can only attack in the Battle Phase.";
       const mine = formationStats(game, game.activePlayer);
       if (!mine) return "You need a Formation set to attack.";
+      if (!mine.canAttack) return `${mine.name} can't attack.`;
       if (!mine.complete) return `${mine.name} needs ${mine.missing} more unit${mine.missing === 1 ? "" : "s"} in its slots.`;
       if (game.formationAttacked) return "Your Formation has already attacked this turn.";
       if (action.artifact !== undefined && action.artifact !== null) return artifactProblem(game, game.activePlayer, action.artifact);
@@ -843,7 +902,7 @@ const ACTIONS = {
         game.log.push(`${p.name} doesn't respond.`);
         return resolveLoss(game, player, targets);
       }
-      const { faceDown, ...trap } = p.ups[action.slot];
+      const { faceDown, setTurn, ...trap } = p.ups[action.slot];
       p.ups[action.slot] = null;
       p.graveyard.push(trap);
       const saved = targets.length === 1 ? `${p.ups[targets[0]].name} is saved` : "no unit is destroyed";
@@ -873,13 +932,62 @@ const ACTIONS = {
       const p = game.players[game.activePlayer];
       const [card] = p.hand.splice(handIndex(p, action.card), 1);
       spendEnergy(p, cardCost(card));
-      p.ups[action.slot] = { ...card, faceDown: true };
+      p.ups[action.slot] = { ...card, faceDown: true, setTurn: game.turn };
       game.log.push(`${p.name} sets a card face-down.`);
     },
   },
 
   // { type: "chooseLoss", player, slot }: the defender picks which of their tied
   // lowest-Grade units goes to the Grave. Only allowed while game.pending asks for it.
+  // { type: "cast", player, card }: cast a Spell straight from your hand in Preparation Phase I
+  // or II, paying its cost. It takes effect at once and goes to the Grave (RULES.md, Fire Arrow).
+  cast: {
+    check(game, action) {
+      const p = game.players[game.activePlayer];
+      if (!PREP.includes(game.phase)) return "You can only cast a Spell in a Preparation Phase.";
+      const i = handIndex(p, action.card);
+      if (i < 0) return "That card isn't in your hand.";
+      const card = p.hand[i];
+      if (card.type !== "spell") return "That isn't a Spell card.";
+      if (!spellDoes(card)) return `${card.name} doesn't do anything yet.`;
+      if (cardCost(card) > p.energy) return `${card.name} costs ${cardCost(card)} Energy and you have ${p.energy}.`;
+      return null;
+    },
+    apply(game, action) {
+      const p = game.players[game.activePlayer];
+      const [card] = p.hand.splice(handIndex(p, action.card), 1);
+      spendEnergy(p, cardCost(card));
+      game.log.push(`${p.name} casts ${card.name}.`);
+      resolveSpell(game, game.activePlayer, card);
+    },
+  },
+
+  // { type: "activateSet", player, slot }: activate your set Spell in that slot during your own
+  // Start, Preparation I, Battle, Preparation II or End Phase. It was paid for when it was set.
+  activateSet: {
+    check(game, action) {
+      const p = game.players[game.activePlayer];
+      const c = isSlot(p, action.slot) ? p.ups[action.slot] : null;
+      if (!c?.faceDown) return "There's no set card there.";
+      if (c.type !== "spell" || !spellDoes(c)) return "That set card can't be activated now.";
+      if (!SPELL_PHASES.includes(game.phase)) return "You can't activate it in this phase.";
+      if (c.setTurn === game.turn) return `${c.name} was set this turn, so it's ready next turn.`;
+      return null;
+    },
+    apply(game, action) {
+      const p = game.players[game.activePlayer];
+      const card = p.ups[action.slot];
+      p.ups[action.slot] = null;
+      game.log.push(`${p.name} activates ${card.name}.`);
+      resolveSpell(game, game.activePlayer, card);
+      // A Start or End Phase that was waiting moves on once nothing is left to activate.
+      if (game.winner === null && !hasSetCardsToActivate(game, game.activePlayer)) {
+        if (game.phase === "start") startDraw(game);
+        else if (game.phase === "end") passTurn(game);
+      }
+    },
+  },
+
   chooseLoss: {
     check(game, action) {
       if (game.pending?.type !== "chooseLoss") return "There's nothing to choose right now.";
@@ -986,6 +1094,7 @@ export function legalActions(game) {
     candidates.push({ type: "setFormation", player, card: i });
     candidates.push({ type: "setField", player, card: i });
     candidates.push({ type: "enroll", player, card: i });
+    candidates.push({ type: "cast", player, card: i });
     p.ups.forEach((_, slot) => {
       candidates.push({ type: "summon", player, card: i, slot });
       candidates.push({ type: "promote", player, card: i, slot });
@@ -995,6 +1104,7 @@ export function legalActions(game) {
     });
   });
   candidates.push({ type: "attack", player });
+  p.ups.forEach((c, slot) => c?.faceDown && candidates.push({ type: "activateSet", player, slot }));
   p.ups.forEach((u, slot) => u?.artifact?.activate && candidates.push({ type: "attack", player, artifact: slot }));
   const seenFormations = new Set();
   for (const c of p.deck) {
