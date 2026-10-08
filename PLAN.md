@@ -59,6 +59,7 @@ Uses the placeholder rules in `RULES.md`; Dyllan refines them as we play.
 - [x] Katana costs 3, printed on the card (Katana deck now 76% vs the test deck)
 - [x] Player Grade (`97ae452`, `300d835`, `e55b4eb`, `53f63a1`, board `864e430`): highest Grade you've had on the field this game, never drops (`p.playerGrade`; panel shown in `cc95f79`, needs to read the stored value); you can't summon a unit more than one Grade above it, even if its cost is reduced. Engine check plus `playerGrade` in the state, Developer; shown in the player stats panel, Mapmaker
 - [ ] Balance pass once the full Arms collection is in (on hold until then, per Dyllan): Katana, Vanguard Charge, Bloody Blade promote-vs-summon, Last Stand with Vanguard, Advisor + Developer
+- [ ] Stand Strong (first Trap): set face-down in an empty unit slot in Prep Phase I or II; on the opponent's landed hit, it goes to the Grave instead of the destroyed unit. Needs set-card support and the opponent-turn response choice, Developer; face-down card in a slot and the response hand-over, Mapmaker; computer player uses it, Developer
 - [ ] Named units (Grade 4+): flavour text and Class fields in `data/cards.json`, shown on the card face, Developer + Mapmaker (waiting on Dyllan's first named units and Class list)
 - [ ] Dyllan playtests and replaces placeholder rules, Planner updates `RULES.md`
 

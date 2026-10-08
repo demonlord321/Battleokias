@@ -102,7 +102,7 @@ Open questions (placeholders in brackets):
 | **Unit** | Your creatures | Unit Position Slots (UPS) |
 | **Spell** | Spells with effects | (?) |
 | **Field Spell** | Affects the field | Field Effect Zone (?) |
-| **Trap** | Set face-down, activated on the opponent's turn | (?) |
+| **Trap** | Set face-down, activated on the opponent's turn | An empty Unit Position Slot (from Stand Strong) |
 | **Equipment** | Placed over a unit with a shared Signet; boosts or changes it (see Equipment). Special Deck only | On a unit in the grid |
 | **Artifact** | (?) | (?) |
 | **Monster** | Deferred: defined once unit attacks are designed | (?) |
@@ -284,6 +284,17 @@ Open questions:
 
 ## Spell and Trap cost
 - Most Spells, Field Spells and Traps cost **1 Energy** to play, unless the card says otherwise.
+
+## Traps
+### Trap: Stand Strong (School of Arms, from Dyllan)
+- **Signet:** Arms. **Cost:** 1.
+- Set it in **Preparation Phase I or II**, face-down in an **empty Unit Position Slot**.
+- Activate it during your **opponent's Battle Phase**: when their attack lands, send Stand Strong to the Grave **instead of** the unit that would have been destroyed.
+- Placeholders and open questions:
+  - **(?)** Do all Traps (and Spells) get set in an empty Unit Position Slot, or just this one? (Placeholder: all Traps.)
+  - **(?)** Can it sit in a slot your Formation needs, and does that slot then count as filled? (Placeholder: no. A Trap doesn't count as a unit, so a Formation with a Trap in one of its slots is inactive.)
+  - The attacker still deals its Damage Counters; Stand Strong only saves the unit.
+  - It's the first card that responds on the opponent's turn, so the engine raises a choice for the defender, and in hot-seat the board shows the hand-over screen.
 
 ## Field Spells
 A Field Spell goes in the **Field Effect Zone (FEZ)** and stays there, giving an ongoing effect.
