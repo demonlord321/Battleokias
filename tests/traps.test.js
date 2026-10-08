@@ -113,14 +113,14 @@ test("passing lets the unit be destroyed as usual", () => {
   assert.equal(them.ups[4].faceDown, true); // still set for later
 });
 
-test("with tied targets, passing goes on to the defender's choice", () => {
+test("with tied targets, passing goes on to the attacker's choice", () => {
   const game = attackReady();
   const them = game.players[1];
   them.ups[1] = copy("ARM-010");
   ok(game, { type: "attack", player: 0 });
   assert.deepEqual(game.pending.targets, [0, 1]);
   ok(game, { type: "trapResponse", player: 1, slot: null });
-  assert.deepEqual(game.pending, { type: "chooseLoss", player: 1, slots: [0, 1] });
+  assert.deepEqual(game.pending, { type: "chooseLoss", player: 0, owner: 1, slots: [0, 1] });
 });
 
 test("the computer hides the opponent's set cards and always uses its Trap", () => {

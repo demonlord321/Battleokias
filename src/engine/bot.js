@@ -5,7 +5,7 @@
 // playerView(game, player), which hides what that player couldn't know: the opponent's
 // hand, the order of both main decks, what's inside every Special Deck, and the opponent's face-down cards.
 
-import { legalActions, attackPreview, formationSlots } from "./engine.js";
+import { legalActions, attackPreview, formationSlots, unitStats } from "./engine.js";
 
 const HIDDEN = Object.freeze({ hidden: true });
 const FACE_DOWN = Object.freeze({ hidden: true, faceDown: true });
@@ -47,7 +47,11 @@ export function chooseAction(game, player = actingPlayer(game)) {
   const handCard = (a) => me.hand[a.card] ?? me.hand.find((c) => c.id === a.card);
 
   // Choices the engine is waiting on.
-  if (view.pending?.type === "chooseLoss") return of("chooseLoss")[0];
+  if (view.pending?.type === "chooseLoss") {
+    // As the attacker, take out the strongest of the tied units (highest Attack plus Defense).
+    const power = (a) => { const s = unitStats(view, view.pending.owner, a.slot); return s.attack + s.defense; };
+    return of("chooseLoss").sort((a, b) => power(b) - power(a))[0];
+  }
   if (view.pending?.type === "trapResponse") return of("trapResponse")[0]; // always use the Trap (the last option is pass)
   if (view.pending?.type === "specialDraw") {
     // Prefer the Special Deck with the most cards left.

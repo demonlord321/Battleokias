@@ -29,10 +29,12 @@ test("it only acts for the player who has to act", () => {
   const game = newGame({ seed: 3, decks: [arms(), arms()], startingPlayer: 0 });
   assert.equal(chooseAction(game, 1), null);
   assert.ok(chooseAction(game, 0));
-  game.pending = { type: "chooseLoss", player: 1, slots: [0, 2] };
-  game.players[1].ups[0] = game.players[1].ups[2] = { ...byId["ARM-010"], id: "x" };
+  game.pending = { type: "chooseLoss", player: 1, owner: 0, slots: [0, 2] };
+  game.players[0].ups[0] = { ...byId["ARM-010"], id: "x" };
+  game.players[0].ups[2] = { ...byId["ARM-010"], id: "y", attack: byId["ARM-010"].attack + 500 };
   assert.equal(actingPlayer(game), 1);
-  assert.deepEqual(chooseAction(game, 1), { type: "chooseLoss", player: 1, slot: 0 });
+  // The attacker takes out the stronger of the tied units.
+  assert.deepEqual(chooseAction(game, 1), { type: "chooseLoss", player: 1, slot: 2 });
 });
 
 test("its view hides the opponent's hand, both decks' order and every Special Deck", () => {

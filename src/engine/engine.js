@@ -263,11 +263,13 @@ function useArtifact(game, playerIndex, slot) {
   } else game.log.push(`${a.name} has ${a.chargesLeft} charge${a.chargesLeft === 1 ? "" : "s"} left, ready again on turn ${a.readyOnTurn}.`);
 }
 
-function resolveLoss(game, playerIndex, slots) {
-  if (slots.length === 1) return destroyUnit(game, playerIndex, slots[0]);
-  // Placeholder: when candidates tie, the defender picks which unit goes.
-  game.pending = { type: "chooseLoss", player: playerIndex, slots };
-  game.log.push(`${game.players[playerIndex].name} chooses which unit goes to the Grave.`);
+// owner is the player losing a unit. When candidates tie, the attacker picks which of the
+// owner's units goes (Dyllan, 8 Oct): pending.player is the attacker, pending.owner the defender.
+function resolveLoss(game, owner, slots) {
+  if (slots.length === 1) return destroyUnit(game, owner, slots[0]);
+  const attacker = 1 - owner;
+  game.pending = { type: "chooseLoss", player: attacker, owner, slots };
+  game.log.push(`${game.players[attacker].name} chooses which of ${game.players[owner].name}'s units goes to the Grave.`);
 }
 
 export function lowestGradeSlots(game, playerIndex) {
@@ -966,8 +968,8 @@ const ACTIONS = {
     },
   },
 
-  // { type: "chooseLoss", player, slot }: the defender picks which of their tied
-  // lowest-Grade units goes to the Grave. Only allowed while game.pending asks for it.
+  // { type: "chooseLoss", player, slot }: the attacker (player) picks which of the defender's
+  // (pending.owner) tied lowest-Grade units goes to the Grave. Only allowed while game.pending asks for it.
   // { type: "chooseFormation", player, option }: pick which of your Formation's slotOptions it
   // uses (Line Defense: which full row), in either Preparation Phase, for free (RULES.md a2392f0).
   chooseFormation: {
@@ -1041,9 +1043,9 @@ const ACTIONS = {
       return null;
     },
     apply(game, action) {
-      const { player } = game.pending;
+      const { owner } = game.pending;
       game.pending = null;
-      destroyUnit(game, player, action.slot);
+      destroyUnit(game, owner, action.slot);
     }
   },
 };

@@ -190,18 +190,18 @@ test("units outside the Formation are never the ones destroyed", () => {
   assert.deepEqual(lowestGradeSlots(game, 1), [0, 1]);
 });
 
-test("tied lowest Grades: the defender chooses, and nothing else can happen first", () => {
+test("tied lowest Grades: the attacker chooses, and nothing else can happen first", () => {
   const game = gradedBattle([1, 3, 1]);
   attack(game);
-  assert.deepEqual(game.pending, { type: "chooseLoss", player: 1, slots: [0, 2] });
+  assert.deepEqual(game.pending, { type: "chooseLoss", player: 0, owner: 1, slots: [0, 2] });
   assert.deepEqual(legalActions(game), [
-    { type: "chooseLoss", player: 1, slot: 0 },
-    { type: "chooseLoss", player: 1, slot: 2 },
+    { type: "chooseLoss", player: 0, slot: 0 },
+    { type: "chooseLoss", player: 0, slot: 2 },
   ]);
   assert.match(checkAction(game, { type: "nextPhase", player: 0 }), /has to choose/);
-  assert.match(checkAction(game, { type: "chooseLoss", player: 0, slot: 0 }), /choice/);
-  assert.match(checkAction(game, { type: "chooseLoss", player: 1, slot: 1 }), /highlighted/);
-  assert.equal(applyAction(game, { type: "chooseLoss", player: 1, slot: 2 }).ok, true);
+  assert.match(checkAction(game, { type: "chooseLoss", player: 1, slot: 0 }), /choice/);
+  assert.match(checkAction(game, { type: "chooseLoss", player: 0, slot: 1 }), /highlighted/);
+  assert.equal(applyAction(game, { type: "chooseLoss", player: 0, slot: 2 }).ok, true);
   assert.equal(game.players[1].ups[2], null);
   assert.ok(game.players[1].ups[0]);
   assert.equal(game.pending, null);
