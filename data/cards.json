@@ -119,7 +119,7 @@
       "magic",
       "alchemy"
     ],
-    "cost": 0,
+    "cost": 1,
     "slots": [
       0,
       1,
@@ -140,7 +140,7 @@
       "magic",
       "alchemy"
     ],
-    "cost": 1,
+    "cost": 2,
     "slots": [
       0,
       1,

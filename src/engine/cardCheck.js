@@ -81,10 +81,10 @@ export function checkCards(cards) {
       for (const g of ["damageGrade", "defenseGrade"]) {
         if (typeof card[g] === "number" && (card[g] < 0 || !Number.isInteger(card[g]))) problems.push(`${where}: ${g} should be a whole number, 0 or more.`);
       }
-      // RULES.md: a Damage Grade 1 Formation costs 0; a higher one costs its Damage Grade minus 1.
-      // Damage Grade 0 (Line Defense) isn't covered, so its printed cost stands.
-      if (card.damageGrade >= 1 && typeof card.cost === "number" && card.cost !== Math.max(0, card.damageGrade - 1)) {
-        problems.push(`${where}: a Formation with Damage Grade ${card.damageGrade} should cost ${Math.max(0, card.damageGrade - 1)}.`);
+      // RULES.md (Dyllan, 8 Oct): a Formation costs its Damage Grade. Damage Grade 0 normally costs 1,
+      // but Line Defense keeps its printed 2 for now, so the printed cost stands at Damage Grade 0.
+      if (card.damageGrade >= 1 && typeof card.cost === "number" && card.cost !== card.damageGrade) {
+        problems.push(`${where}: a Formation with Damage Grade ${card.damageGrade} should cost ${card.damageGrade}.`);
       }
       if (card.combine === "scaled") {
         for (const k of ["attackMultiplier", "defenseDivisor"]) {
