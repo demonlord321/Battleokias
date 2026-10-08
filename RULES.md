@@ -6,6 +6,8 @@ Written up from Dyllan's notes. Open questions are marked **(?)**. Rules are ref
 
 **Balance approach (Dyllan):** deck building is most of the battle in a TCG. Exact mirror matches (both players with identical decks) are not a fair way to judge balance. Test with different deck builds from the same card pool instead.
 
+**Balance on hold (Dyllan, 8 Oct):** don't tune balance yet. Draw rates, card types and effects will shift it, so once the full Arms collection is in, we run simulations and fine-tune the effects then.
+
 ## Setup
 1. A coin flip decides who goes first.
 2. The starting player draws **4** cards.
