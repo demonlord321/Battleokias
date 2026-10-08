@@ -22,7 +22,6 @@ export const SIGNETS = {
   magic:   { label: "School of Magic",   symbol: "✦", color: "#7a5ce0" },
   alchemy: { label: "School of Alchemy", symbol: "⚗", color: "#3f9a5a" },
   mercenary: { label: "Mercenary",       symbol: "¤", color: "#b8892e" },
-  mystic:  { label: "Mystic",            symbol: "☾", color: "#4f8fd6" }, // placeholder until Dyllan confirms
 };
 
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
