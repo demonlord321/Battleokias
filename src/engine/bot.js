@@ -70,7 +70,11 @@ export function chooseAction(game, player = actingPlayer(game)) {
     of("equip").sort((a, b) => inFormation(a) - inFormation(b) || me.ups[b.slot].grade - me.ups[a.slot].grade)[0] ||
     // Set Traps that do something, only in slots the Formation doesn't need, so it stays active.
     of("setTrap").filter((a) => inFormation(a) && handCard(a)?.type === "trap" && handCard(a)?.response)[0] ||
-    (of("attack")[0] && attackPreview(view, player).hits && of("attack")[0]) ||
+    // Artifacts go on Formation units, so they can be activated when it attacks.
+    of("attach").filter((a) => !inFormation(a))[0] ||
+    (of("attack").find((a) => a.artifact == null) && attackPreview(view, player).hits && of("attack").find((a) => a.artifact == null)) ||
+    // Blinding Beacon only when the plain attack can't get through: blinded, it lands for 1 counter.
+    of("attack").filter((a) => a.artifact != null && attackPreview(view, player, { artifact: a.artifact }).hits)[0] ||
     of("nextPhase")[0] ||
     of("endTurn")[0];
   return pick ?? options[0];
