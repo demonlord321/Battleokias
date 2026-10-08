@@ -120,7 +120,7 @@ test("10 Damage Counters loses the game", () => {
   assert.equal(game.phase, "over");
 });
 
-test("random legal play finishes, unless both Draw Piles run out (a stall)", () => {
+test("random legal play always finishes with a winner", () => {
   for (let seed = 0; seed < 20; seed++) {
     const make = (_, i) => (i % 5 === 0 ? frontal() : unit(1 + (i % 3), 500 * (1 + (i % 4)), 500 * (1 + (i % 3))));
     const game = newGame({ seed, decks: [Array.from({ length: 30 }, make), Array.from({ length: 30 }, make)] });
@@ -130,7 +130,7 @@ test("random legal play finishes, unless both Draw Piles run out (a stall)", () 
       const pick = busy.length ? busy[Math.floor(game.rng() * busy.length)] : options.find((a) => a.type === "nextPhase");
       assert.equal(applyAction(game, pick).ok, true);
     }
-    assert.ok(game.winner !== null || game.players.every((p) => p.deck.length === 0));
+    assert.notEqual(game.winner, null);
   }
 });
 

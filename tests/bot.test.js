@@ -21,10 +21,7 @@ test("the computer plays whole games against itself with only legal moves", () =
       assert.equal(checkAction(game, action), null, `seed ${seed}: ${JSON.stringify(action)}`);
       applyAction(game, action);
     }
-    // With no loss for an empty Draw Pile (8 Oct), a game can stall once both piles are empty
-    // and neither side can get through. Until Dyllan says how that ends, a stall is a draw.
-    const stalled = game.players.every((p) => p.deck.length === 0);
-    assert.ok(game.winner !== null || stalled, `seed ${seed} didn't finish`);
+    assert.notEqual(game.winner, null, `seed ${seed} didn't finish`);
   }
 });
 

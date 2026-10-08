@@ -429,8 +429,13 @@ function startTurn(game) {
 function startDraw(game) {
   const p = game.players[game.activePlayer];
   game.phase = "draw";
-  // Dyllan, 8 Oct: with an empty Draw Pile you just skip the draw; it's not a loss.
-  if (!drawCard(game, game.activePlayer)) game.log.push(`${p.name} skips the draw.`);
+  // RULES.md 9ba7775: drawing from an empty Draw Pile isn't a loss; you take 1 Damage Counter
+  // instead (1 per Draw Phase for now), so stalled games still end.
+  if (!drawCard(game, game.activePlayer)) {
+    p.damage += 1;
+    game.log.push(`${p.name} takes 1 Damage Counter instead. ${p.name} has ${p.damage}.`);
+    if (p.damage >= MAX_DAMAGE) return win(game, 1 - game.activePlayer, `${p.name} reached ${MAX_DAMAGE} Damage Counters.`);
+  }
   game.phase = "prep1";
   for (const unit of p.ups) if (unit?.equipment?.readyNextTurn) {
     delete unit.equipment.readyNextTurn;

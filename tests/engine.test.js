@@ -50,12 +50,18 @@ test("each player has a 3x3 grid, 4 Special Deck Zones, a Field Effect Zone and 
   assert.equal(p.formationZone, null);
 });
 
-test("with an empty Draw Pile the player skips the draw and plays on", () => {
+test("drawing from an empty Draw Pile gives 1 Damage Counter instead, and the 10th loses", () => {
   const game = newGame({ seed: 1, decks: [deck("a", 4), deck("b", 5)], startingPlayer: 0 });
   assert.equal(game.players[0].hand.length, 4);
+  assert.equal(game.players[0].damage, 1);
   assert.equal(game.winner, null);
   assert.equal(game.phase, "prep1");
   assert.ok(game.log.some((line) => /no cards left to draw/.test(line)));
+  const late = newGame({ seed: 1, decks: [deck("a", 4), deck("b", 5)], startingPlayer: 1 });
+  late.players[0].damage = 9;
+  assert.equal(applyAction(late, { type: "endTurn", player: 1 }).ok, true);
+  assert.equal(late.winner, 1);
+  assert.equal(late.phase, "over");
 });
 
 test("illegal actions are refused with a reason", () => {

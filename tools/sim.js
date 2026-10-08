@@ -48,7 +48,7 @@ for (let i = 0; i < lists.length; i++)
       const winner = iFirst ? play(lists[i][1], lists[j][1], seed) : play(lists[j][1], lists[i][1], seed);
       if (winner === (iFirst ? 0 : 1)) iWins++;
       else if (winner !== null) jWins++;
-      else draws++; // stalled: both Draw Piles empty and nobody can get through
+      else draws++; // didn't finish within the step limit
     }
     wins[i][j] = iWins / GAMES;
     wins[j][i] = jWins / GAMES;
@@ -62,4 +62,4 @@ wins.forEach((row, i) => {
   const avg = row.filter((x) => x !== null).reduce((s, x) => s + x, 0) / (row.length - 1);
   console.log([names[i].padEnd(w), ...row.map((x) => pct(x).padStart(w)), pct(avg).padStart(w)].join(" "));
 });
-if (draws) console.log(`\n${draws} game(s) stalled with both Draw Piles empty and counted for neither deck.`);
+if (draws) console.log(`\n${draws} game(s) didn't finish and counted for neither deck.`);
