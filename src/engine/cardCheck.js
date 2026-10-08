@@ -27,6 +27,10 @@ function typeOf(value) {
   return Array.isArray(value) ? "array" : typeof value;
 }
 
+// Dyllan organises cards.json with section headers like { "Comment": "UNITS GRADE 1-3" }.
+// They have no id and aren't cards, so everything that reads the file skips them.
+export const isComment = (entry) => typeOf(entry) === "object" && "Comment" in entry && !("id" in entry);
+
 // Returns a list of readable problems; an empty list means every card is fine.
 export function checkCards(cards) {
   if (!Array.isArray(cards)) return ["cards.json should be a list of cards, starting with [ and ending with ]."];
@@ -35,12 +39,14 @@ export function checkCards(cards) {
   cards.forEach((card, i) => {
     const where = `Card ${i + 1}${card?.id ? ` (${card.id})` : ""}`;
     if (typeOf(card) !== "object") return problems.push(`${where}: should be an object in { }.`);
+    if (isComment(card)) return;
 
     const fields = { ...COMMON, ...(BY_TYPE[card.type] ?? DEFAULT_FIELDS) };
     for (const [field, kind] of Object.entries(fields)) {
       if (field === "slots" && !(field in card) && Array.isArray(card.slotOptions)) continue; // Line Defense picks a row
       if (!(field in card)) problems.push(`${where}: missing "${field}".`);
       else if (field === "defense" && card.defense === null && card.variableDefense) continue; // worked out on the field
+      else if (field === "attack" && card.attack === null && card.variableAttack) continue; // Galent
       else if (typeOf(card[field]) !== kind) problems.push(`${where}: "${field}" should be a ${kind}, not ${typeOf(card[field])}.`);
     }
 
@@ -124,11 +130,13 @@ export function checkCards(cards) {
     }
     // Named units (Grade 4 and up) carry a Class and flavour text.
     for (const k of ["class", "flavor"]) if (k in card && (typeof card[k] !== "string" || !card[k])) problems.push(`${where}: "${k}" should be text.`);
-    if ("variableDefense" in card) {
-      // Drazel: { summoned: 1000, promoted: "base" } = 1000 when summoned, the promoted unit's Defense when promoting.
-      const v = card.variableDefense;
-      if (typeOf(v) !== "object" || !Number.isInteger(v.summoned) || !["base"].includes(v.promoted)) problems.push(`${where}: "variableDefense" should look like { "summoned": 1000, "promoted": "base" }.`);
-      if (card.defense !== null) problems.push(`${where}: a unit with "variableDefense" should have "defense": null.`);
+    for (const [key, stat] of [["variableDefense", "defense"], ["variableAttack", "attack"]]) {
+      if (!(key in card)) continue;
+      // Drazel: { summoned: 1000, promoted: "base" } = 1000 when summoned, the promoted unit's Defense
+      // when promoting. Galent's variableAttack does the same for Attack.
+      const v = card[key];
+      if (typeOf(v) !== "object" || !Number.isInteger(v.summoned) || !["base"].includes(v.promoted)) problems.push(`${where}: "${key}" should look like { "summoned": 1000, "promoted": "base" }.`);
+      if (card[stat] !== null) problems.push(`${where}: a unit with "${key}" should have "${stat}": null.`);
     }
     if ("promotesFrom" in card) {
       // Promotion lines: the cards this unit can go on, each a unit one Grade lower in the same line.

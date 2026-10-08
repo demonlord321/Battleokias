@@ -81,7 +81,7 @@
     "grade": 4,
     "attack": null,
     "defense": 4000,
-    "variableDefense": {
+    "variableAttack": {
       "summoned": 1000,
       "promoted": "base"
     },
@@ -90,7 +90,6 @@
     "formation": "Formation effect text",
     "summonEffect": "none",
     "text": "His Attack is 1000 when summoned, or equal to the Attack of the unit he promotes.",
-
     "image": "images/arm-mer-002.png"
   },
   {
@@ -107,6 +106,8 @@
     "flavor": "Placeholder.",
     "formation": "Formation effect text",
     "summonEffect": "Pickpocket: when summoned Sena can distroy 1 Item, artifact or equipment on the opponents side of the field, does not need to be in a formation and only activates when summoned.",
+    "onSummon": "pickpocket",
+    "text": "Pickpocket: when Sena is summoned, you may destroy 1 Item, Artifact or Equipment on your opponent's side of the field. She doesn't need to be in a Formation.",
     "image": "images/arm-mer-001.png"
   },
   {

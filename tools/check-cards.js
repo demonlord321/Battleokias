@@ -1,7 +1,7 @@
 // Run with: npm run check-cards
 // Reads data/cards.json and data/decks.json and lists anything wrong in plain words.
 import { readFileSync, existsSync } from "node:fs";
-import { checkCards, checkDecks } from "../src/engine/cardCheck.js";
+import { checkCards, checkDecks, isComment } from "../src/engine/cardCheck.js";
 
 function load(file) {
   try {
@@ -22,4 +22,4 @@ if (problems.length) {
   for (const p of problems) console.error(`  - ${p}`);
   process.exit(1);
 }
-console.log(`data/cards.json looks good: ${cards.length} cards.${hasDecks ? " data/decks.json looks good too." : ""}`);
+console.log(`data/cards.json looks good: ${cards.filter((c) => !isComment(c)).length} cards.${hasDecks ? " data/decks.json looks good too." : ""}`);
