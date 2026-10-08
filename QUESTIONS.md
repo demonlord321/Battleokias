@@ -9,54 +9,52 @@ Each question has a **placeholder**, which is what the game does for now so the 
 ### 1. Empty Draw Pile damage
 You went with Advisor's idea: when you'd draw from an empty main Draw Pile, you take 1 Damage Counter instead. Is that 1 counter per Draw Phase, or 1 for each card you can't draw (you draw 2 a turn)?
 **Placeholder:** 1 per Draw Phase.
-**Answer:**
+**Answer:** 1 damage counter per Drawphase, no damage taken in prep phase 2 we say that a player can skipp a special deck draw.
 
 ### 2. Do Drazel and Galent keep Mercenary?
 In your `cards.json`, Drazel and Galent list only Arms, but their IDs (`ARM-MER-001`, `ARM-MER-002`) still say Mercenary. Did you mean to drop Mercenary?
 **Placeholder:** both are Arms (main) and Mercenary (sub).
-**Answer:**
+**Answer:** for now we will only be using the three base signets already discussed, later we can add others, so remove any mention of a signet that is not Arms, Magic or Alchemy
 
 ### 3. Sena's second Signet
 Sena's ID is `ARM-ASS-002`. Is "ASS" a new Signet, Assassin for example? Also, there's no `-001` card yet.
 **Placeholder:** she is Arms only.
-**Answer:**
+**Answer:** later i wish to make an assassin signet, for now she is arms only you can alter the ID's to reflect this, or rather for named units make the second part a short hand of ther name. example ARM-SEN-001, note there can be more then one sena named card, maybe a higher grade version of this current card.
 
 ### 4. Line Defense cost
 The card says cost 2, but the new Formation cost rule (no Damage Grade costs 1) gives 1. Which one is right?
 **Placeholder:** the printed cost wins, so it stays 2.
-**Answer:**
+**Answer:** set the cost to 1
 
 ### 5. When do you choose a Formation's row?
 For Line Defense with more than one full row.
 **Placeholder:** you pick when you play the Formation, and you can change it in either of your Prep Phases. If your row breaks on the opponent's turn, the strongest full row is used.
-**Answer:**
+**Answer:** we will take the placeholder answer for right now.
 
 ## Cards
 
 ### 6. Drazel, the Bloody Blade: Last Stand
 Are the 3 turns three of your own turns?
 **Placeholder:** yes, counting the turn you start it.
-**Answer:**
+**Answer:** ok for this one, Last Stand only distroys Drazel after the third battle phase it is active on.
 
 ### 7. Drazel's Katana and the Bloody Blade
 Does Drazel's Katana stay on when Drazel promotes to the Bloody Blade, and can you equip it to the Bloody Blade directly?
-**Placeholder:** yes to both.
-**Answer:**
+**Answer:** yes to both.
 
 ### 8. Drazel's Katana when you fetch Katana of the Fallen Hero
 What happens to Drazel's Katana?
-**Placeholder:** it goes to the Grave.
-**Answer:**
+**Answer:** it goes to the Grave.
 
 ### 9. Pickpocket on promotion
 Does promoting into Sena count as "summoned", so Pickpocket triggers?
 **Placeholder:** no, only a normal summon does.
-**Answer:**
+**Answer:** yes we refer to summon as any state that causes a unit to enter the field, so promotion does count for this.
 
 ### 10. Fire Arrow on the turn it's set
 Can a Fire Arrow you set this turn fire in the same turn (for example set in Prep Phase II, fired in the End Phase)?
 **Placeholder:** no, not until your next turn.
-**Answer:**
+**Answer:** Yes yoou can, its affects are the sanme either way, but if you are going to do that you may as well just cast it.
 
 ### 11. Blinding Beacon's two-turn cooldown
 Does it count your own turns?
@@ -66,7 +64,7 @@ Does it count your own turns?
 ### 12. Frontal Assault and Vanguard Charge Signets
 Your card list from this morning had Frontal Assault as Arms only and Vanguard Charge as Arms/Mercenary. `cards.json` still gives both Arms, Magic and Alchemy. Which is right?
 **Placeholder:** what `cards.json` says now (Arms, Magic, Alchemy) until you confirm.
-**Answer:**
+**Answer:** for now set both to arms only
 
 ### 13. Frontal Assault's Damage and Defense Grade
 **Placeholder:** Damage Grade 1, Defense Grade 0.
