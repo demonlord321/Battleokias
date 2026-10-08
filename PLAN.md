@@ -30,7 +30,7 @@ Mapmaker (game board and screens), Advisor (balance reviews), Planner (plan and 
 - [ ] Card types stage 1: Units, Spells, Traps
 - [ ] Card types stage 2 (one at a time): Field Spells, Equipment, Artifacts, Monsters (after unit attacks are designed)
 - [x] Coin flip, opening deal (4 and 5), Draw Phase each turn, seeded shuffle
-- [ ] Hand limits, empty Draw Pile rule (Dyllan, 8 Oct: an empty main deck skips the draw instead of losing, and empty Special Decks just skip; engine, Developer)
+- [ ] Hand limits (open). Empty Draw Pile done (`788c458`): an empty pile skips the draw instead of losing. Stalled games with both piles empty count as draws for now (QUESTIONS.md #1)
 - [x] Game state; every move is an action passed to one `applyAction` function
 - [x] Turn phases, playing cards, resources, combat, win check
 - [x] Two random bots play full games in Node; unit tests
@@ -67,12 +67,12 @@ Uses the placeholder rules in `RULES.md`; Dyllan refines them as we play.
 - [ ] Player picks the condition when a Formation has several met (Dyllan, 8 Oct), e.g. Line Defense with two full rows. Engine: a chosen-row field on the Formation and an action to pick it (Developer). Board: a row picker that pops up when more than one row fits (Mapmaker). Timing placeholder in RULES.md
 - [x] Blinding Beacon (first Artifact; engine `1703716` to `12811d9`, board `068460a`; still to do: Signets become Arms, Magic, Alchemy and the `mystic` Signet is removed): attach to a unit in Prep I or II, 2 charges, two-turn cooldown, deactivates the opponent's Formation for your Battle Phase; Artifact attach support, Developer; Beacon on the unit, charge and cooldown display, activate button, Mapmaker
 - [ ] Named units (Grade 4+): flavour text and Class fields in `data/cards.json`, shown on the card face, Developer + Mapmaker. Classes so far: Swordsman, Guardian, Rogue
-- [ ] Fix `main` after Dyllan's `6296c33` (`check-cards` fails and 2 tests fail): let the checker skip `{"Comment"}` section headers, give Galent a variable Attack, add Sena's `text`, and drop `ARM-001` Iron Recruit from the Arms deck and `tools/sim-decks.json`, Developer
-- [ ] Galent, The Unbreakable Shield (`ARM-MER-002`): Grade 4 Guardian, 4000 Defense; Attack 1000 when summoned, or the promoted unit's Attack (Drazel in reverse), Developer + Mapmaker
-- [ ] Sena, Mistress of the Shadows (`ARM-ASS-002`): Grade 4 Rogue, 3500/3500; Pickpocket destroys 1 opposing Item, Artifact or Equipment when she's summoned. Engine: summon effects with a target choice, Developer; picking the target on the board, Mapmaker
-- [ ] Formation cost is now its Damage Grade, and Damage Grade 0 costs 1 (Frontal Assault 1, Vanguard Charge 2, Line Defense keeps its printed 2 for now), Developer
-- [ ] On a tie for lowest Grade, the attacker picks which unit is destroyed instead of the defender. Engine choice, Developer; picker, Mapmaker
-- [ ] Open questions for Dyllan (8 Oct): Drazel and Galent lost Mercenary in `cards.json` but their IDs still say MER; what Sena's `ASS` Signet is; whether promoting into Sena triggers Pickpocket; Line Defense cost 2 or 1
+- [x] Fix `main` after Dyllan's `6296c33` (`64d3b26`) (`check-cards` fails and 2 tests fail): let the checker skip `{"Comment"}` section headers, give Galent a variable Attack, add Sena's `text`, and drop `ARM-001` Iron Recruit from the Arms deck and `tools/sim-decks.json`, Developer
+- [x] Galent, The Unbreakable Shield (`ARM-MER-002`, engine `6cfd57b`): Grade 4 Guardian, 4000 Defense; Attack 1000 when summoned, or the promoted unit's Attack (Drazel in reverse), Developer + Mapmaker
+- [ ] Sena, Mistress of the Shadows (`ARM-ASS-002`): Grade 4 Rogue, 3500/3500; Pickpocket destroys 1 opposing Item, Artifact or Equipment when she's summoned. Engine done (`3f995fb`, `pending.type "pickpocket"`), Developer; target picker on the board, Mapmaker
+- [x] Formation cost is now its Damage Grade (`226ee47`), and Damage Grade 0 costs 1 (Frontal Assault 1, Vanguard Charge 2, Line Defense keeps its printed 2 for now), Developer
+- [ ] On a tie for lowest Grade, the attacker picks which unit is destroyed instead of the defender. Engine done (`d8bfbe7`), Developer; picker on the board, Mapmaker
+- [ ] All open questions for Dyllan are collected in `QUESTIONS.md`. He answers there and Planner folds the answers into `RULES.md`
 - [ ] Dyllan playtests and replaces placeholder rules, Planner updates `RULES.md`
 
 ## Milestone 2: Playable board

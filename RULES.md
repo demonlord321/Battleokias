@@ -1,6 +1,6 @@
 # Battle'O'Kias — Rules (Milestone 0, in progress)
 
-Written up from Dyllan's notes. Open questions are marked **(?)**. Rules are refined as we go, and balance is tuned as cards are added.
+Written up from Dyllan's notes. Open questions are marked **(?)**, and all of them are collected in `QUESTIONS.md` for Dyllan to answer. Rules are refined as we go, and balance is tuned as cards are added.
 
 **The world (Dyllan):** a war-torn world where institutes (the Schools) train warriors to fight for their ambitions.
 
