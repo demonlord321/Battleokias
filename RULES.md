@@ -100,11 +100,11 @@ Open questions (placeholders in brackets):
 | Type | What it does | Where it goes |
 |---|---|---|
 | **Unit** | Your creatures | Unit Position Slots (UPS) |
-| **Spell** | Spells with effects | (?) |
+| **Spell** | Spells with effects | An empty Unit Position Slot, unless the card says otherwise |
 | **Field Spell** | Affects the field | Field Effect Zone (?) |
-| **Trap** | Set face-down, activated on the opponent's turn | An empty Unit Position Slot (from Stand Strong) |
+| **Trap** | Set face-down, activated on the opponent's turn | An empty Unit Position Slot, unless the card says otherwise |
 | **Equipment** | Placed over a unit with a shared Signet; boosts or changes it (see Equipment). Special Deck only | On a unit in the grid |
-| **Artifact** | (?) | (?) |
+| **Artifact** | (?) Usually attaches to a unit | On a unit, usually |
 | **Monster** | Deferred: defined once unit attacks are designed | (?) |
 | **Item** | New type, details to come. Special Deck | (?) |
 | **Formation** | Names a pattern of filled grid slots and gives its Attack and Defense for battle (see Formations) | Formation Zone |
@@ -285,14 +285,17 @@ Open questions:
 ## Spell and Trap cost
 - Most Spells, Field Spells and Traps cost **1 Energy** to play, unless the card says otherwise.
 
+## Where cards go (basic rule, confirmed by Dyllan)
+- **Spells and Traps** always go in an **empty Unit Position Slot**, unless the card says otherwise.
+- **Equipment and Artifacts** usually **attach to a unit**.
+- Placeholders (Developer, `fb2b834` to `340e4ed`): the cost is paid when the card is set; a set card can't be moved or retired; a set card isn't a unit, so a Formation with one in its slots is inactive.
+
 ## Traps
 ### Trap: Stand Strong (School of Arms, from Dyllan)
 - **Signet:** Arms. **Cost:** 1.
 - Set it in **Preparation Phase I or II**, face-down in an **empty Unit Position Slot**.
 - Activate it during your **opponent's Battle Phase**: when their attack lands, send Stand Strong to the Grave **instead of** the unit that would have been destroyed.
 - Placeholders and open questions:
-  - **(?)** Do all Traps (and Spells) get set in an empty Unit Position Slot, or just this one? (Placeholder: all Traps.)
-  - **(?)** Can it sit in a slot your Formation needs, and does that slot then count as filled? (Placeholder: no. A Trap doesn't count as a unit, so a Formation with a Trap in one of its slots is inactive.)
   - The attacker still deals its Damage Counters; Stand Strong only saves the unit.
   - It's the first card that responds on the opponent's turn, so the engine raises a choice for the defender, and in hot-seat the board shows the hand-over screen.
 
