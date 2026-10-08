@@ -265,6 +265,19 @@ function useArtifact(game, playerIndex, slot) {
 
 // owner is the player losing a unit. When candidates tie, the attacker picks which of the
 // owner's units goes (Dyllan, 8 Oct): pending.player is the attacker, pending.owner the defender.
+// What Sena's Pickpocket can destroy on the opponent's side: { slot, kind } with kind "equipment"
+// or "artifact" (on a unit; one unit can carry both) or "item" (a face-up Item card in a slot).
+export function pickpocketTargets(game, opponent) {
+  const targets = [];
+  game.players[opponent].ups.forEach((card, slot) => {
+    if (!card || card.faceDown) return;
+    if (card.equipment) targets.push({ slot, kind: "equipment" });
+    if (card.artifact) targets.push({ slot, kind: "artifact" });
+    if (card.type === "item") targets.push({ slot, kind: "item" });
+  });
+  return targets;
+}
+
 function resolveLoss(game, owner, slots) {
   if (slots.length === 1) return destroyUnit(game, owner, slots[0]);
   const attacker = 1 - owner;
@@ -553,6 +566,14 @@ const ACTIONS = {
       spendEnergy(p, cardCost(card));
       p.ups[action.slot] = { ...card, ...arriving(card) };
       game.log.push(`${p.name} summons ${card.name}.`);
+      // Sena's Pickpocket: only on a normal summon (not a promotion), and only if there's a target.
+      if (card.onSummon === "pickpocket") {
+        const targets = pickpocketTargets(game, 1 - game.activePlayer);
+        if (targets.length) {
+          game.pending = { type: "pickpocket", player: game.activePlayer, targets };
+          game.log.push(`${card.name} can pickpocket an Item, Artifact or Equipment.`);
+        }
+      }
     },
   },
 
@@ -1036,6 +1057,39 @@ const ACTIONS = {
     },
   },
 
+  // { type: "pickpocket", player, slot, kind }: Sena destroys one of pending.targets on the
+  // opponent's side, which goes to the opponent's Grave; slot: null skips it.
+  pickpocket: {
+    check(game, action) {
+      if (game.pending?.type !== "pickpocket") return "There's nothing to pickpocket right now.";
+      if (action.slot === null) return null;
+      if (!game.pending.targets.some((t) => t.slot === action.slot && t.kind === action.kind)) return "Pick one of the highlighted cards.";
+      return null;
+    },
+    apply(game, action) {
+      const { player } = game.pending;
+      game.pending = null;
+      const me = game.players[player];
+      if (action.slot === null) return void game.log.push(`${me.name} doesn't pickpocket anything.`);
+      const them = game.players[1 - player];
+      const card = them.ups[action.slot];
+      let gone;
+      if (action.kind === "equipment") {
+        const { readyNextTurn, defenseCopied, attackCopied, ...gear } = card.equipment;
+        delete card.equipment;
+        gone = gear;
+      } else if (action.kind === "artifact") {
+        gone = cleanArtifact(card.artifact);
+        delete card.artifact;
+      } else {
+        them.ups[action.slot] = null;
+        gone = card;
+      }
+      them.graveyard.push(gone);
+      game.log.push(`${me.name} pickpockets ${them.name}'s ${gone.name}, and it goes to the Grave.`);
+    },
+  },
+
   chooseLoss: {
     check(game, action) {
       if (game.pending?.type !== "chooseLoss") return "There's nothing to choose right now.";
@@ -1086,7 +1140,7 @@ export function checkAction(game, action) {
   if (game.pending) {
     const who = game.players[game.pending.player].name;
     if (action.type !== game.pending.type) {
-      const waiting = { graduate: "choose who comes out of the Academy", specialDraw: "pick a Special Deck to draw from", chooseLoss: "choose which unit goes to the Grave", trapResponse: "decide whether to respond" };
+      const waiting = { graduate: "choose who comes out of the Academy", specialDraw: "pick a Special Deck to draw from", chooseLoss: "choose which unit goes to the Grave", trapResponse: "decide whether to respond", pickpocket: "decide what to pickpocket" };
       return `${who} has to ${waiting[game.pending.type]} first.`;
     }
     if (action.player !== undefined && action.player !== game.pending.player) return `It's ${who}'s choice.`;
@@ -1134,6 +1188,10 @@ export function legalActions(game) {
   if (game.pending?.type === "trapResponse") {
     const { player, slots } = game.pending;
     return [...slots, null].map((slot) => ({ type: "trapResponse", player, slot }));
+  }
+  if (game.pending?.type === "pickpocket") {
+    const { player, targets } = game.pending;
+    return [...targets.map(({ slot, kind }) => ({ type: "pickpocket", player, slot, kind })), { type: "pickpocket", player, slot: null }];
   }
   const player = game.activePlayer;
   const p = game.players[player];

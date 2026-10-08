@@ -53,6 +53,11 @@ export function chooseAction(game, player = actingPlayer(game)) {
     return of("chooseLoss").sort((a, b) => power(b) - power(a))[0];
   }
   if (view.pending?.type === "trapResponse") return of("trapResponse")[0]; // always use the Trap (the last option is pass)
+  if (view.pending?.type === "pickpocket") {
+    // Take an Artifact first (it can switch off our Formation), then Equipment, then an Item.
+    const rank = { artifact: 0, equipment: 1, item: 2 };
+    return of("pickpocket").filter((a) => a.slot !== null).sort((a, b) => rank[a.kind] - rank[b.kind])[0] ?? of("pickpocket")[0];
+  }
   if (view.pending?.type === "specialDraw") {
     // Prefer the Special Deck with the most cards left.
     return of("specialDraw").sort((a, b) => me.specialDecks[b.deck].cards.length - me.specialDecks[a.deck].cards.length)[0];
