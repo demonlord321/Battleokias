@@ -772,3 +772,24 @@ html, body {
 .stat-pgrade { margin-top: 4px; }
 .stat-pgrade .stat-icon { color: #ffd98a; }
 .stat-pgrade .stat-value { color: #ffd98a; }
+
+/* Set cards (Traps): face-down in a Unit Position Slot. The owner sees the card dimmed. */
+.card.is-set { position: relative; }
+.card-face.is-set { opacity: 0.62; filter: saturate(0.6); border-style: dashed; }
+.card.is-set::after {
+  content: "SET"; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(-12deg);
+  padding: 1px 6px; border-radius: 4px; font-size: 0.7em; font-weight: bold; letter-spacing: 0.08em;
+  background: #b0457a; color: #fff; box-shadow: 0 0 6px rgba(176, 69, 122, 0.8); pointer-events: none;
+}
+/* Trap response: set cards that can answer glow pink, threatened units pulse red. */
+.slot.can-respond { border-color: #e06aa8; cursor: pointer; box-shadow: 0 0 14px rgba(224, 106, 168, 0.85); }
+.slot.is-threatened { border-color: #e0484f; animation: loss-pulse 0.8s ease-in-out infinite alternate; }
+.slot.is-threatened::before {
+  content: "\2620"; position: absolute; top: -0.6em; right: -0.4em; z-index: 3; font-size: 0.85em;
+  width: 1.4em; height: 1.4em; display: grid; place-items: center; border-radius: 50%;
+  background: #e0484f; color: #fff; box-shadow: 0 0 6px #e0484f;
+}
+.trap-panel { border-color: #e06aa8; }
+.trap-panel .grad-title { color: #ffb3d9; }
+.trap-option { border-color: #e06aa8; }
+.trap-pass { opacity: 0.85; }

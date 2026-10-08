@@ -121,7 +121,7 @@ function renderStats(el, p, active) {
   // Player Grade (RULES.md): the highest Grade you've had on the field this game. You can bring
   // out units up to one Grade above it. Uses the engine's p.playerGrade when it has one.
   // Player Grade never drops, so until the engine stores it, remember each player's highest.
-  const onField = Math.max(0, ...(p.ups ?? []).map((u) => u?.grade ?? 0));
+  const onField = Math.max(0, ...(p.ups ?? []).map((u) => (u && !u.faceDown ? u.grade ?? 0 : 0)));
   const seen = Math.max(gradeReached.get(p) ?? 0, onField);
   gradeReached.set(p, seen);
   const pg = typeof p.playerGrade === "number" ? p.playerGrade : seen;
@@ -134,10 +134,19 @@ function renderStats(el, p, active) {
 const cardEl = (card, faceUp) => renderCard(card, faceUp);
 
 // Puts a card (or nothing) into a slot, keeping the slot's label.
-function fillSlot(slot, card) {
+// A set card (Trap, RULES.md Stand Strong) sits face-down: its owner sees it dimmed with a
+// "Set" badge; the other player only sees a card back. playerView hides it as { hidden: true }.
+function fillSlot(slot, card, mine = false) {
   slot.querySelector(".card")?.remove();
   slot.classList.toggle("is-filled", !!card);
-  if (card) slot.prepend(cardEl(card, !card.faceDown));
+  slot.classList.toggle("has-set", !!card?.faceDown);
+  if (!card) return;
+  if (!card.faceDown) return slot.prepend(cardEl(card, true));
+  const showFace = mine && !card.hidden;
+  const el = cardEl(card, showFace);
+  el.classList.add("is-set");
+  el.title = showFace ? `${card.name} (set face-down; your opponent can't see it)` : "A face-down card";
+  slot.prepend(el);
 }
 
 // Formation Zone: outline the Unit Position Slots the set Formation draws from, and show
@@ -151,7 +160,7 @@ function renderFormation(side, p, ui = {}, stats = null) {
   p.ups.forEach((_, i) => {
     const el = getSlot(side, "ups", i);
     el.classList.toggle("in-formation", slots.includes(i));
-    el.classList.toggle("formation-gap", slots.includes(i) && !p.ups[i]);
+    el.classList.toggle("formation-gap", slots.includes(i) && (!p.ups[i] || !!p.ups[i].faceDown));
   });
   const zone = getSlot(side, "formation");
   zone.classList.toggle("is-legal", side === 0 && !!ui.formationReady);
@@ -159,8 +168,10 @@ function renderFormation(side, p, ui = {}, stats = null) {
   zone.querySelector(".formation-total")?.remove();
   zone.classList.remove("is-inactive");
   if (!slots.length) return;
-  const units = slots.map((i) => p.ups[i]).filter(Boolean);
+  // A set card in a Formation slot isn't a unit, so the Formation stays inactive (RULES.md placeholder).
+  const units = slots.map((i) => p.ups[i]).filter((u) => u && !u.faceDown);
   const missing = slots.length - units.length;
+  const blocked = slots.filter((i) => p.ups[i]?.faceDown).length;
   const atk = stats?.attack ?? units.reduce((n, u) => n + (u.attack ?? 0), 0);
   const def = stats?.defense ?? units.reduce((n, u) => n + (u.defense ?? 0), 0);
   const total = document.createElement("div");
@@ -168,7 +179,7 @@ function renderFormation(side, p, ui = {}, stats = null) {
   zone.classList.toggle("is-inactive", missing > 0);
   total.className = "formation-total" + (missing ? " is-incomplete" : " is-ready");
   total.innerHTML = missing
-    ? `<span>Inactive · ${missing} slot${missing > 1 ? "s" : ""} empty</span>`
+    ? `<span>Inactive · ${blocked ? `set card in ${blocked > 1 ? `${blocked} slots` : "a slot"}` : `${missing} slot${missing > 1 ? "s" : ""} empty`}</span>`
     : `<span class="stat-atk">&#x2694; ${atk}</span><span class="stat-def">&#x1F6E1; ${def}</span>`;
   zone.append(total);
 }
@@ -246,6 +257,8 @@ export const PHASE_NAMES = {
 //   targets:      Set of ups indexes (other side) the attack would destroy
 //   lossSlots:    Set of ups indexes (viewer's side) the defender can choose to lose
 //   promoteSlots: Set of ups indexes (viewer's side) the selected card can promote
+//   trapSlots:    Set of ups indexes (viewer's side) holding a set card that can respond now
+//   threatened:   Set of ups indexes (viewer's side) the opponent's attack is about to destroy
 export function renderBoard(game, viewer = 0, ui = {}) {
   game.players.forEach((p, owner) => {
     const side = owner === viewer ? 0 : 1;
@@ -253,11 +266,11 @@ export function renderBoard(game, viewer = 0, ui = {}) {
     p.ups.forEach((card, i) => {
       const slot = getSlot(side, "ups", i);
       // Show the unit's live stats (after Equipment) and mark which ones changed.
-      const st = card && ui.unitStats?.[owner]?.[i];
+      const st = card && !card.faceDown && ui.unitStats?.[owner]?.[i];
       const mod = (now, base) => (now == null || now === base ? null : now > base ? "up" : "down");
       fillSlot(slot, st ? { ...card, attack: st.attack ?? card.attack, defense: st.defense ?? card.defense,
         statMods: { attack: mod(st.attack, card.attack), defense: mod(st.defense, card.defense) },
-        baseStats: { attack: card.attack, defense: card.defense } } : card);
+        baseStats: { attack: card.attack, defense: card.defense } } : card, side === 0);
       renderEquipment(slot, card);
       slot.classList.toggle("can-equip", side === 0 && !!ui.equipSlots?.has(i));
       slot.classList.toggle("is-legal", side === 0 && !!ui.legalSlots?.has(i));
@@ -269,6 +282,9 @@ export function renderBoard(game, viewer = 0, ui = {}) {
       slot.classList.toggle("can-attack", side === 0 && !!ui.attackers?.has(i));
       slot.classList.toggle("is-target", side === 1 && !!ui.targets?.has(i));
       slot.classList.toggle("choose-loss", side === 0 && !!ui.lossSlots?.has(i));
+      // Trap response: your set cards that can answer, and the units the attack would destroy.
+      slot.classList.toggle("can-respond", side === 0 && !!ui.trapSlots?.has(i));
+      slot.classList.toggle("is-threatened", side === 0 && !!ui.threatened?.has(i));
       slot.classList.toggle("is-exhausted", !!card && side === 0 && ui.phase === "battle" && !!ui.attackers && !ui.attackers.has(i));
     });
     renderFormation(side, p, ui, ui.formationStats?.[owner]);

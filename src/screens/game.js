@@ -94,13 +94,14 @@ function basicPick(game) {
   const of = (type) => options.filter((a) => a.type === type);
   const hits = attackPreview(game, me())?.hits;
   return (
-    of("chooseLoss")[0] || of("specialDraw")[0] || of("graduate").sort((a, b) => inF(a) - inF(b))[0] ||
+    of("trapResponse")[0] || of("chooseLoss")[0] || of("specialDraw")[0] || of("graduate").sort((a, b) => inF(a) - inF(b))[0] ||
     (!p.formationZone && (of("setFormation")[0] || of("deckFormation")[0])) ||
     (!p.fieldEffect && of("setField")[0]) ||
     of("promote").sort((a, b) => inF(a) - inF(b))[0] ||
     of("enroll")[0] ||
     of("summon").sort((a, b) => inF(a) - inF(b) || (p.hand[b.card]?.grade ?? 0) - (p.hand[a.card]?.grade ?? 0) || a.slot - b.slot)[0] ||
     of("equip").sort((a, b) => inF(a) - inF(b))[0] ||
+    of("setTrap").sort((a, b) => inF(b) - inF(a))[0] ||
     (hits && of("attack")[0]) ||
     of("nextPhase")[0] || of("endTurn")[0] || options[0] ||
     { type: "endTurn", player: me() }
@@ -169,13 +170,19 @@ const me = () => game.pending?.player ?? game.activePlayer;
 const choosingLoss = () => game.pending?.type === "chooseLoss";
 const graduating = () => game.pending?.type === "graduate";
 const drawingSpecial = () => game.pending?.type === "specialDraw";
+const responding = () => game.pending?.type === "trapResponse";
+// Unit Position Slots, row*3+col with the front row first.
+const SLOT_NAMES = ["front left", "front centre", "front right", "middle left", "middle centre", "middle right", "back left", "back centre", "back right"];
+const unitIn = (p, slot) => (p.ups[slot] && !p.ups[slot].faceDown ? p.ups[slot] : null);
 let gradCard = null; // Grade 3 picked in the graduation panel (its card id)
 const legal = (action) => checkAction(game, action) === null;
 // A hand card can go to a slot by a normal summon, or by promoting the unit already there
 // (one Grade up, for the difference in Grade; see RULES.md).
 const canEquip = (card, slot) => legal({ type: "equip", player: me(), card, slot });
+// Traps are set face-down in an empty Unit Position Slot (engine action setTrap).
+const canSetTrap = (card, slot) => legal({ type: "setTrap", player: me(), card, slot });
 const canPlay = (card, slot) =>
-  legal({ type: "summon", player: me(), card, slot }) || legal({ type: "promote", player: me(), card, slot }) || canEquip(card, slot);
+  legal({ type: "summon", player: me(), card, slot }) || legal({ type: "promote", player: me(), card, slot }) || canEquip(card, slot) || canSetTrap(card, slot);
 const canSetFormation = (card) => legal({ type: "setFormation", player: me(), card });
 // Field Effect Zone: play a Field Spell there, or enroll a unit in the Academy that's there.
 const fezAction = (card) =>
@@ -210,13 +217,13 @@ function render() {
   if (selectedHand !== null) {
     ui.legalSlots = new Set();
     p.ups.forEach((_, slot) => {
-      if (legal({ type: "summon", player: me(), card: selectedHand, slot })) ui.legalSlots.add(slot);
+      if (legal({ type: "summon", player: me(), card: selectedHand, slot }) || canSetTrap(selectedHand, slot)) ui.legalSlots.add(slot);
     });
     // Equipment: units that can take the selected Equipment card (shared Signet).
-    ui.equipSlots = new Set(p.ups.flatMap((u, slot) => (u && canEquip(selectedHand, slot) ? [slot] : [])));
+    ui.equipSlots = new Set(p.ups.flatMap((u, slot) => (unitIn(p, slot) && canEquip(selectedHand, slot) ? [slot] : [])));
     ui.promoteSlots = new Set();
     p.ups.forEach((u, slot) => {
-      if (u && legal({ type: "promote", player: me(), card: selectedHand, slot })) ui.promoteSlots.add(slot);
+      if (unitIn(p, slot) && legal({ type: "promote", player: me(), card: selectedHand, slot })) ui.promoteSlots.add(slot);
     });
   }
   // RULES.md: in the Battle Phase your whole Formation attacks (its Attack vs their
@@ -233,7 +240,13 @@ function render() {
   if (graduating() && gradCard) ui.legalSlots = new Set(game.pending.slots);
   // Preparation Phase II: the Special Decks you can draw from glow.
   if (drawingSpecial()) ui.drawDecks = new Set(game.pending.decks);
+  // The opponent's attack is about to destroy a unit and you have a set card that can answer.
+  if (responding() && !blocked()) {
+    ui.trapSlots = new Set(game.pending.slots);
+    ui.threatened = new Set(game.pending.targets);
+  }
   renderGradPanel();
+  renderTrapPanel();
 
   ui.formationStats = game.players.map((_, i) => formationStats(game, i));
   // Each unit's Attack/Defense after Equipment, straight from the engine.
@@ -334,12 +347,46 @@ function renderGradPanel() {
       .join("")}</div>`;
 }
 
+// Trap response (engine: game.pending = { type: "trapResponse", player, slots, targets }):
+// the defender sees which units are about to be destroyed and picks a set card or passes.
+function renderTrapPanel() {
+  let panel = $("#trap-panel");
+  if (!responding() || blocked()) return panel?.remove();
+  if (!panel) {
+    panel = document.createElement("div");
+    panel.id = "trap-panel";
+    panel.className = "grad-panel trap-panel";
+    panel.addEventListener("click", (e) => {
+      const b = e.target.closest("[data-trap-slot]");
+      if (!b || !responding()) return;
+      act({ type: "trapResponse", player: me(), slot: b.dataset.trapSlot === "pass" ? null : +b.dataset.trapSlot });
+    });
+    $("#game-screen").append(panel);
+  }
+  const p = game.players[me()];
+  const { slots, targets } = game.pending;
+  const names = targets.map((s) => unitIn(p, s)?.name ?? "A unit");
+  const who = names.length === 1 ? `${names[0]} is` : `${names.slice(0, -1).join(", ")} and ${names.at(-1)} are`;
+  const tie = names.length > 1 ? " (tied lowest Grade; you'd pick one to lose)" : "";
+  panel.innerHTML = `
+    <div class="grad-title">&#x26A0; ${game.players[1 - me()].name}'s attack landed</div>
+    <div class="grad-sub">${who} about to be destroyed${tie}. Use a set card, or let it happen. Damage Counters land either way.</div>
+    <div class="grad-options">${slots
+      .map((s) => `<button class="grad-option trap-option" data-trap-slot="${s}">Activate ${p.ups[s]?.name ?? "set card"}<small>set in your ${SLOT_NAMES[s] ?? `slot ${s + 1}`} slot</small></button>`)
+      .join("")}
+      <button class="grad-option trap-pass" data-trap-slot="pass">Don't respond<small>${names.length === 1 ? `${names[0]} goes to the Grave` : "pick which unit to lose"}</small></button></div>`;
+}
+
 function showCurtain() {
   curtain.hidden = false;
-  $("#curtain-title").textContent = choosingLoss()
+  $("#curtain-title").textContent = responding()
+    ? `${game.players[me()].name}: respond to the attack?`
+    : choosingLoss()
     ? `${game.players[me()].name}: choose a unit to lose`
     : `${game.players[me()].name}'s turn`;
-  $("#curtain-text").textContent = choosingLoss()
+  $("#curtain-text").textContent = responding()
+    ? `${game.players[1 - me()].name}'s attack is about to destroy one of your units, and you have a set card that can respond. Pass the device, then decide.`
+    : choosingLoss()
     ? "Your Formation was hit and your lowest-Grade units are tied. Pass the device, then pick which one goes to the Grave."
     : "Pass the device, then press start. The other player's hand stays hidden.";
   $("#curtain-btn").textContent = `I'm ${game.players[me()].name}, start`;
@@ -392,6 +439,7 @@ function onHandClick({ index }) {
   if (choosingLoss()) return toast("Pick one of the glowing units to send to the Grave.");
   if (graduating()) return toast("Pick a Grade 3 in the Academy panel first.");
   if (drawingSpecial()) return toast("Preparation Phase II: click one of your glowing Special Decks to draw from it.");
+  if (responding()) return toast("Your opponent's attack landed: use a set card or choose not to respond.");
   selectedHand = selectedHand === index ? null : index;
   if (selectedHand !== null) {
     const p = game.players[me()];
@@ -432,6 +480,11 @@ function onSlotClick({ owner, zone, index }) {
     else toast(checkAction(game, { type: game.players[me()].fieldEffect?.academy ? "enroll" : "setField", player: me(), card: selectedHand }) ?? "Can't play that there.");
     return;
   }
+  if (responding()) {
+    if (zone === "ups" && game.pending.slots.includes(index)) act({ type: "trapResponse", player: me(), slot: index });
+    else toast("Click a glowing set card to use it, or choose \"Don't respond\".");
+    return;
+  }
   if (choosingLoss()) {
     if (zone === "ups" && game.pending.slots.includes(index)) act({ type: "chooseLoss", player: me(), slot: index });
     else toast("Pick one of the glowing units to send to the Grave.");
@@ -443,11 +496,13 @@ function onSlotClick({ owner, zone, index }) {
     return;
   }
   if (zone !== "ups") return;
-  const unit = game.players[me()].ups[index];
+  const p = game.players[me()];
+  const unit = unitIn(p, index);
   if (selectedHand !== null && unit && canEquip(selectedHand, index)) {
     act({ type: "equip", player: me(), card: selectedHand, slot: index });
-  } else if (selectedHand !== null && !unit) {
-    act({ type: "summon", player: me(), card: selectedHand, slot: index });
+  } else if (selectedHand !== null && !p.ups[index]) {
+    const trap = p.hand[selectedHand]?.type === "trap";
+    act({ type: trap ? "setTrap" : "summon", player: me(), card: selectedHand, slot: index });
   } else if (selectedHand !== null && legal({ type: "promote", player: me(), card: selectedHand, slot: index })) {
     act({ type: "promote", player: me(), card: selectedHand, slot: index });
   } else if (unit && game.phase === "battle") {
