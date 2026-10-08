@@ -1,6 +1,6 @@
 import { registerScreen, showScreen } from "../screens.js";
 import { newGame, applyAction, checkAction, attackPreview, legalActions, formationStats, unitStats, readySetSpells } from "../engine/engine.js";
-import { buildBoard, renderBoard, PHASE_NAMES } from "../board/board.js";
+import { buildBoard, renderBoard, PHASE_NAMES, getSlot } from "../board/board.js";
 
 // Special Decks: data/decks.json may hold "special": { "<signet>": [ { "type": "equipment", "cards": [ids] }, ... ] },
 // up to four (null for an empty zone). With none listed, the player has no Special Decks.
@@ -255,6 +255,7 @@ function render() {
   if (!blocked() && game.winner === null) ui.fireSlots = new Set(readySetSpells(game, me()));
   renderGradPanel();
   renderTrapPanel();
+  renderRowPanel();
 
   ui.formationStats = game.players.map((_, i) => formationStats(game, i));
   // Each unit's Attack/Defense after Equipment, straight from the engine.
@@ -388,6 +389,75 @@ function renderGradPanel() {
     <div class="grad-options">${game.pending.cards
       .map((c) => `<button class="grad-option${gradCard === c.id ? " is-selected" : ""}" data-grad-id="${c.id}">${c.name}<small>from your ${c.from}</small></button>`)
       .join("")}</div>`;
+}
+
+// Formation row picker (RULES.md a2392f0): when a Formation like Line Defense has more than one
+// full row, the player picks which one it uses. Engine: chooseFormation { option }, with
+// formationStats(...).options (full rows now) and .option (the row in use). It pops up on its own
+// whenever the set of full rows changes, and clicking the Formation Zone in a Prep Phase reopens it.
+let rowPickOpen = false;
+const rowPickSeen = [null, null]; // per player: the full rows they were last shown
+const rowChoices = () => {
+  if (blocked() || computerToMove() || game.pending || game.winner !== null) return [];
+  const st = formationStats(game, me());
+  return (st?.options ?? []).filter((option) => legal({ type: "chooseFormation", player: me(), option }));
+};
+const rowName = (slots) => {
+  const rows = new Set(slots.map((s) => SLOT_NAMES[s]?.split(" ")[0]));
+  return rows.size === 1 ? `${[...rows][0][0].toUpperCase()}${[...rows][0].slice(1)} row` : slots.map((s) => SLOT_NAMES[s]).join(", ");
+};
+function previewRow(slots) {
+  for (let i = 0; i < 9; i++) getSlot(0, "ups", i)?.classList.toggle("row-preview", !!slots?.includes(i));
+}
+function renderRowPanel() {
+  let panel = $("#row-panel");
+  const choices = rowChoices();
+  const p = game.players[me()];
+  const full = formationStats(game, me())?.options ?? [];
+  const seenKey = full.length > 1 ? `${p.formationZone?.id}:${full.join(",")}` : null;
+  const key = choices.length > 1 ? seenKey : null;
+  // Pop up on its own when a new way to activate it appears (not again every turn).
+  if (key && key !== rowPickSeen[me()]) rowPickOpen = true;
+  if (key || !seenKey) rowPickSeen[me()] = seenKey;
+  if (!key || !rowPickOpen) {
+    if (!key) rowPickOpen = false;
+    previewRow(null);
+    return panel?.remove();
+  }
+  if (!panel) {
+    panel = document.createElement("div");
+    panel.id = "row-panel";
+    panel.className = "grad-panel row-panel";
+    panel.addEventListener("click", (e) => {
+      if (e.target.closest("[data-close]")) return (rowPickOpen = false), previewRow(null), render();
+      const b = e.target.closest("[data-option]");
+      if (!b) return;
+      rowPickOpen = false;
+      previewRow(null);
+      act({ type: "chooseFormation", player: me(), option: +b.dataset.option });
+    });
+    panel.addEventListener("mouseover", (e) => {
+      const b = e.target.closest("[data-option]");
+      previewRow(b ? p.formationZone?.slotOptions?.[+b.dataset.option] : null);
+    });
+    panel.addEventListener("mouseleave", () => previewRow(null));
+    $("#game-screen").append(panel);
+  }
+  const f = p.formationZone;
+  const inUse = formationStats(game, me())?.option;
+  // What each row would give, from the engine on a copy of the game.
+  const totals = (option) => {
+    const g = { ...game, players: game.players.map((pl, i) => (i === me() ? { ...pl, formationOption: option } : pl)) };
+    const st = formationStats(g, me());
+    return st?.canAttack === false ? `&#x1F6E1; ${st.defense} · can't attack` : `&#x2694; ${st?.attack ?? 0} &#x1F6E1; ${st?.defense ?? 0}`;
+  };
+  panel.innerHTML = `
+    <div class="grad-title">&#x1F4DC; ${f?.name ?? "Your Formation"}: which row?</div>
+    <div class="grad-sub">More than one row is full. Pick the one your Formation uses. You can switch in either Prep Phase by clicking your Formation Zone.</div>
+    <div class="grad-options">${choices
+      .map((o) => `<button class="grad-option${o === inUse ? " is-selected" : ""}" data-option="${o}">${rowName(f.slotOptions[o])}<small>${totals(o)}${o === inUse ? " · in use" : ""}</small></button>`)
+      .join("")}</div>
+    <button class="grad-close" data-close>Keep ${inUse != null ? rowName(f.slotOptions[inUse]).toLowerCase() : "current"}</button>`;
 }
 
 // Trap response (engine: game.pending = { type: "trapResponse", player, slots, targets }):
@@ -536,6 +606,7 @@ function onSlotClick({ owner, zone, index }) {
   if (zone === "formation") {
     if (selectedHand !== null) act({ type: "setFormation", player: me(), card: selectedHand });
     else if (game.phase === "battle") act({ type: "attack", player: me() });
+    else if (rowChoices().length > 1) (rowPickOpen = true), render(); // switch which row the Formation uses
     return;
   }
   if (zone !== "ups") return;

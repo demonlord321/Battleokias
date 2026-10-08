@@ -817,3 +817,8 @@ html, body {
 .formation-pattern.is-options { position: relative; }
 .formation-pattern .fp-note { position: absolute; left: 0; right: 0; bottom: -1.2em; font-size: 0.55em; text-align: center; color: #c9d4ff; white-space: nowrap; }
 .formation-total .no-attack { font-size: 0.8em; color: #b9b4d6; font-style: italic; }
+
+/* Formation row picker (Line Defense): sits above the board so your rows stay visible. */
+.row-panel { top: 24%; border-color: #d9b45a; }
+.row-panel .grad-title { color: #ffe39a; }
+.slot.row-preview { outline: 3px solid #ffe39a; outline-offset: 3px; box-shadow: 0 0 16px rgba(255, 227, 154, 0.8); }
