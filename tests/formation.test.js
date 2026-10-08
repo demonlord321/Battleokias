@@ -23,11 +23,17 @@ test("set a Formation from hand into the Formation Zone in Preparation Phase I",
   assert.equal(game.players[0].formationZone.name, "Frontal Assault");
 });
 
-test("only Formation cards, only in Preparation Phase I", () => {
+test("only Formation cards, in either Preparation Phase, and a new one sends the old one to the Grave", () => {
   const game = start();
   assert.match(checkAction(game, { type: "setFormation", player: 0, card: 0 }), /isn't a Formation/);
   applyAction(game, { type: "nextPhase", player: 0 });
-  assert.match(checkAction(game, { type: "setFormation", player: 0, card: lastCard(game) }), /Preparation Phase I/);
+  assert.match(checkAction(game, { type: "setFormation", player: 0, card: lastCard(game) }), /Preparation Phase/);
+  applyAction(game, { type: "nextPhase", player: 0 });
+  game.pending = null; // no Special Deck draw in this test
+  assert.equal(applyAction(game, { type: "setFormation", player: 0, card: lastCard(game) }).ok, true);
+  game.players[0].hand.push(frontal());
+  assert.equal(applyAction(game, { type: "setFormation", player: 0, card: lastCard(game) }).ok, true);
+  assert.equal(game.players[0].graveyard.at(-1).name, "Frontal Assault");
 });
 
 test("Frontal Assault sums the three front-row units and ignores the rest", () => {

@@ -619,12 +619,12 @@ const ACTIONS = {
   },
 
   // { type: "setFormation", player, card }: put a Formation card from hand into the
-  // Formation Zone during Preparation Phase I. Placeholder until Dyllan decides:
-  // it costs the card's cost (0 for now), and a new one replaces the old, which goes to the Grave.
+  // Formation Zone during Preparation Phase I or II, paying its cost (Dyllan). Playing one on
+  // top of your current Formation swaps it out, and the old one goes to the Grave.
   setFormation: {
     check(game, action) {
       const p = game.players[game.activePlayer];
-      if (game.phase !== "prep1") return "You can only set a Formation in Preparation Phase I.";
+      if (!PREP.includes(game.phase)) return "You can only set a Formation in a Preparation Phase.";
       const i = handIndex(p, action.card);
       if (i < 0) return "That card isn't in your hand.";
       const card = p.hand[i];
