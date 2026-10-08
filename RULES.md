@@ -220,6 +220,8 @@ You can only attack if you have a Formation set.
 - **Formation cost** (confirmed by Dyllan): a Formation with Damage Grade 1 costs **0 Energy**. Higher Damage Grades cost **one less than the Damage Grade** (Damage Grade 2 costs 1, Damage Grade 3 costs 2).
 - **Playing and swapping Formations (confirmed by Dyllan):** you can play a Formation in **either Preparation Phase** (I or II). To swap, play a new Formation on top of your current one: the old one goes to the **Grave**, and you pay the new one's normal cost.
   - This means you can attack with one Formation, then swap to a defensive one like Line Defense in Phase II for your opponent's turn.
+- **Choosing between conditions (confirmed by Dyllan):** if a Formation can be activated in more than one way and more than one condition is met, a choice pops up and **the player picks which one to use**. For example, if Line Defense's first and second rows are both full, you choose which row it uses.
+  - **(?)** When is the choice made, and can it change? Placeholder: you pick when the Formation is played, and you can re-pick in either of your Prep Phases. If only one condition is met, it's picked automatically. If the picked condition stops being met (say a unit in that row is destroyed) and another one is met, you pick again, and on the opponent's turn the strongest one is used.
 
 ### Formation: Vanguard Charge (from Dyllan)
 - **Pattern:** the **whole front row** plus the **middle-centre** slot, four slots in a T shape (grid positions `[0, 1, 2, 4]`).
@@ -257,7 +259,7 @@ Built as `FRM-001` (all three Signets, `"slots": [0,1,2]`, `"combine": "sum"`).
 - **Attack 0.** Its **Defense** is the sum of that row's units' Attack **and** Defense.
 - **Damage Grade 0, Defense Grade 1.** It can't attack at all unless a card or effect raises its Damage Grade.
 - Placeholders and open questions:
-  - **(?)** If more than one row is full, which row counts? (Placeholder: the strongest one, picked automatically.)
+  - If more than one row is full, **the player chooses** which row counts (confirmed by Dyllan; see "Choosing between conditions" above).
   - When a hit lands on it, the lowest-Grade unit in the counted row is destroyed, as usual.
   - A set Spell or Trap in the row means the row isn't full.
 
