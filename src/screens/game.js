@@ -94,7 +94,7 @@ function basicPick(game) {
   const of = (type) => options.filter((a) => a.type === type);
   const hits = attackPreview(game, me())?.hits;
   return (
-    of("trapResponse")[0] || of("chooseLoss")[0] || of("specialDraw")[0] || of("graduate").sort((a, b) => inF(a) - inF(b))[0] ||
+    of("trapResponse")[0] || of("chooseLoss")[0] || of("pickpocket").sort((a, b) => (a.slot === null) - (b.slot === null))[0] || of("specialDraw")[0] || of("graduate").sort((a, b) => inF(a) - inF(b))[0] ||
     (!p.formationZone && (of("setFormation")[0] || of("deckFormation")[0])) ||
     (!p.fieldEffect && of("setField")[0]) ||
     of("promote").sort((a, b) => inF(a) - inF(b))[0] ||
@@ -173,6 +173,7 @@ const choosingLoss = () => game.pending?.type === "chooseLoss";
 const graduating = () => game.pending?.type === "graduate";
 const drawingSpecial = () => game.pending?.type === "specialDraw";
 const responding = () => game.pending?.type === "trapResponse";
+const pickpocketing = () => game.pending?.type === "pickpocket";
 // Unit Position Slots, row*3+col with the front row first.
 const SLOT_NAMES = ["front left", "front centre", "front right", "middle left", "middle centre", "middle right", "back left", "back centre", "back right"];
 const unitIn = (p, slot) => (p.ups[slot] && !p.ups[slot].faceDown ? p.ups[slot] : null);
@@ -241,7 +242,13 @@ function render() {
     if (pv.hits && pv.destroys?.length) ui.targets = new Set(pv.destroys);
   }
   // The defender choosing which tied unit goes to the Grave.
-  if (choosingLoss()) ui.lossSlots = new Set(game.pending.slots);
+  // Tied lowest Grade: the attacker picks which of the defender's units goes (pending.owner).
+  if (choosingLoss() && !blocked()) {
+    ui.lossSlots = new Set(game.pending.slots);
+    ui.lossSide = (game.pending.owner ?? me()) === viewer ? 0 : 1;
+  }
+  // Sena's Pickpocket: the opponent's units carrying something she can destroy glow.
+  if (pickpocketing() && !blocked()) ui.pickSlots = new Set(game.pending.targets.map((t) => t.slot));
   // Graduation: once a Grade 3 is picked in the panel, its possible slots glow.
   if (graduating() && gradCard) ui.legalSlots = new Set(game.pending.slots);
   // Preparation Phase II: the Special Decks you can draw from glow.
@@ -256,6 +263,8 @@ function render() {
   renderGradPanel();
   renderTrapPanel();
   renderRowPanel();
+  renderPickpocketPanel();
+  renderLossPanel();
 
   ui.formationStats = game.players.map((_, i) => formationStats(game, i));
   // Each unit's Attack/Defense after Equipment, straight from the engine.
@@ -391,6 +400,67 @@ function renderGradPanel() {
       .join("")}</div>`;
 }
 
+// Tie on a landed attack (engine: game.pending = { type: "chooseLoss", player: attacker, owner, slots }):
+// the attacker picks which of the defender's tied lowest-Grade units goes to the Grave.
+function renderLossPanel() {
+  let panel = $("#loss-panel");
+  if (!choosingLoss() || blocked()) return panel?.remove();
+  if (!panel) {
+    panel = document.createElement("div");
+    panel.id = "loss-panel";
+    panel.className = "grad-panel loss-panel";
+    panel.addEventListener("click", (e) => {
+      const b = e.target.closest("[data-loss-slot]");
+      if (b && choosingLoss()) act({ type: "chooseLoss", player: me(), slot: +b.dataset.lossSlot });
+    });
+    $("#game-screen").append(panel);
+  }
+  const owner = game.players[game.pending.owner ?? me()];
+  const mine = (game.pending.owner ?? me()) === me();
+  panel.innerHTML = `
+    <div class="grad-title">&#x2694; ${mine ? "Choose a unit to lose" : "Your attack landed: choose who falls"}</div>
+    <div class="grad-sub">${mine ? "Your" : `${owner.name}'s`} lowest-Grade units are tied. Pick which one goes to the Grave.</div>
+    <div class="grad-options">${game.pending.slots
+      .map((s) => `<button class="grad-option loss-option" data-loss-slot="${s}">${owner.ups[s]?.name ?? "Unit"}<small>${SLOT_NAMES[s]}</small></button>`)
+      .join("")}</div>`;
+}
+
+// Sena's Pickpocket (engine: game.pending = { type: "pickpocket", player, targets: [{ slot, kind }] }):
+// after her normal summon, pick one Item, Artifact or Equipment on the opponent's side to destroy,
+// or skip. The same targets glow on the board and can be clicked there too.
+const PICK_KIND = { equipment: "Equipment", artifact: "Artifact", item: "Item" };
+function renderPickpocketPanel() {
+  let panel = $("#pick-panel");
+  if (!pickpocketing() || blocked()) return panel?.remove();
+  if (!panel) {
+    panel = document.createElement("div");
+    panel.id = "pick-panel";
+    panel.className = "grad-panel pick-panel";
+    panel.addEventListener("click", (e) => {
+      const b = e.target.closest("[data-pick-slot]");
+      if (!b || !pickpocketing()) return;
+      const skip = b.dataset.pickSlot === "skip";
+      act({ type: "pickpocket", player: me(), slot: skip ? null : +b.dataset.pickSlot, kind: skip ? undefined : b.dataset.kind });
+    });
+    $("#game-screen").append(panel);
+  }
+  const them = game.players[1 - me()];
+  const sena = game.players[me()].ups.find((c) => c?.onSummon === "pickpocket")?.name ?? "Your unit";
+  const label = ({ slot, kind }) => {
+    const card = them.ups[slot];
+    const thing = kind === "equipment" ? card?.equipment : kind === "artifact" ? card?.artifact : card;
+    const where = kind === "item" ? `in their ${SLOT_NAMES[slot]} slot` : `on ${card?.name ?? "a unit"} (${SLOT_NAMES[slot]})`;
+    return `${thing?.name ?? PICK_KIND[kind]}<small>${PICK_KIND[kind]} ${where}</small>`;
+  };
+  panel.innerHTML = `
+    <div class="grad-title">&#x1F5E1; ${sena}: Pickpocket</div>
+    <div class="grad-sub">Destroy one Item, Artifact or Equipment on ${them.name}'s side. It goes to their Grave.</div>
+    <div class="grad-options">${game.pending.targets
+      .map((t) => `<button class="grad-option pick-option" data-pick-slot="${t.slot}" data-kind="${t.kind}">${label(t)}</button>`)
+      .join("")}
+      <button class="grad-option trap-pass" data-pick-slot="skip">Don't pickpocket<small>leave their cards alone</small></button></div>`;
+}
+
 // Formation row picker (RULES.md a2392f0): when a Formation like Line Defense has more than one
 // full row, the player picks which one it uses. Engine: chooseFormation { option }, with
 // formationStats(...).options (full rows now) and .option (the row in use). It pops up on its own
@@ -480,14 +550,14 @@ function renderTrapPanel() {
   const { slots, targets } = game.pending;
   const names = targets.map((s) => unitIn(p, s)?.name ?? "A unit");
   const who = names.length === 1 ? `${names[0]} is` : `${names.slice(0, -1).join(", ")} and ${names.at(-1)} are`;
-  const tie = names.length > 1 ? " (tied lowest Grade; you'd pick one to lose)" : "";
+  const tie = names.length > 1 ? " (tied lowest Grade; your opponent picks which one goes)" : "";
   panel.innerHTML = `
     <div class="grad-title">&#x26A0; ${game.players[1 - me()].name}'s attack landed</div>
     <div class="grad-sub">${who} about to be destroyed${tie}. Use a set card, or let it happen. Damage Counters land either way.</div>
     <div class="grad-options">${slots
       .map((s) => `<button class="grad-option trap-option" data-trap-slot="${s}">Activate ${p.ups[s]?.name ?? "set card"}<small>set in your ${SLOT_NAMES[s] ?? `slot ${s + 1}`} slot</small></button>`)
       .join("")}
-      <button class="grad-option trap-pass" data-trap-slot="pass">Don't respond<small>${names.length === 1 ? `${names[0]} goes to the Grave` : "pick which unit to lose"}</small></button></div>`;
+      <button class="grad-option trap-pass" data-trap-slot="pass">Don't respond<small>${names.length === 1 ? `${names[0]} goes to the Grave` : "they pick which unit you lose"}</small></button></div>`;
 }
 
 function showCurtain() {
@@ -495,12 +565,12 @@ function showCurtain() {
   $("#curtain-title").textContent = responding()
     ? `${game.players[me()].name}: respond to the attack?`
     : choosingLoss()
-    ? `${game.players[me()].name}: choose a unit to lose`
+    ? `${game.players[me()].name}: choose a unit to destroy`
     : `${game.players[me()].name}'s turn`;
   $("#curtain-text").textContent = responding()
     ? `${game.players[1 - me()].name}'s attack is about to destroy one of your units, and you have a set card that can respond. Pass the device, then decide.`
     : choosingLoss()
-    ? "Your Formation was hit and your lowest-Grade units are tied. Pass the device, then pick which one goes to the Grave."
+    ? `Your attack landed and ${game.players[1 - me()].name}'s lowest-Grade units are tied. Pass the device back, then pick which one goes to the Grave.`
     : "Pass the device, then press start. The other player's hand stays hidden.";
   $("#curtain-btn").textContent = `I'm ${game.players[me()].name}, start`;
   $("#curtain-btn").focus();
@@ -550,6 +620,7 @@ async function startGame() {
 function onHandClick({ index }) {
   if (blocked() || game.winner !== null) return;
   if (choosingLoss()) return toast("Pick one of the glowing units to send to the Grave.");
+  if (pickpocketing()) return toast("Pickpocket: pick a glowing card on your opponent's side, or skip it in the panel.");
   if (graduating()) return toast("Pick a Grade 3 in the Academy panel first.");
   if (drawingSpecial()) return toast("Preparation Phase II: click one of your glowing Special Decks to draw from it.");
   if (responding()) return toast("Your opponent's attack landed: use a set card or choose not to respond.");
@@ -575,6 +646,17 @@ function onHandClick({ index }) {
 
 function onSlotClick({ owner, zone, index }) {
   if (blocked() || game.winner !== null) return;
+  if (choosingLoss()) {
+    if (zone === "ups" && owner === (game.pending.owner === viewer ? 0 : 1) && game.pending.slots.includes(index)) act({ type: "chooseLoss", player: me(), slot: index });
+    else toast("Pick one of the glowing units to send to the Grave.");
+    return;
+  }
+  if (pickpocketing()) {
+    const here = zone === "ups" && owner === 1 ? game.pending.targets.filter((t) => t.slot === index) : [];
+    if (here.length === 1) act({ type: "pickpocket", player: me(), slot: index, kind: here[0].kind });
+    else toast(here.length ? "That unit carries more than one: pick which in the Pickpocket panel." : "Pick one of the glowing cards on your opponent's side, or skip it in the panel.");
+    return;
+  }
   if (owner !== 0) return; // only your own side does anything for now
   if (drawingSpecial()) {
     if (zone === "sdz" && game.pending.decks.includes(index)) act({ type: "specialDraw", player: me(), deck: index });
@@ -596,11 +678,6 @@ function onSlotClick({ owner, zone, index }) {
   if (responding()) {
     if (zone === "ups" && game.pending.slots.includes(index)) act({ type: "trapResponse", player: me(), slot: index });
     else toast("Click a glowing set card to use it, or choose \"Don't respond\".");
-    return;
-  }
-  if (choosingLoss()) {
-    if (zone === "ups" && game.pending.slots.includes(index)) act({ type: "chooseLoss", player: me(), slot: index });
-    else toast("Pick one of the glowing units to send to the Grave.");
     return;
   }
   if (zone === "formation") {

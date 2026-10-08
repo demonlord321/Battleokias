@@ -283,7 +283,8 @@ export const PHASE_NAMES = {
 //   attackers:    optional Set of ups indexes that can attack (unused since Formation attacks)
 //   formationCanAttack: the viewer's Formation can attack now (Formation Zone glows)
 //   targets:      Set of ups indexes (other side) the attack would destroy
-//   lossSlots:    Set of ups indexes (viewer's side) the defender can choose to lose
+//   lossSlots:    Set of ups indexes on side lossSide (1 = opponent) the attacker can pick to destroy on a tie
+//   pickSlots:    Set of ups indexes (other side) Sena's Pickpocket can hit
 //   promoteSlots: Set of ups indexes (viewer's side) the selected card can promote
 //   trapSlots:    Set of ups indexes (viewer's side) holding a set card that can respond now
 //   fireSlots:    Set of ups indexes (viewer's side) holding a set Spell that can be fired now
@@ -311,7 +312,8 @@ export function renderBoard(game, viewer = 0, ui = {}) {
       else delete slot.dataset.stack;
       slot.classList.toggle("can-attack", side === 0 && !!ui.attackers?.has(i));
       slot.classList.toggle("is-target", side === 1 && !!ui.targets?.has(i));
-      slot.classList.toggle("choose-loss", side === 0 && !!ui.lossSlots?.has(i));
+      slot.classList.toggle("choose-loss", side === (ui.lossSide ?? 0) && !!ui.lossSlots?.has(i));
+      slot.classList.toggle("can-pickpocket", side === 1 && !!ui.pickSlots?.has(i));
       // Trap response: your set cards that can answer, and the units the attack would destroy.
       slot.classList.toggle("can-respond", side === 0 && !!ui.trapSlots?.has(i));
       slot.classList.toggle("can-fire", side === 0 && !!ui.fireSlots?.has(i));

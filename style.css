@@ -822,3 +822,14 @@ html, body {
 .row-panel { top: 24%; border-color: #d9b45a; }
 .row-panel .grad-title { color: #ffe39a; }
 .slot.row-preview { outline: 3px solid #ffe39a; outline-offset: 3px; box-shadow: 0 0 16px rgba(255, 227, 154, 0.8); }
+
+/* Sena's Pickpocket: the opponent's cards she can destroy glow violet. */
+.slot.can-pickpocket { outline: 2px solid #b48cff; outline-offset: 2px; cursor: pointer; animation: pick-pulse 0.8s ease-in-out infinite alternate; }
+@keyframes pick-pulse { from { box-shadow: 0 0 3px #b48cff; } to { box-shadow: 0 0 16px #b48cff; } }
+.pick-panel { top: 66%; border-color: #b48cff; }
+.pick-panel .grad-title { color: #d9c4ff; }
+.pick-option { border-color: #b48cff; }
+.loss-panel { top: 66%; border-color: #e0484f; }
+.loss-panel .grad-title { color: #ffb0b4; }
+.loss-option { border-color: #e0484f; }
+.slot.choose-loss { outline: 2px solid #e0484f; outline-offset: 2px; }
