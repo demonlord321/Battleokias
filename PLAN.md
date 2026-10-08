@@ -31,7 +31,7 @@ Mapmaker (game board and screens), Advisor (balance reviews), Planner (plan and 
 - [ ] Card types stage 2 (one at a time): Field Spells, Equipment, Artifacts, Monsters (after unit attacks are designed)
 - [x] Coin flip, opening deal (4 and 5), Draw Phase each turn, seeded shuffle
 - [ ] Hand limits (open)
-- [ ] Empty Draw Pile, updated 8 Oct: when you'd draw from an empty main Draw Pile, take 1 Damage Counter instead (placeholder: 1 per Draw Phase). Empty Special Decks still just skip. This replaces the skip from `788c458`, so stalled games end, Developer; show the counter on the board, Mapmaker
+- [x] Empty Draw Pile (`292c741`), updated 8 Oct: when you'd draw from an empty main Draw Pile, take 1 Damage Counter instead (placeholder: 1 per Draw Phase). Empty Special Decks still just skip. This replaces the skip from `788c458`, so stalled games end, Developer; show the counter on the board, Mapmaker
 - [x] Game state; every move is an action passed to one `applyAction` function
 - [x] Turn phases, playing cards, resources, combat, win check
 - [x] Two random bots play full games in Node; unit tests
@@ -59,7 +59,7 @@ Uses the placeholder rules in `RULES.md`; Dyllan refines them as we play.
 - [ ] Vanguard Charge still wins over 90%; Dyllan to revisit (Frontal Assault Defense Grade 1 got it to about 43%)
 - [x] Katana costs 3, printed on the card (Katana deck now 76% vs the test deck)
 - [x] Player Grade (`97ae452`, `300d835`, `e55b4eb`, `53f63a1`, board `864e430`): highest Grade you've had on the field this game, never drops (`p.playerGrade`; panel shown in `cc95f79`, needs to read the stored value); you can't summon a unit more than one Grade above it, even if its cost is reduced. Engine check plus `playerGrade` in the state, Developer; shown in the player stats panel, Mapmaker
-- [ ] Balance pass once the full Arms collection is in (on hold until then, per Dyllan): Katana, Vanguard Charge, attack-then-swap to Line Defense every turn (Advisor), Bloody Blade promote-vs-summon, Last Stand with Vanguard, Advisor + Developer
+- [ ] Balance pass once the full Arms collection is in (on hold until then, per Dyllan): Katana, Vanguard Charge, attack-then-swap to Line Defense every turn (Advisor), Bloody Blade promote-vs-summon, Last Stand with Vanguard, Advisor + Developer. Balance questions for Dyllan are in `QUESTIONS.md` (B1 to B5), and Advisor adds new ones there
 - [x] Stand Strong (first Trap; engine `fb2b834` to `340e4ed`, board in progress): set face-down in an empty unit slot in Prep Phase I or II; on the opponent's landed hit, it goes to the Grave instead of the destroyed unit. Needs set-card support and the opponent-turn response choice, Developer; face-down card in a slot and the response hand-over, Mapmaker; computer player uses it, Developer
 - [x] Spells set into empty unit slots too, the same way as Traps (`59b7451`, `0992524`)
 - [x] Fire Arrow (first real Spell; `280465f` to `21306b3`): cast in Prep I or II, or set and fire in your own Start, Prep I, Battle, Prep II or End Phase; deals 1 Damage Counter. Engine: cast action and activating set Spells on your own turn, Developer; cast and fire buttons, Mapmaker

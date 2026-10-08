@@ -143,6 +143,34 @@ Does it hold one Field Spell at a time? What happens if you play a second one?
 **Placeholder:** one at a time, and a new one replaces the old one, which goes to the Grave.
 **Answer:**
 
+## Balance (from Advisor)
+Balance tuning is on hold until the full Arms collection is in, and then we run sims. Use these to note your thinking, or a direction you'd like tested in that pass. Advisor adds new ones here as they come up. Win rates are from computer games, with deck builds rather than exact mirrors.
+
+### B1. Drazel's Katana
+At cost 3, a Katana deck wins 76% against the test deck. You expected that to drop once decks are 60 cards and other Special Deck types exist. Parked ideas: the Katana breaks after its first special kill, or Special Decks need a minimum size (see question 15).
+**Placeholder:** no change until the sim pass.
+**Answer:**
+
+### B2. Vanguard Charge vs Frontal Assault
+A Vanguard Charge deck beats a Frontal Assault deck 89% of the time, because Damage Grade 2 deals double counters. Advisor's suggested fix: give Frontal Assault Defense Grade 1 (that brought it to about 43%). You were leaving it in case Equipment balances it.
+**Placeholder:** no change until the sim pass.
+**Answer:**
+
+### B3. Attacking, then swapping to Line Defense
+Since Formations can be swapped in Prep Phase II, a player can attack with Vanguard Charge and then switch to Line Defense for the opponent's turn. Sending the old Formation to the Grave limits this, but Advisor wants to test whether it's still too strong when done every turn.
+**Placeholder:** allowed, tested in the sim pass.
+**Answer:**
+
+### B4. Drazel, the Bloody Blade: promote or summon?
+When promoted, he copies the promoted unit's Attack and Defense; when summoned normally, he is 4000 / 2500. Advisor wants to check that one way isn't always better than the other.
+**Placeholder:** as written, tested in the sim pass.
+**Answer:**
+
+### B5. Last Stand with Vanguard Charge
+Last Stand's +50% for 3 turns stacks with Vanguard Charge's x1.5 Formation Attack. Advisor wants to check that the combination isn't too strong.
+**Placeholder:** they stack, tested in the sim pass.
+**Answer:**
+
 ## Later (no rush)
 Answer these whenever you're ready. Nothing is waiting on them yet.
 - What is the Grade range (Energy caps at 10)? Do Grades map to rarity names like Common, Rare or Legendary?
