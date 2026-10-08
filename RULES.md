@@ -22,7 +22,7 @@ Each turn runs through six phases, shown on screen with their short names:
 | 2 | **Draw Phase** | DPh | Draw 1 card from your main deck. |
 | 3 | **Preparation Phase I** | PPh1 | Summon, promote, move and retire units, set cards, play Formations and Field Spells. |
 | 4 | **Battle Phase** | BPh | Attack your opponent. You can only attack with an active Formation. |
-| 5 | **Preparation Phase II** | PPh2 | Draw 1 card from a Special Deck of your choice, and set cards (setting only). |
+| 5 | **Preparation Phase II** | PPh2 | Draw 1 card from a Special Deck of your choice, set cards, and play or swap a Formation. |
 | 6 | **End Phase** | EPh | You can activate set cards if needed. Then your opponent's turn begins. |
 
 - The Draw Phase includes the starting player's very first turn, so the starting player begins their first Preparation Phase I with **5** cards, and the opponent begins with **6**.
@@ -218,6 +218,8 @@ You can only attack if you have a Formation set.
 - Each Formation has its own formula for its power. Basic Formations use the **sum**.
 - **Fractions always round down** (confirmed by Dyllan).
 - **Formation cost** (confirmed by Dyllan): a Formation with Damage Grade 1 costs **0 Energy**. Higher Damage Grades cost **one less than the Damage Grade** (Damage Grade 2 costs 1, Damage Grade 3 costs 2).
+- **Playing and swapping Formations (confirmed by Dyllan):** you can play a Formation in **either Preparation Phase** (I or II). To swap, play a new Formation on top of your current one: the old one goes to the **Grave**, and you pay the new one's normal cost.
+  - This means you can attack with one Formation, then swap to a defensive one like Line Defense in Phase II for your opponent's turn.
 
 ### Formation: Vanguard Charge (from Dyllan)
 - **Pattern:** the **whole front row** plus the **middle-centre** slot, four slots in a T shape (grid positions `[0, 1, 2, 4]`).
