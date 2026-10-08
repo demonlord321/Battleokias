@@ -44,9 +44,9 @@ Starting Signets:
 
 Other Signets seen on cards:
 - **Mercenary** (first seen as Drazel's sub-Signet). **(?)** Can you declare Mercenary as your deck's Signet, like the three Schools? (Placeholder: yes.)
-- **Hero** (first seen on Katana of the Fallen Hero). **(?)** Can you declare Hero as your deck's Signet? (Placeholder: yes.)
+- **Hero** (first seen on Katana of the Fallen Hero). **(?)** Can you declare Hero as your deck's Signet? Can you declare Hero as your deck's Signet? (Placeholder: yes.)
+- **Mystic** (first seen on Blinding Beacon). **(?)** Is Mystic a new Signet, or the School of Magic renamed?
 
-Deck rule:
 - A deck is built around **one Signet**. Every card in the deck must carry that Signet.
 - A card can belong to **more than one** Signet, so it can appear in decks of any of them.
 - **Deck legality (confirmed by Dyllan):** a deck is legal as long as every card shares the deck's Signet, whether as its main Signet or a sub-Signet. This allows unusual cross-academy combinations, and that's intended.
@@ -113,7 +113,7 @@ Build order: **Units, Spells and Traps first**, then Field Spells, Equipment, Ar
 and Monsters one at a time.
 
 Open questions:
-- **(?)** What do Artifacts do?
+- Artifacts usually attach to a unit, like Equipment, and are Special Deck only. First one: **Blinding Beacon** (see Artifacts).
 - **(?)** Which card types cost Energy, and how do card levels map to cost?
 
 ## Unit cards
@@ -289,6 +289,20 @@ Open questions:
 - **Spells and Traps** always go in an **empty Unit Position Slot**, unless the card says otherwise.
 - **Equipment and Artifacts** usually **attach to a unit**.
 - Placeholders (Developer, `fb2b834` to `340e4ed`): the cost is paid when the card is set; a set card can't be moved or retired; a set card isn't a unit, so a Formation with one in its slots is inactive.
+
+## Artifacts
+### Artifact: Blinding Beacon (from Dyllan)
+- **Signets:** Arms, Mystic, Alchemy. **Cost:** 1.
+- Attach it to one of your units in **Preparation Phase I or II**.
+- Only **one Blinding Beacon** can be in your Formation at a time.
+- It holds **2 charges**. When you attack, you may activate it: your opponent's Formation is **deactivated for this Battle Phase**, and it reactivates at the start of your opponent's turn.
+- **Two-turn cooldown** between uses. After its second activation, it goes to the Grave.
+- Placeholders and open questions:
+  - **(?)** Under the current rules, an inactive Formation counts as no Formation, so the hit always lands but deals only **1 Damage Counter and destroys no unit**. Is that what you want, or should the hit land with its full Damage Grade and destroy a unit as normal?
+  - **(?)** "Two-turn cooldown": placeholder is that it can be used again two of your own turns later (use it on turn 3, again on turn 5), the same counting as Arms Academy.
+  - The unit has to share a Signet with it, and it has to be in your attacking Formation to activate it.
+  - A unit can hold one Equipment and one Artifact at once. If the unit leaves the field, the Beacon goes to the Grave.
+  - Attached in Phase II, it works from your next Preparation Phase I, like Equipment.
 
 ## Traps
 ### Trap: Stand Strong (School of Arms, from Dyllan)
