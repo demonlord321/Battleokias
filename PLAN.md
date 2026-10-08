@@ -30,7 +30,8 @@ Mapmaker (game board and screens), Advisor (balance reviews), Planner (plan and 
 - [ ] Card types stage 1: Units, Spells, Traps
 - [ ] Card types stage 2 (one at a time): Field Spells, Equipment, Artifacts, Monsters (after unit attacks are designed)
 - [x] Coin flip, opening deal (4 and 5), Draw Phase each turn, seeded shuffle
-- [ ] Hand limits (open). Empty Draw Pile done (`788c458`): an empty pile skips the draw instead of losing. Stalled games with both piles empty count as draws for now (QUESTIONS.md #1)
+- [ ] Hand limits (open)
+- [ ] Empty Draw Pile, updated 8 Oct: when you'd draw from an empty main Draw Pile, take 1 Damage Counter instead (placeholder: 1 per Draw Phase). Empty Special Decks still just skip. This replaces the skip from `788c458`, so stalled games end, Developer; show the counter on the board, Mapmaker
 - [x] Game state; every move is an action passed to one `applyAction` function
 - [x] Turn phases, playing cards, resources, combat, win check
 - [x] Two random bots play full games in Node; unit tests
@@ -69,9 +70,9 @@ Uses the placeholder rules in `RULES.md`; Dyllan refines them as we play.
 - [ ] Named units (Grade 4+): flavour text and Class fields in `data/cards.json`, shown on the card face, Developer + Mapmaker. Classes so far: Swordsman, Guardian, Rogue
 - [x] Fix `main` after Dyllan's `6296c33` (`64d3b26`) (`check-cards` fails and 2 tests fail): let the checker skip `{"Comment"}` section headers, give Galent a variable Attack, add Sena's `text`, and drop `ARM-001` Iron Recruit from the Arms deck and `tools/sim-decks.json`, Developer
 - [x] Galent, The Unbreakable Shield (`ARM-MER-002`, engine `6cfd57b`): Grade 4 Guardian, 4000 Defense; Attack 1000 when summoned, or the promoted unit's Attack (Drazel in reverse), Developer + Mapmaker
-- [ ] Sena, Mistress of the Shadows (`ARM-ASS-002`): Grade 4 Rogue, 3500/3500; Pickpocket destroys 1 opposing Item, Artifact or Equipment when she's summoned. Engine done (`3f995fb`, `pending.type "pickpocket"`), Developer; target picker on the board, Mapmaker
+- [x] Sena, Mistress of the Shadows (`ARM-ASS-002`): Grade 4 Rogue, 3500/3500; Pickpocket destroys 1 opposing Item, Artifact or Equipment when she's summoned. Engine done (`3f995fb`, `pending.type "pickpocket"`), Developer; target picker on the board (`267717d`), Mapmaker
 - [x] Formation cost is now its Damage Grade (`226ee47`), and Damage Grade 0 costs 1 (Frontal Assault 1, Vanguard Charge 2, Line Defense keeps its printed 2 for now), Developer
-- [ ] On a tie for lowest Grade, the attacker picks which unit is destroyed instead of the defender. Engine done (`d8bfbe7`), Developer; picker on the board, Mapmaker
+- [x] On a tie for lowest Grade, the attacker picks which unit is destroyed instead of the defender. Engine `d8bfbe7`, Developer; picker on the board `267717d`, Mapmaker
 - [ ] All open questions for Dyllan are collected in `QUESTIONS.md`. He answers there and Planner folds the answers into `RULES.md`
 - [ ] Dyllan playtests and replaces placeholder rules, Planner updates `RULES.md`
 

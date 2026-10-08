@@ -437,7 +437,7 @@ These are **temporary** so a units-only game can be played and tuned. Dyllan wil
   - If the column is empty, the attack hits the opponent's Defense Points directly for the unit's Attack value.
 - **End Phase:** pass the turn.
 - **Win:** see **Damage Counters**. A player with 10 Damage Counters loses.
-- **Empty Draw Pile:** you skip the draw instead of losing (see **Empty Draw Pile**).
+- **Empty Draw Pile:** you take 1 Damage Counter instead of drawing (see **Empty Draw Pile**).
 
 ## Player stats
 Shown alongside each player's **Hand** (the zone where drawn cards go).
@@ -459,8 +459,11 @@ Shown alongside each player's **Hand** (the zone where drawn cards go).
     - Arms Academy's free Graduate still arrives even if your Player Grade is only 1, because the card says it's summoned automatically.
 
 ## Empty Draw Pile
-- **Confirmed by Dyllan (8 Oct):** running out of cards **doesn't make you lose**. If your main Draw Pile is empty, you **skip the draw** (or you can forfeit). If a Special Deck is empty, you just skip that draw and play continues.
-- **(?)** Is forfeiting a choice offered at that moment, or just the normal option to concede at any time? Placeholder: the game skips the draw automatically, and forfeiting is a normal concede button.
+- Running out of cards **doesn't make you lose straight away** (Dyllan, 8 Oct).
+- **Main Draw Pile empty (Advisor's suggestion, accepted by Dyllan for now, 8 Oct):** when you would draw from it, you take **1 Damage Counter** instead. This makes stalled games (for example two Galent walls with both piles empty) wind down to a winner in about 10 turns, and Fire Arrow or Blinding Beacon become the ways to break a wall before then. It replaces "skip the draw", which let about 1 in 13 computer games go on forever.
+  - **(?)** Is it 1 counter per Draw Phase, or 1 for each card you can't draw (you draw 2 a turn)? Placeholder: 1 per Draw Phase.
+- **Special Deck empty:** you just skip that draw and play continues.
+- You can concede at any time.
 
 ## Field layout
 Each player has their own half of the table. The opponent's half is the player's half
