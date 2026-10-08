@@ -249,6 +249,16 @@ You can only attack if you have a Formation set.
 
 Built as `FRM-001` (all three Signets, `"slots": [0,1,2]`, `"combine": "sum"`).
 
+### Formation: Line Defense (from Dyllan)
+- **Signets:** Arms, Mercenary. **Cost:** 2 (printed on the card; the usual Formation cost rule doesn't cover Damage Grade 0).
+- **Slots:** any **one full row**, front, middle or back. Only the units in that row count.
+- **Attack 0.** Its **Defense** is the sum of that row's units' Attack **and** Defense.
+- **Damage Grade 0, Defense Grade 1.** It can't attack at all unless a card or effect raises its Damage Grade.
+- Placeholders and open questions:
+  - **(?)** If more than one row is full, which row counts? (Placeholder: the strongest one, picked automatically.)
+  - When a hit lands on it, the lowest-Grade unit in the counted row is destroyed, as usual.
+  - A set Spell or Trap in the row means the row isn't full.
+
 ### Formation battle (confirmed by Dyllan)
 - In the Battle Phase, your **Formation Attack** is compared with the opponent's **Formation Defense**.
 - If your Attack is **greater than or equal to** their Defense, the attack goes through and the opponent gains a **Damage Counter**.
@@ -288,6 +298,16 @@ Open questions:
 - **Spells and Traps** always go in an **empty Unit Position Slot**, unless the card says otherwise.
 - **Equipment and Artifacts** usually **attach to a unit**.
 - Placeholders (Developer, `fb2b834` to `340e4ed`): the cost is paid when the card is set; a set card can't be moved or retired; a set card isn't a unit, so a Formation with one in its slots is inactive.
+
+## Spells
+### Spell: Fire Arrow (from Dyllan)
+- **Signets:** Arms, Magic, Alchemy. **Cost:** 1.
+- **Cast** it straight from your hand in Preparation Phase I or II, or **set** it face-down in an empty unit slot.
+- A set Fire Arrow can be activated in your own **Start, Preparation I, Battle, Preparation II or End Phase**.
+- **Effect:** deals **1 Damage Counter** to your opponent. Then it goes to the Grave.
+- Placeholders and open questions:
+  - **(?)** Can a Fire Arrow set this turn be activated in the same turn (for example set in Phase II, fired in the End Phase)? (Placeholder: no, not until your next turn. That's the same as Equipment, and it means setting it is a real commitment.)
+  - The cost is paid once, when it's cast or set.
 
 ## Artifacts
 ### Artifact: Blinding Beacon (from Dyllan)
