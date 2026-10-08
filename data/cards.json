@@ -1,4 +1,5 @@
 [
+  {"Comment": "UNITS GRADE 1-3"},
   {
     "id": "ARM-010",
     "name": "Student of Arms",
@@ -46,6 +47,67 @@
     "formation": "Formation effect text",
     "text": "",
     "image": "images/arm-012.png"
+  },
+
+  {"Comment": "UNITS GRADE 4-6"},
+  {
+    "id": "ARM-MER-001",
+    "name": "Drazel, Instructor of the Blade",
+    "type": "unit",
+    "signets": [
+      "arms"
+    ],
+    "grade": 4,
+    "attack": 4000,
+    "defense": null,
+    "variableDefense": {
+      "summoned": 1000,
+      "promoted": "base"
+    },
+    "class": "Swordsman",
+    "flavor": "Drazel found himself gifted with a blade. Upon graduation he chose to share that knowledge with the new recruits. When war came his unit was decimated, and Drazel joined the mercenaries to get stronger and make some money.",
+    "formation": "Formation effect text",
+    "summonEffect": "none",
+    "text": "Drazel chose to halt his study of Defense and put it all into Attack. His Defense is 1000 when summoned, or equal to the Defense of the unit he promotes.",
+    "image": "images/arm-mer-001.png"
+  },
+  {
+    "id": "ARM-MER-002",
+    "name": "Galent, The Unbreakable Shield",
+    "type": "unit",
+    "signets": [
+      "arms"
+    ],
+    "grade": 4,
+    "attack": null,
+    "defense": 4000,
+    "variableDefense": {
+      "summoned": 1000,
+      "promoted": "base"
+    },
+    "class": "Guardian",
+    "flavor": "Placeholder.",
+    "formation": "Formation effect text",
+    "summonEffect": "none",
+    "text": "His Attack is 1000 when summoned, or equal to the Attack of the unit he promotes.",
+
+    "image": "images/arm-mer-002.png"
+  },
+  {
+    "id": "ARM-ASS-002",
+    "name": "Sena, Mistress of the shadows",
+    "type": "unit",
+    "signets": [
+      "arms"
+    ],
+    "grade": 4,
+    "attack": 3500,
+    "defense": 3500,
+    "class": "rogue",
+    "flavor": "Placeholder.",
+    "formation": "Formation effect text",
+    "summonEffect": "Pickpocket: when summoned Sena can distroy 1 Item, artifact or equipment on the opponents side of the field, does not need to be in a formation and only activates when summoned.",
+    "image": "images/arm-mer-001.png"
   },
   {
     "id": "FRM-001",
@@ -126,20 +188,6 @@
     "text": "Equip to an Arms unit of Grade 1 to 3. The equipped unit gets +250 Attack and +250 Defense. If the unit is promoted to Grade 4 or higher, put this card in the Grave.",
     "image": "images/eqp-001.png",
     "maxGrade": 3
-  },
-  {
-    "id": "ARM-001",
-    "name": "Iron Recruit",
-    "type": "unit",
-    "signets": [
-      "arms"
-    ],
-    "grade": 1,
-    "attack": 400,
-    "defense": 600,
-    "formation": "Formation effect text",
-    "text": "Placeholder card until Dyllan's real cards replace it.",
-    "image": "images/arm-001.png"
   },
   {
     "id": "ARM-002",
@@ -317,27 +365,6 @@
     "formation": "Formation effect text",
     "text": "Placeholder card until Dyllan's real cards replace it.",
     "image": "images/arm-alc-001.png"
-  },
-  {
-    "id": "ARM-MER-001",
-    "name": "Drazel, Instructor of the Blade",
-    "type": "unit",
-    "signets": [
-      "arms",
-      "mercenary"
-    ],
-    "grade": 4,
-    "attack": 4000,
-    "defense": null,
-    "variableDefense": {
-      "summoned": 1000,
-      "promoted": "base"
-    },
-    "class": "Swordsmen",
-    "flavor": "Drazel found himself gifted with a blade. Upon graduation he chose to share that knowledge with the new recruits. When war came his unit was decimated, and Drazel joined the mercenaries to get stronger and make some money.",
-    "formation": "Formation effect text",
-    "text": "Drazel chose to halt his study of Defense and put it all into Attack. His Defense is 1000 when summoned, or equal to the Defense of the unit he promotes.",
-    "image": "images/arm-mer-001.png"
   },
   {
     "id": "EQP-002",

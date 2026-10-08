@@ -288,12 +288,12 @@ Open questions:
 - **If there is no opposing Formation**, your attack deals exactly **1 Damage Counter**, whatever your Damage Grade, and **no units are destroyed**.
 
 Open questions:
-- If several units tie for lowest Grade, the defender picks which one is destroyed. (Accepted for now.)
+- If several units tie for lowest Grade, the defender picks which one is destroyed. (Update, the attacker can chose which is distroyed.)
 - An inactive Formation counts as no opposing Formation: 1 counter, no units destroyed. (Accepted for now.)
 - A failed attack does nothing to the attacker. (Accepted for now.)
-- **(?)** How many times can a Formation attack per Battle Phase? (Placeholder: once.)
-- **(?)** Does playing a Formation card cost Energy? Can you swap it for another Formation? (Placeholders built: 0 Energy, and the old one goes to the Grave.)
-- **(?)** Do units that just arrived count toward the Formation on the turn they're summoned or promoted?
+- **(?)** How many times can a Formation attack per Battle Phase? (Only one attack per battle phase unless an effect is available that states otherwise.)
+- **(?)** Does playing a Formation card cost Energy? Can you swap it for another Formation? (Formation will cost its damage grade, if no damage grade it will cost 1.)
+- **(?)** Do units that just arrived count toward the Formation on the turn they're summoned or promoted?(yes)
 
 ## Spell and Trap cost
 - Most Spells, Field Spells and Traps cost **1 Energy** to play, unless the card says otherwise.
@@ -427,7 +427,7 @@ Shown alongside each player's **Hand** (the zone where drawn cards go).
     - Arms Academy's free Graduate still arrives even if your Player Grade is only 1, because the card says it's summoned automatically.
 
 ## Empty Draw Pile
-- **(?)** What happens when a player must draw from an empty Draw Pile (lose, take damage, reshuffle the Grave)?
+- **(?)** What happens when a player must draw from an empty Draw Pile (lose, take damage, reshuffle the Grave)? (Skip Drawphase or Forfiet, only applies to main deck, play continues for special decks, just skip the draw.)
 
 ## Field layout
 Each player has their own half of the table. The opponent's half is the player's half
@@ -438,7 +438,6 @@ and their Field Effect Zone is top right.
 Full board as seen by the player:
 
 ```
-                              [FEZ]        <- opponent Field Effect Zone
                               [FZ ]        <- opponent Formation Zone
  [Draw ]    [UPS][UPS][UPS]
             [UPS][UPS][UPS]               opponent
@@ -450,7 +449,6 @@ Full board as seen by the player:
         [UPS][UPS][UPS]                   player
         [UPS][UPS][UPS]       [Draw ]
  [FZ ]                                   <- player Formation Zone
- [FEZ]                                   <- player Field Effect Zone
 ```
 
 - **Unit Position Slots (UPS):** a 3x3 grid of 9 slots for units.
@@ -461,8 +459,8 @@ Full board as seen by the player:
 - **Formation Zone (FZ):** directly above the Field Effect Zone; holds Formation cards.
 
 Open questions:
-- **(?)** What goes in the Field Effect Zone? One field card at a time?
-- **(?)** Where are spells and traps set: in the UPS grid or elsewhere?
+- **(?)** What goes in the Field Effect Zone? One field card at a time? (No Felid effect zone for right now.)
+- **(?)** Where are spells and traps set: in the UPS grid or elsewhere? (Spells and traps are set in the UPS, can only be placed in a slot not already ocuppied.)
 
 ## Still to define (continued)
 - ~~Deck size and card limits~~ (see Deck building)
