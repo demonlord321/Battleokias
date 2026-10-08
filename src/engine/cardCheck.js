@@ -90,6 +90,14 @@ export function checkCards(cards) {
       if (card.type !== "equipment" || !Array.isArray(card.onlyOn) || !card.onlyOn.length) problems.push(`${where}: "onlyOn" goes on Equipment and should be a list of unit ids.`);
       else for (const id of card.onlyOn) if (!ids.has(id)) problems.push(`${where}: "onlyOn" names "${id}", which isn't a unit in cards.json.`);
     }
+    if ("charges" in card && (card.type !== "artifact" || !Number.isInteger(card.charges) || card.charges < 1))
+      problems.push(`${where}: "charges" goes on an Artifact and should be a whole number of 1 or more.`);
+    if ("cooldown" in card && (card.type !== "artifact" || !Number.isInteger(card.cooldown) || card.cooldown < 0))
+      problems.push(`${where}: "cooldown" goes on an Artifact and counts your turns (0 or more).`);
+    if ("activate" in card && (card.type !== "artifact" || !["blindFormation"].includes(card.activate)))
+      problems.push(`${where}: "activate" goes on an Artifact and can be "blindFormation".`);
+    if ("onePerFormation" in card && (card.type !== "artifact" || typeof card.onePerFormation !== "boolean"))
+      problems.push(`${where}: "onePerFormation" goes on an Artifact and should be true or false.`);
     if ("response" in card && (card.type !== "trap" || !["saveUnit"].includes(card.response)))
       problems.push(`${where}: "response" goes on a Trap and can be "saveUnit".`);
     if ("maxCopies" in card && (!Number.isInteger(card.maxCopies) || card.maxCopies < 1))

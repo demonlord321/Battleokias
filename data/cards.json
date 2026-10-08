@@ -369,5 +369,22 @@
     "response": "saveUnit",
     "text": "Set in an empty Unit Position Slot during your Preparation Phase I or II. During your opponent's Battle Phase, when one of your units would be destroyed, send this card to the Grave instead.",
     "image": "images/trp-001.png"
+  },
+  {
+    "id": "ART-001",
+    "name": "Blinding Beacon",
+    "type": "artifact",
+    "signets": [
+      "arms",
+      "mystic",
+      "alchemy"
+    ],
+    "cost": 1,
+    "charges": 2,
+    "cooldown": 2,
+    "activate": "blindFormation",
+    "onePerFormation": true,
+    "text": "Attach to one of your units in Preparation Phase I or II. Only one Blinding Beacon can be in your Formation. Holds 2 charges. When you attack, you may activate it: your opponent's Formation is deactivated for this Battle Phase and reactivates at the start of their turn. Two-turn cooldown. After its second activation, send it to the Grave.",
+    "image": "images/art-001.png"
   }
 ]
