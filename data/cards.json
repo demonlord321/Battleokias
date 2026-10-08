@@ -386,5 +386,51 @@
     "onePerFormation": true,
     "text": "Attach to one of your units in Preparation Phase I or II. Only one Blinding Beacon can be in your Formation. Holds 2 charges. When you attack, you may activate it: your opponent's Formation is deactivated for this Battle Phase and reactivates at the start of their turn. Two-turn cooldown. After its second activation, send it to the Grave.",
     "image": "images/art-001.png"
+  },
+  {
+    "id": "FRM-003",
+    "name": "Line Defense",
+    "type": "formation",
+    "signets": [
+      "arms",
+      "mercenary"
+    ],
+    "cost": 2,
+    "slotOptions": [
+      [
+        0,
+        1,
+        2
+      ],
+      [
+        3,
+        4,
+        5
+      ],
+      [
+        6,
+        7,
+        8
+      ]
+    ],
+    "combine": "wall",
+    "damageGrade": 0,
+    "defenseGrade": 1,
+    "text": "Needs one full row: front, middle or back. Only that row counts. Attack is 0, and Defense is the sum of that row's units' Attack and Defense. Damage Grade 0: this Formation can't attack unless a card or effect raises its Damage Grade.",
+    "image": "images/frm-003.png"
+  },
+  {
+    "id": "SPL-001",
+    "name": "Fire Arrow",
+    "type": "spell",
+    "signets": [
+      "arms",
+      "magic",
+      "alchemy"
+    ],
+    "cost": 1,
+    "damage": 1,
+    "text": "Cast in Preparation Phase I or II, or set it face-down in an empty unit slot. A set Fire Arrow can be activated in your Start, Preparation I, Battle, Preparation II or End Phase. Deals 1 Damage Counter to your opponent.",
+    "image": "images/spl-001.png"
   }
 ]

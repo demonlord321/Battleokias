@@ -16,7 +16,8 @@ const BY_TYPE = {
 };
 // How a Formation adds up its units: "sum" (Frontal Assault), or "scaled" (Vanguard
 // Charge), which sums and then uses attackMultiplier and defenseDivisor.
-export const COMBINE_RULES = ["sum", "scaled"];
+// "wall" (Line Defense) has Attack 0 and Defense equal to its units' Attack plus Defense.
+export const COMBINE_RULES = ["sum", "scaled", "wall"];
 const DEFAULT_FIELDS = { cost: "number" };
 
 // IDs look like ARM-001, or ARM-ALC-001 for a card with more than one Signet.
@@ -37,6 +38,7 @@ export function checkCards(cards) {
 
     const fields = { ...COMMON, ...(BY_TYPE[card.type] ?? DEFAULT_FIELDS) };
     for (const [field, kind] of Object.entries(fields)) {
+      if (field === "slots" && !(field in card) && Array.isArray(card.slotOptions)) continue; // Line Defense picks a row
       if (!(field in card)) problems.push(`${where}: missing "${field}".`);
       else if (field === "defense" && card.defense === null && card.variableDefense) continue; // worked out on the field
       else if (typeOf(card[field]) !== kind) problems.push(`${where}: "${field}" should be a ${kind}, not ${typeOf(card[field])}.`);
@@ -61,16 +63,21 @@ export function checkCards(cards) {
       if (typeof card.grade === "number" && (card.grade < 1 || card.grade > 10 || !Number.isInteger(card.grade))) {
         problems.push(`${where}: grade should be a whole number from 1 to 10.`);
       }
-    } else if (card.type === "formation" && Array.isArray(card.slots)) {
-      const ok = card.slots.every((n) => Number.isInteger(n) && n >= 0 && n <= 8);
-      if (!ok || card.slots.length === 0 || new Set(card.slots).size !== card.slots.length) {
-        problems.push(`${where}: slots should list different slot numbers from 0 to 8 (front row is 0, 1, 2).`);
+    } else if (card.type === "formation" && (Array.isArray(card.slots) || Array.isArray(card.slotOptions))) {
+      // slotOptions (Line Defense): several slot lists, and the strongest full one counts.
+      for (const slots of card.slotOptions ?? [card.slots]) {
+        const ok = Array.isArray(slots) && slots.every((n) => Number.isInteger(n) && n >= 0 && n <= 8);
+        if (!ok || slots.length === 0 || new Set(slots).size !== slots.length) {
+          problems.push(`${where}: slots should list different slot numbers from 0 to 8 (front row is 0, 1, 2).`);
+        }
       }
+      if (card.slots && card.slotOptions) problems.push(`${where}: use "slots" or "slotOptions", not both.`);
       for (const g of ["damageGrade", "defenseGrade"]) {
         if (typeof card[g] === "number" && (card[g] < 0 || !Number.isInteger(card[g]))) problems.push(`${where}: ${g} should be a whole number, 0 or more.`);
       }
       // RULES.md: a Damage Grade 1 Formation costs 0; a higher one costs its Damage Grade minus 1.
-      if (typeof card.damageGrade === "number" && typeof card.cost === "number" && card.cost !== Math.max(0, card.damageGrade - 1)) {
+      // Damage Grade 0 (Line Defense) isn't covered, so its printed cost stands.
+      if (card.damageGrade >= 1 && typeof card.cost === "number" && card.cost !== Math.max(0, card.damageGrade - 1)) {
         problems.push(`${where}: a Formation with Damage Grade ${card.damageGrade} should cost ${Math.max(0, card.damageGrade - 1)}.`);
       }
       if (card.combine === "scaled") {
@@ -98,6 +105,8 @@ export function checkCards(cards) {
       problems.push(`${where}: "activate" goes on an Artifact and can be "blindFormation".`);
     if ("onePerFormation" in card && (card.type !== "artifact" || typeof card.onePerFormation !== "boolean"))
       problems.push(`${where}: "onePerFormation" goes on an Artifact and should be true or false.`);
+    if ("damage" in card && (card.type !== "spell" || !Number.isInteger(card.damage) || card.damage < 1))
+      problems.push(`${where}: "damage" goes on a Spell and should be a whole number of 1 or more.`);
     if ("response" in card && (card.type !== "trap" || !["saveUnit"].includes(card.response)))
       problems.push(`${where}: "response" goes on a Trap and can be "saveUnit".`);
     if ("maxCopies" in card && (!Number.isInteger(card.maxCopies) || card.maxCopies < 1))
