@@ -5,7 +5,7 @@
 // playerView(game, player), which hides what that player couldn't know: the opponent's
 // hand, the order of both main decks, what's inside every Special Deck, and the opponent's face-down cards.
 
-import { legalActions, attackPreview } from "./engine.js";
+import { legalActions, attackPreview, formationSlots } from "./engine.js";
 
 const HIDDEN = Object.freeze({ hidden: true });
 const FACE_DOWN = Object.freeze({ hidden: true, faceDown: true });
@@ -41,7 +41,8 @@ export function chooseAction(game, player = actingPlayer(game)) {
   const view = playerView(game, player);
   const me = view.players[player];
   const of = (type) => options.filter((a) => a.type === type);
-  const wanted = new Set(me.formationZone?.slots ?? me.hand.find((c) => c.type === "formation")?.slots ?? [0, 1, 2]);
+  const planned = me.hand.find((c) => c.type === "formation");
+  const wanted = new Set(me.formationZone ? formationSlots(view, player) : planned?.slots ?? planned?.slotOptions?.[0] ?? [0, 1, 2]);
   const inFormation = (a) => (wanted.has(a.slot) ? 0 : 1);
   const handCard = (a) => me.hand[a.card] ?? me.hand.find((c) => c.id === a.card);
 
@@ -60,6 +61,7 @@ export function chooseAction(game, player = actingPlayer(game)) {
   const enroll = of("enroll")[0];
   const studentId = me.fieldEffect?.academy?.enroll;
   const pick =
+    of("activateSet")[0] || // set Spells (Fire Arrow) fire as soon as they can
     (!me.formationZone && (of("setFormation")[0] || of("deckFormation")[0])) ||
     (!me.fieldEffect && of("setField")[0]) ||
     of("promote").sort((a, b) => inFormation(a) - inFormation(b))[0] ||
@@ -68,6 +70,7 @@ export function chooseAction(game, player = actingPlayer(game)) {
       .filter((a) => !(enroll && (handCard(a)?.cardId ?? handCard(a)?.id) === studentId))
       .sort((a, b) => inFormation(a) - inFormation(b) || handCard(b).grade - handCard(a).grade || a.slot - b.slot)[0] ||
     of("equip").sort((a, b) => inFormation(a) - inFormation(b) || me.ups[b.slot].grade - me.ups[a.slot].grade)[0] ||
+    of("cast")[0] ||
     // Set Traps that do something, only in slots the Formation doesn't need, so it stays active.
     of("setTrap").filter((a) => inFormation(a) && handCard(a)?.type === "trap" && handCard(a)?.response)[0] ||
     // Artifacts go on Formation units, so they can be activated when it attacks.
