@@ -41,10 +41,10 @@ test("Frontal Assault sums the three front-row units and ignores the rest", () =
   applyAction(game, { type: "setFormation", player: 0, card: lastCard(game) });
   place(game, 0, 0, unit(1, 500, 500)); // Student
   place(game, 0, 1, unit(2, 1500, 1000)); // Apprentice
-  assert.deepEqual(formationStats(game, 0), { name: "Frontal Assault", slots: [0, 1, 2], attack: 2000, defense: 1500, missing: 1, blinded: false, complete: false, canAttack: true, damageGrade: 1, defenseGrade: 0 });
+  assert.deepEqual(formationStats(game, 0), { name: "Frontal Assault", slots: [0, 1, 2], attack: 2000, defense: 1500, missing: 1, blinded: false, complete: false, options: [], option: null, canAttack: true, damageGrade: 1, defenseGrade: 0 });
   place(game, 0, 2, unit(1, 500, 500)); // Student
   place(game, 0, 4, unit(3, 2000, 1500)); // Graduate in the middle row doesn't count
-  assert.deepEqual(formationStats(game, 0), { name: "Frontal Assault", slots: [0, 1, 2], attack: 2500, defense: 2000, missing: 0, blinded: false, complete: true, canAttack: true, damageGrade: 1, defenseGrade: 0 });
+  assert.deepEqual(formationStats(game, 0), { name: "Frontal Assault", slots: [0, 1, 2], attack: 2500, defense: 2000, missing: 0, blinded: false, complete: true, options: [], option: null, canAttack: true, damageGrade: 1, defenseGrade: 0 });
 });
 
 test("a new Formation replaces the old one, which goes to the Grave (placeholder)", () => {
@@ -290,7 +290,7 @@ test("Vanguard Charge: the front row plus middle centre, Attack x1.5 and Defense
   place(game, 0, 4, unit(1, 500, 500)); // Student, middle centre
   place(game, 0, 3, unit(3, 2000, 1500)); // middle left doesn't count
   // 4500 x 1.5 = 6750 Attack; 3500 / 1.5 = 2333.3, rounded down to 2333 Defense.
-  assert.deepEqual(formationStats(game, 0), { name: "Vanguard Charge", slots: [0, 1, 2, 4], attack: 6750, defense: 2333, missing: 0, blinded: false, complete: true, canAttack: true, damageGrade: 2, defenseGrade: 0 });
+  assert.deepEqual(formationStats(game, 0), { name: "Vanguard Charge", slots: [0, 1, 2, 4], attack: 6750, defense: 2333, missing: 0, blinded: false, complete: true, options: [], option: null, canAttack: true, damageGrade: 2, defenseGrade: 0 });
 });
 
 // Line Defense (RULES.md d751b3f): any one full row, Attack 0, Defense = Attack + Defense of that row.
@@ -323,4 +323,35 @@ test("Line Defense counts the strongest full row as a wall, can't attack, and it
   assert.equal(hit.hits, true);
   assert.equal(hit.counters, 1);
   assert.deepEqual(hit.destroys, [6, 7, 8]);
+});
+
+test("with more than one full row, the player chooses which one Line Defense uses", () => {
+  const game = start();
+  const p = game.players[0];
+  p.energy = 10;
+  p.hand.push(lineDefense());
+  applyAction(game, { type: "setFormation", player: 0, card: lastCard(game) });
+  [0, 1, 2].forEach((s) => place(game, 0, s, unit(1, 500, 500)));
+  [3, 4, 5].forEach((s) => place(game, 0, s, unit(2, 1500, 1000)));
+  let stats = formationStats(game, 0);
+  assert.deepEqual(stats.options, [0, 1]);
+  assert.equal(stats.option, 1); // strongest until a choice is made
+  assert.deepEqual(legalActions(game).filter((a) => a.type === "chooseFormation").map((a) => a.option), [0, 1]);
+  assert.match(checkAction(game, { type: "chooseFormation", player: 0, option: 2 }), /aren't all filled/);
+  assert.equal(applyAction(game, { type: "chooseFormation", player: 0, option: 0 }).ok, true);
+  stats = formationStats(game, 0);
+  assert.deepEqual([stats.option, stats.slots, stats.defense], [0, [0, 1, 2], 3000]);
+  // If the chosen row breaks, the strongest full row is used.
+  p.ups[1] = null;
+  stats = formationStats(game, 0);
+  assert.deepEqual([stats.options, stats.option, stats.slots], [[1], 1, [3, 4, 5]]);
+  // Not in the Battle Phase, and a new Formation clears the choice.
+  applyAction(game, { type: "nextPhase", player: 0 });
+  assert.match(checkAction(game, { type: "chooseFormation", player: 0, option: 1 }), /Preparation Phase/);
+  assert.equal(p.formationOption, 0);
+  game.phase = "prep2";
+  p.hand.push(frontal());
+  applyAction(game, { type: "setFormation", player: 0, card: lastCard(game) });
+  assert.equal(p.formationOption, undefined);
+  assert.match(checkAction(game, { type: "chooseFormation", player: 0, option: 0 }), /doesn't have a choice/);
 });
