@@ -42,6 +42,7 @@ Starting Signets:
 
 Other Signets seen on cards:
 - **Mercenary** (first seen as Drazel's sub-Signet). **(?)** Can you declare Mercenary as your deck's Signet, like the three Schools? (Placeholder: yes.)
+- **Hero** (first seen on Katana of the Fallen Hero). **(?)** Can you declare Hero as your deck's Signet? (Placeholder: yes.)
 
 Deck rule:
 - A deck is built around **one Signet**. Every card in the deck must carry that Signet.
@@ -152,6 +153,27 @@ Open questions:
 - Because his main Signet is Arms, he is in the Arms promotion line, so he can promote a Graduate of Arms (Defense 1500).
 - **Equipment on the promoted unit (confirmed by Dyllan):** if that unit's Equipment stays on through the promotion, Drazel takes its **total** Defense, Equipment included. Practice Gear never stays (it's Grades 1 to 3 only), so this applies to future Equipment.
   - Placeholder: the Equipment's Defense bonus is already part of that total, so it isn't added a second time while it stays on Drazel. Its Attack bonus still applies.
+
+#### Drazel, the Bloody Blade (from Dyllan, card list in progress)
+| Field | Value |
+|---|---|
+| Type | Unit |
+| Grade | 5 |
+| Signets | Arms (main), Mercenary (sub) |
+| Class | Swordsmen |
+| Attack / Defense | Set by his effect (see below) |
+
+*Flavour text:* "Drazel witnessed many comrades fall in battle, and the endless conflict changed him. He had one last goal before he fell: to return to the Battle'O'Kias Academy and return his blade to the halls of heroes, so he may be remembered. He cut through the warzone solo, which earned him the title of Bloody Blade."
+
+**Effect:** Drazel learnt a lot with the mercenaries, but his strengths didn't grow. When he promotes a unit, his Attack and Defense **equal that unit's**. When summoned normally, he is **4000 / 2500**.
+
+**Last Stand:** in Preparation Phase I you can start Drazel's Last Stand. His Attack and Defense rise by **50%** for **3 turns**, and when the 3 turns end, Drazel is destroyed.
+- If he holds **Drazel's Katana**, the Equipment changes: you may take **Katana of the Fallen Hero** from your Equipment Special Deck and add it to your hand.
+- Placeholders and open questions:
+  - **(?)** Are the 3 turns three of your own turns? (Placeholder: yes, counting the turn you start it.)
+  - **(?)** Drazel's Katana currently goes only on Drazel, Instructor of the Blade. Does it stay on when he promotes to the Bloody Blade, and can it be equipped to the Bloody Blade directly? (Placeholder: yes to both.)
+  - **(?)** What happens to Drazel's Katana when you fetch Katana of the Fallen Hero? (Placeholder: it goes to the Grave.)
+  - The 50% applies to his stats with Equipment included, rounded down.
 
 ### Official sample units (School of Arms, from Dyllan)
 | Grade | Name | Attack | Defense |
@@ -309,6 +331,13 @@ Open questions (placeholders in brackets):
   - Signets Arms and Mercenary, the same as Drazel; Special Deck only like all Equipment; no Grade limit.
 - **Cost 3 Energy**, printed on the card (confirmed by Dyllan), and up to **3 copies** like other Equipment. A 1-per-deck limit was tried and **removed**: Dyllan expects the odds to drop once decks are full size and other Special Deck types exist, since players may not pick Equipment. Making the destroy need Drazel's Attack to beat the target's Defense was turned down, since Dyllan thinks it would swing balance too far the other way.
 - Specialised Equipment is a new idea: Equipment that names the one unit it can go on.
+
+### Equipment: Katana of the Fallen Hero (from Dyllan, card list in progress)
+- **Signets:** Arms, Hero. **Cost:** 3.
+- Equip to any unit that shares a Signet with it. The unit gets **+250 Attack and +250 Defense** and gains **Last Stand** (see Drazel, the Bloody Blade).
+- When the unit falls at the end of Last Stand, this card **doesn't go to the Grave**. It returns to your hand with **1 Soul Charge**.
+- Each Soul Charge adds **+100 Attack and +100 Defense** to this card's bonus, stacking up to **5** (so up to +750 / +750).
+- Placeholders: Soul Charges stay on the card while it's in your hand; if the unit is destroyed any other way, the Katana goes to the Grave as usual and keeps no charges.
 
 ## Placeholder rules for the first Arms vs Arms test game
 These are **temporary** so a units-only game can be played and tuned. Dyllan will replace them.
