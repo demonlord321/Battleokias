@@ -156,7 +156,8 @@ function fillSlot(slot, card, mine = false) {
 // Formations like Vanguard Charge show their real totals; falls back to a plain sum.
 function renderFormation(side, p, ui = {}, stats = null) {
   const f = p.formationZone ?? null;
-  const slots = f && Array.isArray(f.slots) ? f.slots : [];
+  // The engine's formationStats says which slots count right now (Line Defense picks a row).
+  const slots = Array.isArray(stats?.slots) ? stats.slots : f && Array.isArray(f.slots) ? f.slots : [];
   p.ups.forEach((_, i) => {
     const el = getSlot(side, "ups", i);
     el.classList.toggle("in-formation", slots.includes(i));
@@ -185,6 +186,8 @@ function renderFormation(side, p, ui = {}, stats = null) {
     ? `<span title="Blinded by a Blinding Beacon: counts as no Formation until its owner's turn starts">&#x2737; Blinded · inactive</span>`
     : missing
     ? `<span>Inactive · ${blocked ? `set card in ${blocked > 1 ? `${blocked} slots` : "a slot"}` : `${missing} slot${missing > 1 ? "s" : ""} empty`}</span>`
+    : stats?.canAttack === false
+    ? `<span class="stat-def">&#x1F6E1; ${def}</span><span class="no-attack" title="Damage Grade 0: this Formation can't attack">can't attack</span>`
     : `<span class="stat-atk">&#x2694; ${atk}</span><span class="stat-def">&#x1F6E1; ${def}</span>`;
   zone.append(total);
 }
@@ -283,6 +286,7 @@ export const PHASE_NAMES = {
 //   lossSlots:    Set of ups indexes (viewer's side) the defender can choose to lose
 //   promoteSlots: Set of ups indexes (viewer's side) the selected card can promote
 //   trapSlots:    Set of ups indexes (viewer's side) holding a set card that can respond now
+//   fireSlots:    Set of ups indexes (viewer's side) holding a set Spell that can be fired now
 //   threatened:   Set of ups indexes (viewer's side) the opponent's attack is about to destroy
 export function renderBoard(game, viewer = 0, ui = {}) {
   game.players.forEach((p, owner) => {
@@ -310,6 +314,7 @@ export function renderBoard(game, viewer = 0, ui = {}) {
       slot.classList.toggle("choose-loss", side === 0 && !!ui.lossSlots?.has(i));
       // Trap response: your set cards that can answer, and the units the attack would destroy.
       slot.classList.toggle("can-respond", side === 0 && !!ui.trapSlots?.has(i));
+      slot.classList.toggle("can-fire", side === 0 && !!ui.fireSlots?.has(i));
       slot.classList.toggle("is-threatened", side === 0 && !!ui.threatened?.has(i));
       slot.classList.toggle("is-exhausted", !!card && side === 0 && ui.phase === "battle" && !!ui.attackers && !ui.attackers.has(i));
     });

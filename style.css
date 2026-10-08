@@ -808,3 +808,12 @@ html, body {
 /* A blinded Formation: greyed out with a gold veil until its owner's turn starts. */
 .slot-formation.is-blinded, .slot.is-blinded { filter: grayscale(0.7) brightness(0.8); outline: 2px dashed #f0c060; outline-offset: 2px; }
 .slot.is-blinded .formation-total { color: #ffe0a0; }
+
+/* Spells: Cast button above the phase button, and set Spells that can fire glow. */
+.cast-btn { bottom: 8.6rem; background: linear-gradient(#5a8fe0, #2c4f9a); border-color: #b3d0ff; }
+.slot.can-fire { border-color: #ffb347; cursor: pointer; box-shadow: 0 0 14px rgba(255, 179, 71, 0.9); animation: draw-pulse 0.9s ease-in-out infinite alternate; }
+.slot.can-fire .card.is-set::after { content: "FIRE"; background: #e07a1f; }
+/* Line Defense: "any one row" pattern, and a Formation that can't attack. */
+.formation-pattern.is-options { position: relative; }
+.formation-pattern .fp-note { position: absolute; left: 0; right: 0; bottom: -1.2em; font-size: 0.55em; text-align: center; color: #c9d4ff; white-space: nowrap; }
+.formation-total .no-attack { font-size: 0.8em; color: #b9b4d6; font-style: italic; }

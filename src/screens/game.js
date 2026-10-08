@@ -1,5 +1,5 @@
 import { registerScreen, showScreen } from "../screens.js";
-import { newGame, applyAction, checkAction, attackPreview, legalActions, formationStats, unitStats } from "../engine/engine.js";
+import { newGame, applyAction, checkAction, attackPreview, legalActions, formationStats, unitStats, readySetSpells } from "../engine/engine.js";
 import { buildBoard, renderBoard, PHASE_NAMES } from "../board/board.js";
 
 // Special Decks: data/decks.json may hold "special": { "<signet>": [ { "type": "equipment", "cards": [ids] }, ... ] },
@@ -89,7 +89,7 @@ import("../engine/bot.js").then((m) => (chooseAction = m.chooseAction ?? m.defau
 function basicPick(game) {
   const p = game.players[game.activePlayer];
   const options = legalActions(game).filter((a) => a.player === undefined || a.player === me());
-  const wanted = new Set(p.formationZone?.slots ?? p.hand.find((c) => c.type === "formation")?.slots ?? [0, 1, 2]);
+  const wanted = new Set(formationStats(game, me())?.slots ?? p.hand.find((c) => c.type === "formation")?.slots ?? [0, 1, 2]);
   const inF = (a) => (wanted.has(a.slot) ? 0 : 1);
   const of = (type) => options.filter((a) => a.type === type);
   const hits = attackPreview(game, me())?.hits;
@@ -101,6 +101,7 @@ function basicPick(game) {
     of("enroll")[0] ||
     of("summon").sort((a, b) => inF(a) - inF(b) || (p.hand[b.card]?.grade ?? 0) - (p.hand[a.card]?.grade ?? 0) || a.slot - b.slot)[0] ||
     of("equip").sort((a, b) => inF(a) - inF(b))[0] ||
+    of("activateSet")[0] || of("cast")[0] ||
     of("setTrap").sort((a, b) => inF(b) - inF(a))[0] ||
     (hits && of("attack")[0]) ||
     of("nextPhase")[0] || of("endTurn")[0] || options[0] ||
@@ -135,7 +136,7 @@ const blocked = () => curtain.hidden === false || computerToMove();
 let game = null;
 let viewer = 0; // whose side is at the bottom; follows the active player
 let selectedHand = null; // hand index picked to summon
-let beaconBtn;
+let beaconBtn, castBtn;
 let board, phaseBtn, attackBtn, deckFormBtn, logEl, toastEl, curtain, winScreen;
 
 const $ = (sel) => document.querySelector(sel);
@@ -184,6 +185,8 @@ const canEquip = (card, slot) => legal({ type: "equip", player: me(), card, slot
 const canSetTrap = (card, slot) => legal({ type: "setTrap", player: me(), card, slot });
 // Artifacts attach to a unit (engine action attach), like Equipment.
 const canAttach = (card, slot) => legal({ type: "attach", player: me(), card, slot });
+// Spells: cast straight from hand (engine cast), or fire a set one on your own turn (activateSet).
+const canCast = (card) => legal({ type: "cast", player: me(), card });
 const canPlay = (card, slot) =>
   legal({ type: "summon", player: me(), card, slot }) || legal({ type: "promote", player: me(), card, slot }) || canEquip(card, slot) || canSetTrap(card, slot) || canAttach(card, slot);
 const canSetFormation = (card) => legal({ type: "setFormation", player: me(), card });
@@ -212,7 +215,7 @@ function render() {
   // Hand cards that could be summoned somewhere right now.
   ui.playable = new Set();
   p.hand.forEach((_, card) => {
-    if (canSetFormation(card) || fezAction(card) || p.ups.some((_, slot) => canPlay(card, slot))) ui.playable.add(card);
+    if (canSetFormation(card) || fezAction(card) || canCast(card) || p.ups.some((_, slot) => canPlay(card, slot))) ui.playable.add(card);
   });
   // Slots the selected card can go to.
   ui.formationReady = selectedHand !== null && canSetFormation(selectedHand);
@@ -248,6 +251,8 @@ function render() {
     ui.trapSlots = new Set(game.pending.slots);
     ui.threatened = new Set(game.pending.targets);
   }
+  // Set Spells you can fire right now (Fire Arrow) glow; click one to activate it.
+  if (!blocked() && game.winner === null) ui.fireSlots = new Set(readySetSpells(game, me()));
   renderGradPanel();
   renderTrapPanel();
 
@@ -262,6 +267,7 @@ function render() {
   if (computerToMove()) phaseBtn.textContent = "Computer is playing…";
   renderAttackButton(ui.formationCanAttack);
   renderBeaconButton();
+  renderCastButton();
   renderDeckFormation();
 
   logEl.innerHTML = game.log
@@ -307,6 +313,15 @@ function renderBeaconButton() {
   const { attack: atk, defense: theirDef, hits, counters } = attackPreview(game, me(), { artifact: beaconSlot });
   beaconBtn.classList.toggle("will-miss", !hits);
   beaconBtn.innerHTML = `&#x2737; Attack + ${a.name} <small>Blinds their Formation · ${atk} vs &#x1F6E1; ${theirDef}${hits ? ` · hits for ${counters}` : " · blocked"} · ${a.chargesLeft} charge${a.chargesLeft === 1 ? "" : "s"} left</small>`;
+}
+
+// "Cast" button: shown while a Spell picked in your hand can be cast from hand right now.
+function renderCastButton() {
+  const card = selectedHand !== null ? game.players[me()].hand[selectedHand] : null;
+  castBtn.hidden = !card || card.type !== "spell" || !canCast(selectedHand) || blocked();
+  if (castBtn.hidden) return;
+  const cost = card.cost ?? 0;
+  castBtn.innerHTML = `&#x2726; Cast ${card.name} <small>${cost ? `costs ${cost} Energy` : "free"} · or click an empty slot to set it</small>`;
 }
 
 // No Formation by round three: summon one straight from the deck (engine action deckFormation).
@@ -471,7 +486,7 @@ function onHandClick({ index }) {
   selectedHand = selectedHand === index ? null : index;
   if (selectedHand !== null) {
     const p = game.players[me()];
-    const anywhere = canSetFormation(index) || !!fezAction(index) || p.ups.some((_, slot) => canPlay(index, slot));
+    const anywhere = canSetFormation(index) || !!fezAction(index) || canCast(index) || p.ups.some((_, slot) => canPlay(index, slot));
     if (!anywhere && p.hand[index]?.type === "formation") {
       toast(checkAction(game, { type: "setFormation", player: me(), card: index }) ?? "Can't set that now.");
       selectedHand = null;
@@ -526,6 +541,9 @@ function onSlotClick({ owner, zone, index }) {
   if (zone !== "ups") return;
   const p = game.players[me()];
   const unit = unitIn(p, index);
+  // Fire a set Spell that's ready (it glows).
+  if (selectedHand === null && p.ups[index]?.faceDown && readySetSpells(game, me()).includes(index))
+    return act({ type: "activateSet", player: me(), slot: index });
   if (selectedHand !== null && unit && canEquip(selectedHand, index)) {
     act({ type: "equip", player: me(), card: selectedHand, slot: index });
   } else if (selectedHand !== null && unit && p.hand[selectedHand]?.type === "artifact") {
@@ -619,6 +637,12 @@ export function setupGame() {
   beaconBtn.hidden = true;
   beaconBtn.addEventListener("click", () => beaconSlot !== null && act({ type: "attack", player: me(), artifact: beaconSlot }));
   attackBtn.after(beaconBtn);
+  castBtn = document.createElement("button");
+  castBtn.id = "cast-btn";
+  castBtn.className = "attack-btn cast-btn";
+  castBtn.hidden = true;
+  castBtn.addEventListener("click", () => selectedHand !== null && act({ type: "cast", player: me(), card: selectedHand }));
+  beaconBtn.after(castBtn);
   deckFormBtn = $("#deckform-btn");
   deckFormBtn.addEventListener("click", () => ((deckFormOpen = !deckFormOpen), render()));
   logEl = $("#game-log");
