@@ -167,6 +167,7 @@ function renderFormation(side, p, ui = {}, stats = null) {
   zone.classList.toggle("can-attack", side === 0 && !!ui.formationCanAttack);
   zone.querySelector(".formation-total")?.remove();
   zone.classList.remove("is-inactive");
+  zone.classList.toggle("is-blinded", !!(stats?.blinded ?? p.blinded));
   if (!slots.length) return;
   // A set card in a Formation slot isn't a unit, so the Formation stays inactive (RULES.md placeholder).
   const units = slots.map((i) => p.ups[i]).filter((u) => u && !u.faceDown);
@@ -176,9 +177,13 @@ function renderFormation(side, p, ui = {}, stats = null) {
   const def = stats?.defense ?? units.reduce((n, u) => n + (u.defense ?? 0), 0);
   const total = document.createElement("div");
   // RULES.md: a Formation with an empty slot is inactive until the slot is filled again.
-  zone.classList.toggle("is-inactive", missing > 0);
-  total.className = "formation-total" + (missing ? " is-incomplete" : " is-ready");
-  total.innerHTML = missing
+  // Blinding Beacon: a blinded Formation is deactivated until the start of its owner's turn.
+  const blinded = !!(stats?.blinded ?? p.blinded);
+  zone.classList.toggle("is-inactive", missing > 0 || blinded);
+  total.className = "formation-total" + (missing || blinded ? " is-incomplete" : " is-ready");
+  total.innerHTML = blinded
+    ? `<span title="Blinded by a Blinding Beacon: counts as no Formation until its owner's turn starts">&#x2737; Blinded · inactive</span>`
+    : missing
     ? `<span>Inactive · ${blocked ? `set card in ${blocked > 1 ? `${blocked} slots` : "a slot"}` : `${missing} slot${missing > 1 ? "s" : ""} empty`}</span>`
     : `<span class="stat-atk">&#x2694; ${atk}</span><span class="stat-def">&#x1F6E1; ${def}</span>`;
   zone.append(total);
@@ -201,6 +206,26 @@ function renderSpecialPile(slot, deck, canDraw) {
   count.className = "pile-count";
   count.textContent = n;
   slot.append(count);
+}
+
+// Artifacts (RULES.md, Blinding Beacon) sit on top of their unit: a tag with the name, the
+// charges left as pips, and when it can be used again. Reads unit.artifact { chargesLeft,
+// charges, readyOnTurn, readyNextTurn }.
+function renderArtifact(slot, card, game) {
+  slot.querySelector(".artifact-tag")?.remove();
+  const a = card?.artifact;
+  if (!a || card.faceDown) return;
+  const total = a.charges ?? a.chargesLeft ?? 1;
+  const left = a.chargesLeft ?? total;
+  const pips = Array.from({ length: total }, (_, i) => (i < left ? "\u25CF" : "\u25CB")).join("");
+  const waiting = a.readyNextTurn ? "ready next turn" : a.readyOnTurn > game.turn ? `cooling down · turn ${a.readyOnTurn}` : "";
+  const tag = document.createElement("div");
+  tag.className = "artifact-tag" + (waiting ? " is-waiting" : " is-ready");
+  tag.title = `${a.name}: ${left} of ${total} charge${total === 1 ? "" : "s"} left` + (waiting ? ` (${waiting})` : ", ready to use when you attack") + (a.text ? `\n${a.text}` : "");
+  // Kept short so it fits over a card: the full name and status are in the tooltip.
+  const short = a.readyNextTurn ? "next turn" : a.readyOnTurn > game.turn ? `T${a.readyOnTurn}` : "";
+  tag.textContent = `\u2737 ${pips}` + (short ? ` \u00b7 ${short}` : "");
+  slot.append(tag);
 }
 
 // Equipment sits tucked under its unit: a small tag with its name along the bottom edge.
@@ -272,6 +297,7 @@ export function renderBoard(game, viewer = 0, ui = {}) {
         statMods: { attack: mod(st.attack, card.attack), defense: mod(st.defense, card.defense) },
         baseStats: { attack: card.attack, defense: card.defense } } : card, side === 0);
       renderEquipment(slot, card);
+      renderArtifact(slot, card, game);
       slot.classList.toggle("can-equip", side === 0 && !!ui.equipSlots?.has(i));
       slot.classList.toggle("is-legal", side === 0 && !!ui.legalSlots?.has(i));
       slot.classList.toggle("can-promote", side === 0 && !!ui.promoteSlots?.has(i));

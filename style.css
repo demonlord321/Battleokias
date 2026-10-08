@@ -793,3 +793,18 @@ html, body {
 .trap-panel .grad-title { color: #ffb3d9; }
 .trap-option { border-color: #e06aa8; }
 .trap-pass { opacity: 0.85; }
+
+/* Artifacts (Blinding Beacon): a tag on top of the unit with charge pips and cooldown. */
+.artifact-tag {
+  position: absolute; left: 50%; top: -7px; transform: translateX(-50%); z-index: 3; max-width: 170%;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  font-size: 0.55em; font-weight: bold; padding: 1px 5px; border-radius: 6px;
+  background: #5a3d17; border: 1px solid #f0c060; color: #ffe8b0;
+}
+.artifact-tag.is-ready { box-shadow: 0 0 6px rgba(240, 192, 96, 0.7); }
+.artifact-tag.is-waiting { opacity: 0.65; border-style: dashed; font-style: italic; }
+/* Beacon attack button sits above the plain Attack button. */
+.beacon-btn { bottom: 8.6rem; background: linear-gradient(#e0b04a, #9a6a1c); border-color: #ffe0a0; }
+/* A blinded Formation: greyed out with a gold veil until its owner's turn starts. */
+.slot-formation.is-blinded, .slot.is-blinded { filter: grayscale(0.7) brightness(0.8); outline: 2px dashed #f0c060; outline-offset: 2px; }
+.slot.is-blinded .formation-total { color: #ffe0a0; }

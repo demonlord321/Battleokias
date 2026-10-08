@@ -135,6 +135,7 @@ const blocked = () => curtain.hidden === false || computerToMove();
 let game = null;
 let viewer = 0; // whose side is at the bottom; follows the active player
 let selectedHand = null; // hand index picked to summon
+let beaconBtn;
 let board, phaseBtn, attackBtn, deckFormBtn, logEl, toastEl, curtain, winScreen;
 
 const $ = (sel) => document.querySelector(sel);
@@ -181,8 +182,10 @@ const legal = (action) => checkAction(game, action) === null;
 const canEquip = (card, slot) => legal({ type: "equip", player: me(), card, slot });
 // Traps and Spells are set face-down in an empty Unit Position Slot (engine action setTrap).
 const canSetTrap = (card, slot) => legal({ type: "setTrap", player: me(), card, slot });
+// Artifacts attach to a unit (engine action attach), like Equipment.
+const canAttach = (card, slot) => legal({ type: "attach", player: me(), card, slot });
 const canPlay = (card, slot) =>
-  legal({ type: "summon", player: me(), card, slot }) || legal({ type: "promote", player: me(), card, slot }) || canEquip(card, slot) || canSetTrap(card, slot);
+  legal({ type: "summon", player: me(), card, slot }) || legal({ type: "promote", player: me(), card, slot }) || canEquip(card, slot) || canSetTrap(card, slot) || canAttach(card, slot);
 const canSetFormation = (card) => legal({ type: "setFormation", player: me(), card });
 // Field Effect Zone: play a Field Spell there, or enroll a unit in the Academy that's there.
 const fezAction = (card) =>
@@ -220,7 +223,7 @@ function render() {
       if (legal({ type: "summon", player: me(), card: selectedHand, slot }) || canSetTrap(selectedHand, slot)) ui.legalSlots.add(slot);
     });
     // Equipment: units that can take the selected Equipment card (shared Signet).
-    ui.equipSlots = new Set(p.ups.flatMap((u, slot) => (unitIn(p, slot) && canEquip(selectedHand, slot) ? [slot] : [])));
+    ui.equipSlots = new Set(p.ups.flatMap((u, slot) => (unitIn(p, slot) && (canEquip(selectedHand, slot) || canAttach(selectedHand, slot)) ? [slot] : [])));
     ui.promoteSlots = new Set();
     p.ups.forEach((u, slot) => {
       if (unitIn(p, slot) && legal({ type: "promote", player: me(), card: selectedHand, slot })) ui.promoteSlots.add(slot);
@@ -258,6 +261,7 @@ function render() {
   phaseBtn.disabled = game.winner !== null || !!game.pending || computerToMove();
   if (computerToMove()) phaseBtn.textContent = "Computer is playing…";
   renderAttackButton(ui.formationCanAttack);
+  renderBeaconButton();
   renderDeckFormation();
 
   logEl.innerHTML = game.log
@@ -279,6 +283,30 @@ function renderAttackButton(canAttack) {
   attackBtn.innerHTML = canAttack
     ? `&#x2694; Attack <small>${atk} vs &#x1F6E1; ${theirDef}${hits ? (counters ? ` · hits for ${counters}` : " · lands, 0 counters") : " · blocked"}</small>`
     : `&#x2694; Attack <small>${checkAction(game, { type: "attack", player: me() }) ?? ""}</small>`;
+}
+
+// Blinding Beacon: a second attack button, "Attack + Blinding Beacon", shown in the Battle Phase
+// when one of your Formation units carries an activatable Artifact. Engine: attack { artifact: slot },
+// previewed with attackPreview(game, player, { artifact: slot }).
+let beaconSlot = null;
+function renderBeaconButton() {
+  const inBattle = game.phase === "battle" && game.winner === null && !game.pending && !computerToMove();
+  const p = game.players[me()];
+  const slots = p.ups.flatMap((u, s) => (unitIn(p, s) && u.artifact?.activate ? [s] : []));
+  const ready = slots.filter((s) => legal({ type: "attack", player: me(), artifact: s }));
+  // Only offered while the Formation can still attack this Battle Phase.
+  beaconBtn.hidden = !inBattle || !slots.length || !legal({ type: "attack", player: me() });
+  if (beaconBtn.hidden) return;
+  beaconSlot = ready[0] ?? null;
+  const a = p.ups[beaconSlot ?? slots[0]].artifact;
+  beaconBtn.disabled = beaconSlot === null;
+  if (beaconSlot === null) {
+    beaconBtn.innerHTML = `&#x2737; ${a.name} <small>${checkAction(game, { type: "attack", player: me(), artifact: slots[0] }) ?? "Can't use it now."}</small>`;
+    return;
+  }
+  const { attack: atk, defense: theirDef, hits, counters } = attackPreview(game, me(), { artifact: beaconSlot });
+  beaconBtn.classList.toggle("will-miss", !hits);
+  beaconBtn.innerHTML = `&#x2737; Attack + ${a.name} <small>Blinds their Formation · ${atk} vs &#x1F6E1; ${theirDef}${hits ? ` · hits for ${counters}` : " · blocked"} · ${a.chargesLeft} charge${a.chargesLeft === 1 ? "" : "s"} left</small>`;
 }
 
 // No Formation by round three: summon one straight from the deck (engine action deckFormation).
@@ -500,6 +528,8 @@ function onSlotClick({ owner, zone, index }) {
   const unit = unitIn(p, index);
   if (selectedHand !== null && unit && canEquip(selectedHand, index)) {
     act({ type: "equip", player: me(), card: selectedHand, slot: index });
+  } else if (selectedHand !== null && unit && p.hand[selectedHand]?.type === "artifact") {
+    act({ type: "attach", player: me(), card: selectedHand, slot: index });
   } else if (selectedHand !== null && !p.ups[index]) {
     // Traps and Spells are set face-down in an empty slot (RULES.md basic rule; engine setTrap).
     const setsFaceDown = ["trap", "spell"].includes(p.hand[selectedHand]?.type);
@@ -583,6 +613,12 @@ export function setupGame() {
   phaseBtn = $("#phase-btn");
   attackBtn = $("#attack-btn");
   attackBtn.addEventListener("click", () => act({ type: "attack", player: me() }));
+  beaconBtn = document.createElement("button");
+  beaconBtn.id = "beacon-btn";
+  beaconBtn.className = "attack-btn beacon-btn";
+  beaconBtn.hidden = true;
+  beaconBtn.addEventListener("click", () => beaconSlot !== null && act({ type: "attack", player: me(), artifact: beaconSlot }));
+  attackBtn.after(beaconBtn);
   deckFormBtn = $("#deckform-btn");
   deckFormBtn.addEventListener("click", () => ((deckFormOpen = !deckFormOpen), render()));
   logEl = $("#game-log");
