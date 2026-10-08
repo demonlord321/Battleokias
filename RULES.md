@@ -100,7 +100,7 @@ Open questions (placeholders in brackets):
 |---|---|---|
 | **Unit** | Your creatures | Unit Position Slots (UPS) |
 | **Spell** | Spells with effects | An empty Unit Position Slot, unless the card says otherwise |
-| **Field Spell** | Affects the field | Field Effect Zone (?) |
+| **Field Spell** | Affects the field | (?) The Field Effect Zone is removed for now. Placeholder: an empty Unit Position Slot |
 | **Trap** | Set face-down, activated on the opponent's turn | An empty Unit Position Slot, unless the card says otherwise |
 | **Equipment** | Placed over a unit with a shared Signet; boosts or changes it (see Equipment). Special Deck only | On a unit in the grid |
 | **Artifact** | (?) Usually attaches to a unit | On a unit, usually |
@@ -132,7 +132,7 @@ Open questions:
 - From **Grade 4 upward**, units are **named** characters rather than generic ranks like Student or Graduate.
 - Named units also carry **flavour text** (story only, no rules effect) and a new typing called a **Class**.
 - Grades 1 to 3 have no name, flavour text or Class.
-- Classes so far: **Swordsmen** (Drazel).
+- Classes so far: **Swordsman** (Drazel), **Guardian** (Galent), **Rogue** (Sena). Dyllan's `cards.json` (8 Oct) uses "Swordsman", so that spelling replaces "Swordsmen".
 - **(?)** What other Classes are there?
 - **(?)** Does a unit's Class do anything in play (for example, a Formation or Field Spell that needs a certain Class), or is it just a label for now?
 - **(?)** Is each named unit one of a kind? (Placeholder: only one copy of the same named unit on your field at a time, but still no deck limit.)
@@ -143,8 +143,8 @@ Open questions:
 |---|---|
 | Type | Unit |
 | Grade | 4 |
-| Signets | Arms (main), Mercenary (sub) |
-| Class | Swordsmen |
+| Signets | Arms (main), Mercenary (sub). **(?)** Dyllan's 8 Oct `cards.json` lists only Arms; the ID `ARM-MER-001` still says Mercenary. Placeholder: keep Mercenary |
+| Class | Swordsman |
 | Attack | 4000 |
 | Defense | Set by his effect (see below) |
 
@@ -161,7 +161,7 @@ Open questions:
 | Type | Unit |
 | Grade | 5 |
 | Signets | Arms (main), Mercenary (sub) |
-| Class | Swordsmen |
+| Class | Swordsman |
 | Attack / Defense | Set by his effect (see below) |
 
 *Flavour text:* "Drazel witnessed many comrades fall in battle, and the endless conflict changed him. He had one last goal before he fell: to return to the Battle'O'Kias Academy and return his blade to the halls of heroes, so he may be remembered. He cut through the warzone solo, which earned him the title of Bloody Blade."
@@ -175,6 +175,37 @@ Open questions:
   - **(?)** Drazel's Katana currently goes only on Drazel, Instructor of the Blade. Does it stay on when he promotes to the Bloody Blade, and can it be equipped to the Bloody Blade directly? (Placeholder: yes to both.)
   - **(?)** What happens to Drazel's Katana when you fetch Katana of the Fallen Hero? (Placeholder: it goes to the Grave.)
   - The 50% applies to his stats with Equipment included, rounded down.
+
+#### Galent, The Unbreakable Shield (`ARM-MER-002`, from Dyllan, 8 Oct)
+| Field | Value |
+|---|---|
+| Type | Unit |
+| Grade | 4 |
+| Signets | Arms. **(?)** The ID says Mercenary too. Placeholder: Arms (main), Mercenary (sub), the same as Drazel |
+| Class | Guardian |
+| Attack | Set by his effect (see below) |
+| Defense | 4000 |
+
+*Flavour text:* placeholder (to come from Dyllan).
+
+**Effect:** Drazel's mirror image. His **Attack** is **1000** when summoned normally, or **equal to the Attack of the unit he promotes**.
+- Placeholder: Equipment that stays on through the promotion works the same as for Drazel. He takes the total Attack, and the Equipment's Attack bonus isn't added a second time.
+
+#### Sena, Mistress of the Shadows (`ARM-ASS-002`, from Dyllan, 8 Oct)
+| Field | Value |
+|---|---|
+| Type | Unit |
+| Grade | 4 |
+| Signets | Arms. **(?)** The ID `ARM-ASS` suggests a second Signet (Assassin?). Placeholder: Arms only until Dyllan names it |
+| Class | Rogue |
+| Attack / Defense | 3500 / 3500 |
+
+*Flavour text:* placeholder (to come from Dyllan).
+
+**Pickpocket (summon effect):** when Sena is summoned, you may **destroy 1 Item, Artifact or Equipment** on your opponent's side of the field. She doesn't need to be in a Formation, and it only triggers when she is summoned.
+- **(?)** Does promoting into Sena count as "summoned"? Placeholder: no, only a normal summon (the same way Drazel's text separates "summoned" from "promoted").
+- Placeholder: the destroyed card goes to the opponent's Grave. Set Spells and Traps aren't Items, so she can't hit them.
+- Her ID is `ARM-ASS-002`, and there is no `-001` yet. Her card image currently reuses Drazel's (`arm-mer-001.png`).
 
 ### Official sample units (School of Arms, from Dyllan)
 | Grade | Name | Attack | Defense |
@@ -217,7 +248,8 @@ You can only attack if you have a Formation set.
 - Units in other slots can still be on the field, but **only units in the Formation's slots add to its power**.
 - Each Formation has its own formula for its power. Basic Formations use the **sum**.
 - **Fractions always round down** (confirmed by Dyllan).
-- **Formation cost** (confirmed by Dyllan): a Formation with Damage Grade 1 costs **0 Energy**. Higher Damage Grades cost **one less than the Damage Grade** (Damage Grade 2 costs 1, Damage Grade 3 costs 2).
+- **Formation cost (updated by Dyllan, 8 Oct):** a Formation costs **its Damage Grade** in Energy. One with **no Damage Grade (0) costs 1**. So Frontal Assault (Damage Grade 1) costs 1 and Vanguard Charge (Damage Grade 2) costs 2. This replaces the old rule, where cost was the Damage Grade minus one.
+  - **(?)** Line Defense has 2 printed on the card, but the new rule gives 1. Placeholder: the printed cost wins, so it stays 2.
 - **Playing and swapping Formations (confirmed by Dyllan):** you can play a Formation in **either Preparation Phase** (I or II). To swap, play a new Formation on top of your current one: the old one goes to the **Grave**, and you pay the new one's normal cost.
   - This means you can attack with one Formation, then swap to a defensive one like Line Defense in Phase II for your opponent's turn.
 - **Choosing between conditions (confirmed by Dyllan):** if a Formation can be activated in more than one way and more than one condition is met, a choice pops up and **the player picks which one to use**. For example, if Line Defense's first and second rows are both full, you choose which row it uses.
@@ -232,7 +264,7 @@ You can only attack if you have a Formation set.
   ```
 - **Formation Attack** = sum of those units' Attack **x 1.5**.
 - **Formation Defense** = sum of those units' Defense **/ 1.5**.
-- **Damage Grade 2**, **Defense Grade 0**, **cost 1 Energy** (see Formation cost).
+- **Damage Grade 2**, **Defense Grade 0**, **cost 2 Energy** (see Formation cost; it was 1 under the old rule).
 - Example: Student, Apprentice and Student across the front with a Graduate in the middle centre gives 4500 x 1.5 = **6750 Attack** and 3500 / 1.5 = **2333 Defense**.
 - **(?)** Which Signets does it carry? Placeholder: all three, the same as Frontal Assault.
 - Balance note: in bot games, a Vanguard Charge deck beats a Frontal Assault deck 89% of the time, because of Damage Grade 2. Suggested fix: give Frontal Assault Defense Grade 1 (about 43%). Dyllan is leaving this for now, since Equipment may balance it.
@@ -288,12 +320,12 @@ Open questions:
 - **If there is no opposing Formation**, your attack deals exactly **1 Damage Counter**, whatever your Damage Grade, and **no units are destroyed**.
 
 Open questions:
-- If several units tie for lowest Grade, the defender picks which one is destroyed. (Update, the attacker can chose which is distroyed.)
+- **If several units tie for lowest Grade, the attacker picks which one is destroyed** (confirmed by Dyllan, 8 Oct; this replaces "the defender picks").
 - An inactive Formation counts as no opposing Formation: 1 counter, no units destroyed. (Accepted for now.)
 - A failed attack does nothing to the attacker. (Accepted for now.)
-- **(?)** How many times can a Formation attack per Battle Phase? (Only one attack per battle phase unless an effect is available that states otherwise.)
-- **(?)** Does playing a Formation card cost Energy? Can you swap it for another Formation? (Formation will cost its damage grade, if no damage grade it will cost 1.)
-- **(?)** Do units that just arrived count toward the Formation on the turn they're summoned or promoted?(yes)
+- **One attack per Battle Phase**, unless an effect says otherwise (confirmed by Dyllan).
+- Formation cost and swapping are now confirmed (see **Formation cost** and **Playing and swapping Formations**).
+- **Units that just arrived count toward the Formation** on the turn they're summoned or promoted (confirmed by Dyllan).
 
 ## Spell and Trap cost
 - Most Spells, Field Spells and Traps cost **1 Energy** to play, unless the card says otherwise.
@@ -337,7 +369,7 @@ Open questions:
   - It's the first card that responds on the opponent's turn, so the engine raises a choice for the defender, and in hot-seat the board shows the hand-over screen.
 
 ## Field Spells
-A Field Spell goes in the **Field Effect Zone (FEZ)** and stays there, giving an ongoing effect.
+A Field Spell stays on the field, giving an ongoing effect. The Field Effect Zone is removed for now, so the placeholder is that it sits in an empty Unit Position Slot (see **Field layout**).
 
 ### Field Spell: Arms Academy (School of Arms, from Dyllan)
 - **Effect:** In your **Preparation Phase I**, you may send a **Student of Arms** from your hand to the Academy. (Specific to this line: Student of Arms in, Graduate of Arms out.)
@@ -405,7 +437,7 @@ These are **temporary** so a units-only game can be played and tuned. Dyllan wil
   - If the column is empty, the attack hits the opponent's Defense Points directly for the unit's Attack value.
 - **End Phase:** pass the turn.
 - **Win:** see **Damage Counters**. A player with 10 Damage Counters loses.
-- **Empty Draw Pile:** placeholder is that a player who can't draw loses.
+- **Empty Draw Pile:** you skip the draw instead of losing (see **Empty Draw Pile**).
 
 ## Player stats
 Shown alongside each player's **Hand** (the zone where drawn cards go).
@@ -427,13 +459,14 @@ Shown alongside each player's **Hand** (the zone where drawn cards go).
     - Arms Academy's free Graduate still arrives even if your Player Grade is only 1, because the card says it's summoned automatically.
 
 ## Empty Draw Pile
-- **(?)** What happens when a player must draw from an empty Draw Pile (lose, take damage, reshuffle the Grave)? (Skip Drawphase or Forfiet, only applies to main deck, play continues for special decks, just skip the draw.)
+- **Confirmed by Dyllan (8 Oct):** running out of cards **doesn't make you lose**. If your main Draw Pile is empty, you **skip the draw** (or you can forfeit). If a Special Deck is empty, you just skip that draw and play continues.
+- **(?)** Is forfeiting a choice offered at that moment, or just the normal option to concede at any time? Placeholder: the game skips the draw automatically, and forfeiting is a normal concede button.
 
 ## Field layout
 Each player has their own half of the table. The opponent's half is the player's half
 rotated 180 degrees (a true mirror across the table), so from our view their Draw Pile
 is **top left**, their Grave Pile sits below it, their Special Deck Zones face the centre,
-and their Field Effect Zone is top right.
+and their Formation Zone is top right.
 
 Full board as seen by the player:
 
@@ -455,12 +488,13 @@ Full board as seen by the player:
 - **Draw Pile:** bottom right (top left for the opponent).
 - **Grave Pile:** directly above the Draw Pile; the discard zone.
 - **Special Deck Zones (SDZ):** four zones above the 3x3 grid. Each holds one of your Special Decks.
-- **Field Effect Zone (FEZ):** bottom left of the grid.
-- **Formation Zone (FZ):** directly above the Field Effect Zone; holds Formation cards.
+- **Field Effect Zone (FEZ):** removed for now (Dyllan, 8 Oct).
+- **Formation Zone (FZ):** bottom left of the grid; holds Formation cards.
 
 Open questions:
-- **(?)** What goes in the Field Effect Zone? One field card at a time? (No Felid effect zone for right now.)
-- **(?)** Where are spells and traps set: in the UPS grid or elsewhere? (Spells and traps are set in the UPS, can only be placed in a slot not already ocuppied.)
+- **No Field Effect Zone for now** (confirmed by Dyllan, 8 Oct).
+  - **(?)** Where do Field Spells like Arms Academy go without it? Placeholder: in an empty unit slot, like other Spells, until Dyllan decides.
+- **Spells and Traps are set in the UPS grid**, only in an empty slot (confirmed by Dyllan).
 
 ## Still to define (continued)
 - ~~Deck size and card limits~~ (see Deck building)
