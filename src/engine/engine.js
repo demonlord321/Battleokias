@@ -44,13 +44,16 @@ export function destroyUnit(game, playerIndex, slot, message = null) {
   const p = game.players[playerIndex];
   const unit = p.ups[slot];
   if (!unit) return null;
-  const { under = [], equipment = null, ...card } = unit;
+  const { under = [], equipment = null, artifact = null, ...card } = unit;
   p.ups[slot] = null;
   const { readyNextTurn, defenseCopied, ...gear } = equipment ?? {};
-  p.graveyard.push(...under, card, ...(equipment ? [gear] : []));
+  p.graveyard.push(...under, card, ...(equipment ? [gear] : []), ...(artifact ? [cleanArtifact(artifact)] : []));
   game.log.push(message ?? `${unit.name} goes to the Grave.`);
   return unit;
 }
+
+// An Artifact as it goes back to the Grave, without its on-the-field state.
+const cleanArtifact = ({ readyNextTurn, chargesLeft, readyOnTurn, ...card }) => card;
 
 const isSlot = (p, slot) => Number.isInteger(slot) && slot >= 0 && slot < p.ups.length;
 // A set Trap sits face-down in a Unit Position Slot as { ...card, faceDown: true } (RULES.md, Stand Strong).
@@ -91,6 +94,8 @@ export function formationStats(game, playerIndex) {
   // Each unit's Equipment boost is applied and rounded down first, then the Formation adds them up.
   const units = f.slots.filter((slot) => unitAt(p, slot)).map((slot) => unitStats(game, playerIndex, slot));
   const missing = f.slots.length - units.length;
+  // Blinding Beacon: a blinded Formation is deactivated, so it counts as no active Formation.
+  const blinded = !!p.blinded;
   let attack = units.reduce((total, u) => total + u.attack, 0);
   let defense = units.reduce((total, u) => total + u.defense, 0);
   // "scaled" (Vanguard Charge): Attack times attackMultiplier, Defense divided by
@@ -100,7 +105,7 @@ export function formationStats(game, playerIndex) {
     defense = Math.floor(defense / (f.defenseDivisor ?? 1));
   }
   return {
-    name: f.name, attack, defense, missing, complete: missing === 0,
+    name: f.name, attack, defense, missing, blinded, complete: missing === 0 && !blinded,
     damageGrade: f.damageGrade ?? 1, // Damage Counters dealt when its attack lands
     defenseGrade: f.defenseGrade ?? 0, // taken off an incoming attack's Damage Grade
   };
@@ -115,9 +120,14 @@ export function formationStats(game, playerIndex) {
 //   With Drazel's Katana (hitRule "highestTotal") working on a unit in the attacking
 //   Formation, it destroys their unit with the highest Attack + Defense instead.
 // - Against no active Formation: it always lands, deals exactly 1 counter, and destroys nothing.
-export function attackPreview(game, playerIndex = game.activePlayer) {
+// - { artifact: slot } previews the attack with that unit's Blinding Beacon activated.
+export function attackPreview(game, playerIndex = game.activePlayer, { artifact = null } = {}) {
+  const enemy = game.players[1 - playerIndex];
+  const wasBlinded = enemy.blinded;
+  if (artifact !== null && game.players[playerIndex].ups[artifact]?.artifact?.activate === "blindFormation") enemy.blinded = true;
   const mine = formationStats(game, playerIndex);
   const theirs = formationStats(game, 1 - playerIndex);
+  enemy.blinded = wasBlinded;
   const guarded = !!theirs?.complete;
   const attack = mine?.complete ? mine.attack : 0;
   const defense = guarded ? theirs.defense : 0;
@@ -159,6 +169,47 @@ function savingTraps(p) {
 }
 
 // A landed hit's loss: one candidate is destroyed; tied candidates go to the defender's choice.
+// Whether the player's Formation already holds this Artifact (by card id), ignoring `exceptSlot`.
+// Attaching outside the Formation is always fine.
+function formationHas(p, cardId, slot) {
+  const slots = p.formationZone?.slots ?? [];
+  if (!slots.includes(slot)) return false;
+  return slots.some((s) => s !== slot && p.ups[s]?.artifact && catalogueId(p.ups[s].artifact) === cardId);
+}
+
+// Why the Artifact on the unit in `slot` can't be activated with this attack, or null.
+// Placeholder (Planner): the unit has to be in the attacking Formation. Cooldown counts your
+// own turns: used on turn 3 with cooldown 2, it's ready again on turn 5.
+function artifactProblem(game, playerIndex, slot) {
+  const p = game.players[playerIndex];
+  const unit = isSlot(p, slot) ? unitAt(p, slot) : null;
+  const a = unit?.artifact;
+  if (!a) return "There's no Artifact there.";
+  if (!a.activate) return `${a.name} can't be activated.`;
+  if (!(p.formationZone?.slots ?? []).includes(slot)) return `${unit.name} has to be in your Formation to use ${a.name}.`;
+  if (a.readyNextTurn) return `${a.name} takes effect next turn.`;
+  if (a.readyOnTurn > game.turn) return `${a.name} is cooling down until turn ${a.readyOnTurn}.`;
+  return null;
+}
+
+// Activates the Artifact: Blinding Beacon ("blindFormation") deactivates the opponent's
+// Formation until the start of their turn. It uses a charge, starts its cooldown, and after
+// its last charge it goes to the Grave.
+function useArtifact(game, playerIndex, slot) {
+  const p = game.players[playerIndex];
+  const unit = p.ups[slot];
+  const a = unit.artifact;
+  if (a.activate === "blindFormation") game.players[1 - playerIndex].blinded = true;
+  a.chargesLeft -= 1;
+  a.readyOnTurn = game.turn + (a.cooldown ?? 0);
+  game.log.push(`${p.name} activates ${a.name}: ${game.players[1 - playerIndex].name}'s Formation is deactivated for this Battle Phase.`);
+  if (a.chargesLeft <= 0) {
+    delete unit.artifact;
+    p.graveyard.push(cleanArtifact(a));
+    game.log.push(`${a.name} is used up and goes to the Grave.`);
+  } else game.log.push(`${a.name} has ${a.chargesLeft} charge${a.chargesLeft === 1 ? "" : "s"} left, ready again on turn ${a.readyOnTurn}.`);
+}
+
 function resolveLoss(game, playerIndex, slots) {
   if (slots.length === 1) return destroyUnit(game, playerIndex, slots[0]);
   // Placeholder: when candidates tie, the defender picks which unit goes.
@@ -290,6 +341,8 @@ function startTurn(game) {
   if (game.activePlayer === game.startingPlayer) game.turn += 1;
   const p = game.players[game.activePlayer];
   refreshEnergy(p);
+  // Blinding Beacon: a blinded Formation reactivates at the start of its owner's turn.
+  if (p.blinded) { delete p.blinded; game.log.push(`${p.name}'s Formation can see again.`); }
   // RULES.md: one promotion per turn (Field Spells may raise this later),
   // and your Formation can attack once per Battle Phase (placeholder).
   game.promotionsLeft = PROMOTIONS_PER_TURN;
@@ -311,6 +364,10 @@ function startDraw(game) {
   for (const unit of p.ups) if (unit?.equipment?.readyNextTurn) {
     delete unit.equipment.readyNextTurn;
     game.log.push(`${unit.name}'s ${unit.equipment.name} takes effect.`);
+  }
+  for (const unit of p.ups) if (unit?.artifact?.readyNextTurn) {
+    delete unit.artifact.readyNextTurn;
+    game.log.push(`${unit.name}'s ${unit.artifact.name} takes effect.`);
   }
   for (const student of academyOf(game, game.activePlayer)?.enrolled ?? []) student.due = student.ready <= game.turn;
   nextGraduation(game);
@@ -445,13 +502,13 @@ const ACTIONS = {
       if (!unlimitedPromotion(game, game.activePlayer, base)) game.promotionsLeft -= 1;
       // Equipment stays on through a promotion, unless the new Grade is above its maxGrade
       // (Practice Gear: Grades 1-3), and then it goes to the Grave.
-      const { under = [], equipment, ...baseCard } = base;
+      const { under = [], equipment, artifact, ...baseCard } = base;
       const outgrown = equipment && !fitsGrade(equipment, card);
       const kept = equipment && !outgrown ? equipment : null;
       // Drazel takes the total Defense when the Equipment stays on (and it's already working).
       const copiesTotal = kept && !kept.readyNextTurn && card.variableDefense?.promoted === "base";
       const defense = arrivingDefense(card, base, copiesTotal ? unitStats(game, game.activePlayer, action.slot).defense : null);
-      p.ups[action.slot] = { ...card, defense, under: [...under, baseCard], ...(kept ? { equipment: copiesTotal ? { ...kept, defenseCopied: true } : kept } : {}) };
+      p.ups[action.slot] = { ...card, defense, under: [...under, baseCard], ...(kept ? { equipment: copiesTotal ? { ...kept, defenseCopied: true } : kept } : {}), ...(artifact ? { artifact } : {}) };
       game.log.push(`${p.name} promotes ${base.name} to ${card.name}.`);
       if (outgrown) {
         const { readyNextTurn, defenseCopied, ...gear } = equipment;
@@ -471,6 +528,11 @@ const ACTIONS = {
       if (!isSlot(p, action.to)) return "Pick one of your Unit Position Slots.";
       if (p.ups[action.to]?.faceDown) return "There's a set card in that slot."; // placeholder: set cards stay put
       if (action.to === action.from) return "That unit is already there.";
+      // Only one of each onePerFormation Artifact (Blinding Beacon) in your Formation, after the move.
+      const after = [...p.ups];
+      [after[action.to], after[action.from]] = [p.ups[action.from], p.ups[action.to]];
+      const ids = (p.formationZone?.slots ?? []).flatMap((s) => (after[s]?.artifact?.onePerFormation ? [catalogueId(after[s].artifact)] : []));
+      if (new Set(ids).size < ids.length) return "Only one of each of those Artifacts can be in your Formation.";
       return null;
     },
     apply(game, action) {
@@ -575,6 +637,38 @@ const ACTIONS = {
         unit.equipment = card;
         game.log.push(`${p.name} equips ${unit.name} with ${card.name}.`);
       }
+    },
+  },
+
+  // { type: "attach", player, card, slot }: attach an Artifact from your hand to your unit in that
+  // slot during Preparation Phase I or II, paying its cost (RULES.md, Blinding Beacon).
+  // Placeholders (Planner): the unit must share a Signet, one Artifact per unit (alongside its
+  // Equipment), it stays on through promotion, goes to the Grave with its unit, and attached in
+  // Phase II it works from your next Phase I. `onePerFormation`: only one copy in your Formation.
+  attach: {
+    check(game, action) {
+      const p = game.players[game.activePlayer];
+      if (!PREP.includes(game.phase)) return "You can only attach an Artifact in a Preparation Phase.";
+      const i = handIndex(p, action.card);
+      if (i < 0) return "That card isn't in your hand.";
+      const card = p.hand[i];
+      if (card.type !== "artifact") return "That isn't an Artifact card.";
+      const unit = isSlot(p, action.slot) ? unitAt(p, action.slot) : null;
+      if (!unit) return "There's no unit there to attach it to.";
+      if (!(card.signets ?? []).some((s) => (unit.signets ?? []).includes(s))) return `${card.name} can only go on a unit with the same Signet.`;
+      if (unit.artifact) return `${unit.name} already has ${unit.artifact.name}.`;
+      if (card.onePerFormation && formationHas(p, catalogueId(card), action.slot)) return `Only one ${card.name} can be in your Formation.`;
+      if (cardCost(card) > p.energy) return `${card.name} costs ${cardCost(card)} Energy and you have ${p.energy}.`;
+      return null;
+    },
+    apply(game, action) {
+      const p = game.players[game.activePlayer];
+      const [card] = p.hand.splice(handIndex(p, action.card), 1);
+      spendEnergy(p, cardCost(card));
+      const unit = p.ups[action.slot];
+      const later = game.phase === "prep2";
+      unit.artifact = { ...card, chargesLeft: card.charges ?? 1, readyOnTurn: 0, ...(later ? { readyNextTurn: true } : {}) };
+      game.log.push(`${p.name} attaches ${card.name} to ${unit.name}.${later ? " It takes effect next turn." : ""}`);
     },
   },
 
@@ -704,12 +798,15 @@ const ACTIONS = {
       if (!mine) return "You need a Formation set to attack.";
       if (!mine.complete) return `${mine.name} needs ${mine.missing} more unit${mine.missing === 1 ? "" : "s"} in its slots.`;
       if (game.formationAttacked) return "Your Formation has already attacked this turn.";
+      if (action.artifact !== undefined && action.artifact !== null) return artifactProblem(game, game.activePlayer, action.artifact);
       return null;
     },
     apply(game, action) {
       const me = game.activePlayer;
       const p = game.players[me];
       const enemy = game.players[1 - me];
+      const slot = action.artifact ?? null;
+      if (slot !== null) useArtifact(game, me, slot);
       const { attack, defense, hits, counters, destroys, mine, theirs } = attackPreview(game, me);
       game.formationAttacked = true;
       const against = theirs ? `${theirs.name} (${defense})` : "no active Formation";
@@ -894,9 +991,11 @@ export function legalActions(game) {
       candidates.push({ type: "promote", player, card: i, slot });
       candidates.push({ type: "equip", player, card: i, slot });
       candidates.push({ type: "setTrap", player, card: i, slot });
+      candidates.push({ type: "attach", player, card: i, slot });
     });
   });
   candidates.push({ type: "attack", player });
+  p.ups.forEach((u, slot) => u?.artifact?.activate && candidates.push({ type: "attack", player, artifact: slot }));
   const seenFormations = new Set();
   for (const c of p.deck) {
     if (c.type !== "formation" || seenFormations.has(c.cardId ?? c.id)) continue; // one choice per Formation name
