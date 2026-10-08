@@ -53,6 +53,9 @@ export function destroyUnit(game, playerIndex, slot, message = null) {
 }
 
 const isSlot = (p, slot) => Number.isInteger(slot) && slot >= 0 && slot < p.ups.length;
+// A set Trap sits face-down in a Unit Position Slot as { ...card, faceDown: true } (RULES.md, Stand Strong).
+// It fills the slot but isn't a unit: it has no stats, and a Formation slot holding it counts as empty.
+export const unitAt = (p, slot) => (p.ups[slot] && !p.ups[slot].faceDown ? p.ups[slot] : null);
 
 // The summon action names a hand card either by its hand index (a number) or by
 // its instance id (a string like "ARM-001#2"). Returns the hand index, or -1.
@@ -66,7 +69,7 @@ export function cardCost(card) {
 // numbers, like { attackPercent: 25 } (rounded down). Percent applies first, then flat.
 // Returns null for an empty slot.
 export function unitStats(game, playerIndex, slot) {
-  const unit = game.players[playerIndex].ups[slot];
+  const unit = unitAt(game.players[playerIndex], slot);
   if (!unit) return null;
   // Equipment set in Preparation Phase II (equipment.readyNextTurn) does nothing until your next Phase I.
   const boost = (!unit.equipment?.readyNextTurn && unit.equipment?.boost) || {};
@@ -86,7 +89,7 @@ export function formationStats(game, playerIndex) {
   const f = p.formationZone;
   if (!f) return null;
   // Each unit's Equipment boost is applied and rounded down first, then the Formation adds them up.
-  const units = f.slots.filter((slot) => p.ups[slot]).map((slot) => unitStats(game, playerIndex, slot));
+  const units = f.slots.filter((slot) => unitAt(p, slot)).map((slot) => unitStats(game, playerIndex, slot));
   const missing = f.slots.length - units.length;
   let attack = units.reduce((total, u) => total + u.attack, 0);
   let defense = units.reduce((total, u) => total + u.defense, 0);
@@ -143,16 +146,29 @@ function attackerHitRule(game, playerIndex) {
 // The Formation slots holding the player's unit(s) with the highest Attack + Defense, Equipment included.
 export function highestTotalSlots(game, playerIndex) {
   const p = game.players[playerIndex];
-  const slots = (p.formationZone?.slots ?? []).filter((slot) => p.ups[slot]);
+  const slots = (p.formationZone?.slots ?? []).filter((slot) => unitAt(p, slot));
   const total = (slot) => { const s = unitStats(game, playerIndex, slot); return s.attack + s.defense; };
   const top = Math.max(...slots.map(total));
   return slots.filter((slot) => total(slot) === top);
 }
 
 // The Formation slots holding the player's lowest-Grade unit(s).
+// Set Traps of this player that can save a unit from an attack (Stand Strong: response "saveUnit").
+function savingTraps(p) {
+  return p.ups.flatMap((c, slot) => (c?.faceDown && c.type === "trap" && c.response === "saveUnit" ? [slot] : []));
+}
+
+// A landed hit's loss: one candidate is destroyed; tied candidates go to the defender's choice.
+function resolveLoss(game, playerIndex, slots) {
+  if (slots.length === 1) return destroyUnit(game, playerIndex, slots[0]);
+  // Placeholder: when candidates tie, the defender picks which unit goes.
+  game.pending = { type: "chooseLoss", player: playerIndex, slots };
+  game.log.push(`${game.players[playerIndex].name} chooses which unit goes to the Grave.`);
+}
+
 export function lowestGradeSlots(game, playerIndex) {
   const p = game.players[playerIndex];
-  const slots = (p.formationZone?.slots ?? []).filter((slot) => p.ups[slot]);
+  const slots = (p.formationZone?.slots ?? []).filter((slot) => unitAt(p, slot));
   const lowest = Math.min(...slots.map((slot) => p.ups[slot].grade));
   return slots.filter((slot) => p.ups[slot].grade === lowest);
 }
@@ -411,7 +427,7 @@ const ACTIONS = {
       if (i < 0) return "That card isn't in your hand.";
       const card = p.hand[i];
       if (card.type !== "unit") return "Only units can promote.";
-      const base = p.ups[action.slot];
+      const base = isSlot(p, action.slot) ? unitAt(p, action.slot) : null;
       if (!base) return "There's no unit there to promote.";
       if (card.grade !== base.grade + 1) return `${card.name} is Grade ${card.grade} and can only promote a Grade ${card.grade - 1} unit.`;
       if (!inPromotionLine(base, card)) return `${card.name} isn't next in ${base.name}'s promotion line.`;
@@ -451,8 +467,9 @@ const ACTIONS = {
     check(game, action) {
       const p = game.players[game.activePlayer];
       if (game.phase !== "prep1") return "You can only move units in Preparation Phase I.";
-      if (!isSlot(p, action.from) || !p.ups[action.from]) return "There's no unit there to move.";
+      if (!isSlot(p, action.from) || !unitAt(p, action.from)) return "There's no unit there to move.";
       if (!isSlot(p, action.to)) return "Pick one of your Unit Position Slots.";
+      if (p.ups[action.to]?.faceDown) return "There's a set card in that slot."; // placeholder: set cards stay put
       if (action.to === action.from) return "That unit is already there.";
       return null;
     },
@@ -472,7 +489,7 @@ const ACTIONS = {
     check(game, action) {
       const p = game.players[game.activePlayer];
       if (game.phase !== "prep1") return "You can only retire units in Preparation Phase I.";
-      if (!isSlot(p, action.slot) || !p.ups[action.slot]) return "There's no unit there to retire.";
+      if (!isSlot(p, action.slot) || !unitAt(p, action.slot)) return "There's no unit there to retire.";
       return null;
     },
     apply(game, action) {
@@ -536,7 +553,7 @@ const ACTIONS = {
       if (i < 0) return "That card isn't in your hand.";
       const card = p.hand[i];
       if (card.type !== "equipment") return "That isn't an Equipment card.";
-      const unit = isSlot(p, action.slot) ? p.ups[action.slot] : null;
+      const unit = isSlot(p, action.slot) ? unitAt(p, action.slot) : null;
       if (!unit) return "There's no unit there to equip.";
       if (!(card.signets ?? []).some((s) => (unit.signets ?? []).includes(s))) return `${card.name} can only go on a unit with the same Signet.`;
       if (card.onlyOn && !card.onlyOn.includes(catalogueId(unit))) return `${card.name} can't go on ${unit.name}.`;
@@ -700,12 +717,65 @@ const ACTIONS = {
       enemy.damage += counters;
       game.log.push(`${p.name}'s ${mine.name} (${attack}) breaks through ${against} for ${counters} Damage Counter${counters === 1 ? "" : "s"}. ${enemy.name} has ${enemy.damage}.`);
       if (enemy.damage >= MAX_DAMAGE) return win(game, me, `${enemy.name} reached ${MAX_DAMAGE} Damage Counters.`);
-      if (destroys.length === 1) destroyUnit(game, 1 - me, destroys[0]);
-      // Placeholder: when lowest Grades tie, the defender picks which unit goes.
-      if (destroys.length > 1) {
-        game.pending = { type: "chooseLoss", player: 1 - me, slots: destroys };
-        game.log.push(`${enemy.name} chooses which unit goes to the Grave.`);
+      if (!destroys.length) return;
+      // RULES.md (Stand Strong): a set Trap that saves units can answer before anything is destroyed.
+      // Placeholder: the Damage Counters above still count; the Trap only saves the unit.
+      const traps = savingTraps(enemy);
+      if (traps.length) {
+        game.pending = { type: "trapResponse", player: 1 - me, slots: traps, targets: destroys };
+        return game.log.push(`${enemy.name} can respond with a set card.`);
       }
+      resolveLoss(game, 1 - me, destroys);
+    },
+  },
+
+  // { type: "trapResponse", player, slot }: answers game.pending { type: "trapResponse" } on the
+  // opponent's attack. slot is one of pending.slots to activate that Trap, or null to pass.
+  // Stand Strong (response "saveUnit") goes to the Grave instead of the unit in pending.targets.
+  trapResponse: {
+    check(game, action) {
+      if (game.pending?.type !== "trapResponse") return "There's nothing to respond to right now.";
+      if (action.slot !== null && !game.pending.slots.includes(action.slot)) return "Pick one of your set cards that can respond, or pass.";
+      return null;
+    },
+    apply(game, action) {
+      const { player, targets } = game.pending;
+      game.pending = null;
+      const p = game.players[player];
+      if (action.slot === null) {
+        game.log.push(`${p.name} doesn't respond.`);
+        return resolveLoss(game, player, targets);
+      }
+      const { faceDown, ...trap } = p.ups[action.slot];
+      p.ups[action.slot] = null;
+      p.graveyard.push(trap);
+      const saved = targets.length === 1 ? `${p.ups[targets[0]].name} is saved` : "no unit is destroyed";
+      game.log.push(`${p.name} activates ${trap.name}: it goes to the Grave instead, and ${saved}.`);
+    },
+  },
+
+  // { type: "setTrap", player, card, slot }: set a Trap from your hand face-down in an empty Unit
+  // Position Slot during Preparation Phase I or II (RULES.md, Stand Strong). Placeholder: its cost is
+  // paid when it's set, and a set card stays where it is.
+  setTrap: {
+    check(game, action) {
+      const p = game.players[game.activePlayer];
+      if (!PREP.includes(game.phase)) return "You can only set a Trap in a Preparation Phase.";
+      const i = handIndex(p, action.card);
+      if (i < 0) return "That card isn't in your hand.";
+      const card = p.hand[i];
+      if (card.type !== "trap") return "That isn't a Trap card.";
+      if (!isSlot(p, action.slot)) return "Pick one of your Unit Position Slots.";
+      if (p.ups[action.slot]) return "That slot is taken.";
+      if (cardCost(card) > p.energy) return `${card.name} costs ${cardCost(card)} Energy and you have ${p.energy}.`;
+      return null;
+    },
+    apply(game, action) {
+      const p = game.players[game.activePlayer];
+      const [card] = p.hand.splice(handIndex(p, action.card), 1);
+      spendEnergy(p, cardCost(card));
+      p.ups[action.slot] = { ...card, faceDown: true };
+      game.log.push(`${p.name} sets a card face-down.`);
     },
   },
 
@@ -761,7 +831,7 @@ export function checkAction(game, action) {
   if (game.pending) {
     const who = game.players[game.pending.player].name;
     if (action.type !== game.pending.type) {
-      const waiting = { graduate: "choose who comes out of the Academy", specialDraw: "pick a Special Deck to draw from", chooseLoss: "choose which unit goes to the Grave" };
+      const waiting = { graduate: "choose who comes out of the Academy", specialDraw: "pick a Special Deck to draw from", chooseLoss: "choose which unit goes to the Grave", trapResponse: "decide whether to respond" };
       return `${who} has to ${waiting[game.pending.type]} first.`;
     }
     if (action.player !== undefined && action.player !== game.pending.player) return `It's ${who}'s choice.`;
@@ -786,7 +856,7 @@ export function applyAction(game, action) {
 // Stored as p.playerGrade after every action, for the board.
 export function playerGrade(game, playerIndex) {
   const p = game.players[playerIndex];
-  return Math.max(p.playerGrade ?? 0, ...p.ups.filter(Boolean).map((u) => u.grade ?? 0));
+  return Math.max(p.playerGrade ?? 0, ...p.ups.filter((u) => u && !u.faceDown).map((u) => u.grade ?? 0));
 }
 function updatePlayerGrades(game) {
   game.players.forEach((p, i) => (p.playerGrade = playerGrade(game, i)));
@@ -806,6 +876,10 @@ export function legalActions(game) {
     const { player, decks } = game.pending;
     return decks.map((deck) => ({ type: "specialDraw", player, deck }));
   }
+  if (game.pending?.type === "trapResponse") {
+    const { player, slots } = game.pending;
+    return [...slots, null].map((slot) => ({ type: "trapResponse", player, slot }));
+  }
   const player = game.activePlayer;
   const p = game.players[player];
   const candidates = [{ type: "endTurn", player }, { type: "nextPhase", player }];
@@ -817,6 +891,7 @@ export function legalActions(game) {
       candidates.push({ type: "summon", player, card: i, slot });
       candidates.push({ type: "promote", player, card: i, slot });
       candidates.push({ type: "equip", player, card: i, slot });
+      candidates.push({ type: "setTrap", player, card: i, slot });
     });
   });
   candidates.push({ type: "attack", player });
