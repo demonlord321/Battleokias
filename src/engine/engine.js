@@ -754,17 +754,19 @@ const ACTIONS = {
     },
   },
 
-  // { type: "setTrap", player, card, slot }: set a Trap from your hand face-down in an empty Unit
-  // Position Slot during Preparation Phase I or II (RULES.md, Stand Strong). Placeholder: its cost is
-  // paid when it's set, and a set card stays where it is.
+  // { type: "setTrap", player, card, slot }: set a Trap or a Spell from your hand face-down in an
+  // empty Unit Position Slot during Preparation Phase I or II. Basic rule (Dyllan): Traps and Spells
+  // go in available slots unless the card says otherwise; Field Spells keep their own zone.
+  // Placeholders: the cost is paid when it's set, a set card stays where it is, and a set Spell
+  // can't be activated yet (no Spell effects exist).
   setTrap: {
     check(game, action) {
       const p = game.players[game.activePlayer];
-      if (!PREP.includes(game.phase)) return "You can only set a Trap in a Preparation Phase.";
+      if (!PREP.includes(game.phase)) return "You can only set a card in a Preparation Phase.";
       const i = handIndex(p, action.card);
       if (i < 0) return "That card isn't in your hand.";
       const card = p.hand[i];
-      if (card.type !== "trap") return "That isn't a Trap card.";
+      if (card.type !== "trap" && card.type !== "spell") return "Only Traps and Spells are set in a slot.";
       if (!isSlot(p, action.slot)) return "Pick one of your Unit Position Slots.";
       if (p.ups[action.slot]) return "That slot is taken.";
       if (cardCost(card) > p.energy) return `${card.name} costs ${cardCost(card)} Energy and you have ${p.energy}.`;

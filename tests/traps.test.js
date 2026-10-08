@@ -60,6 +60,20 @@ test("Stand Strong is set face-down in an empty slot in either Preparation Phase
   assert.match(checkAction(game, { type: "setTrap", player: 0, card: other.id, slot: 5 }), /Preparation Phase/);
 });
 
+test("Spells are set face-down in a slot too, but Field Spells aren't", () => {
+  const game = start();
+  const p = game.players[0];
+  const spell = copy("MAG-002");
+  const field = copy("FLD-001");
+  const unit = copy("ARM-010");
+  p.hand.push(spell, field, unit);
+  assert.match(checkAction(game, { type: "setTrap", player: 0, card: field.id, slot: 3 }), /Only Traps and Spells/);
+  assert.match(checkAction(game, { type: "setTrap", player: 0, card: unit.id, slot: 3 }), /Only Traps and Spells/);
+  ok(game, { type: "setTrap", player: 0, card: spell.id, slot: 3 });
+  assert.equal(p.ups[3].faceDown, true);
+  assert.equal(p.ups[3].name, "Arcane Bolt");
+});
+
 test("a Trap in a Formation slot leaves the Formation inactive", () => {
   const game = start();
   const p = game.players[0];

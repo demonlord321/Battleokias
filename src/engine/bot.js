@@ -68,8 +68,8 @@ export function chooseAction(game, player = actingPlayer(game)) {
       .filter((a) => !(enroll && (handCard(a)?.cardId ?? handCard(a)?.id) === studentId))
       .sort((a, b) => inFormation(a) - inFormation(b) || handCard(b).grade - handCard(a).grade || a.slot - b.slot)[0] ||
     of("equip").sort((a, b) => inFormation(a) - inFormation(b) || me.ups[b.slot].grade - me.ups[a.slot].grade)[0] ||
-    // Set Traps only in slots the Formation doesn't need, so it stays active.
-    of("setTrap").filter((a) => inFormation(a))[0] ||
+    // Set Traps that do something, only in slots the Formation doesn't need, so it stays active.
+    of("setTrap").filter((a) => inFormation(a) && handCard(a)?.type === "trap" && handCard(a)?.response)[0] ||
     (of("attack")[0] && attackPreview(view, player).hits && of("attack")[0]) ||
     of("nextPhase")[0] ||
     of("endTurn")[0];
