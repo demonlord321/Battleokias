@@ -100,7 +100,7 @@ Open questions (placeholders in brackets):
 |---|---|---|
 | **Unit** | Your creatures | Unit Position Slots (UPS) |
 | **Spell** | Spells with effects | An empty Unit Position Slot, unless the card says otherwise |
-| **Field Spell** | Affects the field | (?) The Field Effect Zone is removed for now. Placeholder: an empty Unit Position Slot |
+| **Field Spell** | Affects the field | Field Effect Zone |
 | **Trap** | Set face-down, activated on the opponent's turn | An empty Unit Position Slot, unless the card says otherwise |
 | **Equipment** | Placed over a unit with a shared Signet; boosts or changes it (see Equipment). Special Deck only | On a unit in the grid |
 | **Artifact** | (?) Usually attaches to a unit | On a unit, usually |
@@ -369,7 +369,7 @@ Open questions:
   - It's the first card that responds on the opponent's turn, so the engine raises a choice for the defender, and in hot-seat the board shows the hand-over screen.
 
 ## Field Spells
-A Field Spell stays on the field, giving an ongoing effect. The Field Effect Zone is removed for now, so the placeholder is that it sits in an empty Unit Position Slot (see **Field layout**).
+A Field Spell goes in the **Field Effect Zone (FEZ)** and stays there, giving an ongoing effect.
 
 ### Field Spell: Arms Academy (School of Arms, from Dyllan)
 - **Effect:** In your **Preparation Phase I**, you may send a **Student of Arms** from your hand to the Academy. (Specific to this line: Student of Arms in, Graduate of Arms out.)
@@ -466,11 +466,12 @@ Shown alongside each player's **Hand** (the zone where drawn cards go).
 Each player has their own half of the table. The opponent's half is the player's half
 rotated 180 degrees (a true mirror across the table), so from our view their Draw Pile
 is **top left**, their Grave Pile sits below it, their Special Deck Zones face the centre,
-and their Formation Zone is top right.
+and their Field Effect Zone is top right.
 
 Full board as seen by the player:
 
 ```
+                              [FEZ]        <- opponent Field Effect Zone
                               [FZ ]        <- opponent Formation Zone
  [Draw ]    [UPS][UPS][UPS]
             [UPS][UPS][UPS]               opponent
@@ -482,18 +483,18 @@ Full board as seen by the player:
         [UPS][UPS][UPS]                   player
         [UPS][UPS][UPS]       [Draw ]
  [FZ ]                                   <- player Formation Zone
+ [FEZ]                                   <- player Field Effect Zone
 ```
 
 - **Unit Position Slots (UPS):** a 3x3 grid of 9 slots for units.
 - **Draw Pile:** bottom right (top left for the opponent).
 - **Grave Pile:** directly above the Draw Pile; the discard zone.
 - **Special Deck Zones (SDZ):** four zones above the 3x3 grid. Each holds one of your Special Decks.
-- **Field Effect Zone (FEZ):** removed for now (Dyllan, 8 Oct).
-- **Formation Zone (FZ):** bottom left of the grid; holds Formation cards.
+- **Field Effect Zone (FEZ):** bottom left of the grid; holds Field Spells. Dyllan briefly removed it on 8 Oct, then put it back.
+- **Formation Zone (FZ):** directly above the Field Effect Zone; holds Formation cards.
 
 Open questions:
-- **No Field Effect Zone for now** (confirmed by Dyllan, 8 Oct).
-  - **(?)** Where do Field Spells like Arms Academy go without it? Placeholder: in an empty unit slot, like other Spells, until Dyllan decides.
+- **(?)** What goes in the Field Effect Zone? One field card at a time? (Placeholder: one Field Spell at a time.)
 - **Spells and Traps are set in the UPS grid**, only in an empty slot (confirmed by Dyllan).
 
 ## Still to define (continued)

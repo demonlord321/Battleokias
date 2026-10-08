@@ -72,8 +72,7 @@ Uses the placeholder rules in `RULES.md`; Dyllan refines them as we play.
 - [ ] Sena, Mistress of the Shadows (`ARM-ASS-002`): Grade 4 Rogue, 3500/3500; Pickpocket destroys 1 opposing Item, Artifact or Equipment when she's summoned. Engine: summon effects with a target choice, Developer; picking the target on the board, Mapmaker
 - [ ] Formation cost is now its Damage Grade, and Damage Grade 0 costs 1 (Frontal Assault 1, Vanguard Charge 2, Line Defense keeps its printed 2 for now), Developer
 - [ ] On a tie for lowest Grade, the attacker picks which unit is destroyed instead of the defender. Engine choice, Developer; picker, Mapmaker
-- [ ] Remove the Field Effect Zone from the board for now (placeholder: Field Spells like Arms Academy go in an empty unit slot), Mapmaker + Developer
-- [ ] Open questions for Dyllan (8 Oct): Drazel and Galent lost Mercenary in `cards.json` but their IDs still say MER; what Sena's `ASS` Signet is; whether promoting into Sena triggers Pickpocket; Line Defense cost 2 or 1; where Field Spells go
+- [ ] Open questions for Dyllan (8 Oct): Drazel and Galent lost Mercenary in `cards.json` but their IDs still say MER; what Sena's `ASS` Signet is; whether promoting into Sena triggers Pickpocket; Line Defense cost 2 or 1
 - [ ] Dyllan playtests and replaces placeholder rules, Planner updates `RULES.md`
 
 ## Milestone 2: Playable board
