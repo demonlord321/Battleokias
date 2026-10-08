@@ -357,5 +357,17 @@
     "hitRule": "highestTotal",
     "text": "Equip to Drazel, Instructor of the Blade only. He gets +500 Attack. Drazel does not conform to slaying the weak: while he is in your attacking Formation and its attack lands, the opponent's unit destroyed is the one with the highest Attack plus Defense.",
     "image": "images/eqp-002.png"
+  },
+  {
+    "id": "TRP-001",
+    "name": "Stand Strong",
+    "type": "trap",
+    "signets": [
+      "arms"
+    ],
+    "cost": 1,
+    "response": "saveUnit",
+    "text": "Set in an empty Unit Position Slot during your Preparation Phase I or II. During your opponent's Battle Phase, when one of your units would be destroyed, send this card to the Grave instead.",
+    "image": "images/trp-001.png"
   }
 ]

@@ -90,6 +90,8 @@ export function checkCards(cards) {
       if (card.type !== "equipment" || !Array.isArray(card.onlyOn) || !card.onlyOn.length) problems.push(`${where}: "onlyOn" goes on Equipment and should be a list of unit ids.`);
       else for (const id of card.onlyOn) if (!ids.has(id)) problems.push(`${where}: "onlyOn" names "${id}", which isn't a unit in cards.json.`);
     }
+    if ("response" in card && (card.type !== "trap" || !["saveUnit"].includes(card.response)))
+      problems.push(`${where}: "response" goes on a Trap and can be "saveUnit".`);
     if ("maxCopies" in card && (!Number.isInteger(card.maxCopies) || card.maxCopies < 1))
       problems.push(`${where}: "maxCopies" should be a whole number from 1 up.`);
     if ("hitRule" in card && (card.type !== "equipment" || !["highestTotal"].includes(card.hitRule)))
