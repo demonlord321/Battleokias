@@ -35,10 +35,10 @@ test("Frontal Assault sums the three front-row units and ignores the rest", () =
   applyAction(game, { type: "setFormation", player: 0, card: lastCard(game) });
   place(game, 0, 0, unit(1, 500, 500)); // Student
   place(game, 0, 1, unit(2, 1500, 1000)); // Apprentice
-  assert.deepEqual(formationStats(game, 0), { name: "Frontal Assault", attack: 2000, defense: 1500, missing: 1, blinded: false, complete: false, damageGrade: 1, defenseGrade: 0 });
+  assert.deepEqual(formationStats(game, 0), { name: "Frontal Assault", slots: [0, 1, 2], attack: 2000, defense: 1500, missing: 1, blinded: false, complete: false, canAttack: true, damageGrade: 1, defenseGrade: 0 });
   place(game, 0, 2, unit(1, 500, 500)); // Student
   place(game, 0, 4, unit(3, 2000, 1500)); // Graduate in the middle row doesn't count
-  assert.deepEqual(formationStats(game, 0), { name: "Frontal Assault", attack: 2500, defense: 2000, missing: 0, blinded: false, complete: true, damageGrade: 1, defenseGrade: 0 });
+  assert.deepEqual(formationStats(game, 0), { name: "Frontal Assault", slots: [0, 1, 2], attack: 2500, defense: 2000, missing: 0, blinded: false, complete: true, canAttack: true, damageGrade: 1, defenseGrade: 0 });
 });
 
 test("a new Formation replaces the old one, which goes to the Grave (placeholder)", () => {
@@ -284,5 +284,37 @@ test("Vanguard Charge: the front row plus middle centre, Attack x1.5 and Defense
   place(game, 0, 4, unit(1, 500, 500)); // Student, middle centre
   place(game, 0, 3, unit(3, 2000, 1500)); // middle left doesn't count
   // 4500 x 1.5 = 6750 Attack; 3500 / 1.5 = 2333.3, rounded down to 2333 Defense.
-  assert.deepEqual(formationStats(game, 0), { name: "Vanguard Charge", attack: 6750, defense: 2333, missing: 0, blinded: false, complete: true, damageGrade: 2, defenseGrade: 0 });
+  assert.deepEqual(formationStats(game, 0), { name: "Vanguard Charge", slots: [0, 1, 2, 4], attack: 6750, defense: 2333, missing: 0, blinded: false, complete: true, canAttack: true, damageGrade: 2, defenseGrade: 0 });
+});
+
+// Line Defense (RULES.md d751b3f): any one full row, Attack 0, Defense = Attack + Defense of that row.
+const lineDefense = () => ({ id: `FRM-003#${++n}`, cardId: "FRM-003", name: "Line Defense", type: "formation", cost: 2,
+  slotOptions: [[0, 1, 2], [3, 4, 5], [6, 7, 8]], combine: "wall", damageGrade: 0, defenseGrade: 1 });
+const vanguard = () => ({ id: `FRM-002#${++n}`, cardId: "FRM-002", name: "Vanguard Charge", type: "formation", cost: 1,
+  slots: [0, 1, 2, 4], combine: "scaled", attackMultiplier: 1.5, defenseDivisor: 1.5, damageGrade: 2, defenseGrade: 0 });
+
+test("Line Defense counts the strongest full row as a wall, can't attack, and its row takes the hit", () => {
+  const game = start();
+  const [me, them] = game.players;
+  me.formationZone = lineDefense();
+  [0, 1].forEach((s) => place(game, 0, s, unit(3, 2000, 1500))); // front row not full
+  assert.equal(formationStats(game, 0).complete, false);
+  [3, 4, 5].forEach((s) => place(game, 0, s, unit(1, 500, 500)));
+  [6, 7, 8].forEach((s) => place(game, 0, s, unit(2, 1500, 1000)));
+  const stats = formationStats(game, 0);
+  assert.deepEqual(stats.slots, [6, 7, 8]); // 7500 beats the Students' 3000
+  assert.equal(stats.attack, 0);
+  assert.equal(stats.defense, 7500);
+  assert.equal(stats.canAttack, false);
+  game.phase = "battle";
+  assert.match(checkAction(game, { type: "attack", player: 0 }), /can't attack/);
+  assert.equal(attackPreview(game, 0).hits, false);
+  // Vanguard with four Graduates: 12000 Attack gets through, 2 - 1 = 1 counter, and the lowest
+  // Grade in the counted row is destroyed.
+  them.formationZone = vanguard();
+  [0, 1, 2, 4].forEach((s) => place(game, 1, s, unit(3, 2000, 1500)));
+  const hit = attackPreview(game, 1);
+  assert.equal(hit.hits, true);
+  assert.equal(hit.counters, 1);
+  assert.deepEqual(hit.destroys, [6, 7, 8]);
 });
