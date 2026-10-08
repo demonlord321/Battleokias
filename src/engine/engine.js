@@ -46,7 +46,7 @@ export function destroyUnit(game, playerIndex, slot, message = null) {
   if (!unit) return null;
   const { under = [], equipment = null, artifact = null, ...card } = unit;
   p.ups[slot] = null;
-  const { readyNextTurn, defenseCopied, ...gear } = equipment ?? {};
+  const { readyNextTurn, defenseCopied, attackCopied, ...gear } = equipment ?? {};
   p.graveyard.push(...under, card, ...(equipment ? [gear] : []), ...(artifact ? [cleanArtifact(artifact)] : []));
   game.log.push(message ?? `${unit.name} goes to the Grave.`);
   return unit;
@@ -78,8 +78,9 @@ export function unitStats(game, playerIndex, slot) {
   const boost = (!unit.equipment?.readyNextTurn && unit.equipment?.boost) || {};
   // Drazel copied a Defense that already counted this Equipment, so it isn't added twice.
   const defBoost = unit.equipment?.defenseCopied ? {} : boost;
+  const atkBoost = unit.equipment?.attackCopied ? {} : boost; // Galent, the same way
   return {
-    attack: Math.floor((unit.attack * (100 + (boost.attackPercent ?? 0))) / 100) + (boost.attack ?? 0),
+    attack: Math.floor((unit.attack * (100 + (atkBoost.attackPercent ?? 0))) / 100) + (atkBoost.attack ?? 0),
     defense: Math.floor((unit.defense * (100 + (defBoost.defensePercent ?? 0))) / 100) + (defBoost.defense ?? 0),
   };
 }
@@ -309,16 +310,19 @@ export const promotionLine = (card) => card.signets?.[0] ?? null;
 // Equipment with maxGrade (Practice Gear: 3) only goes on, and only stays on, units up to that Grade.
 const fitsGrade = (equipment, unit) => !Number.isInteger(equipment.maxGrade) || unit.grade <= equipment.maxGrade;
 
-// The Defense a unit has when it arrives on the field. Most use their printed number. A unit
-// with variableDefense (Drazel) has variableDefense.summoned when summoned, and copies the
-// Defense of the unit it promotes: the printed number, or, when that unit's Equipment stays on
-// (RULES.md f6fc20c), its total Defense with the Equipment (baseTotal from unitStats).
-function arrivingDefense(card, base = null, baseTotal = null) {
-  const v = card.variableDefense;
-  if (!v) return card.defense;
+// The Attack or Defense (stat) a unit has when it arrives on the field. Most use their printed
+// number. A unit with variableDefense (Drazel) or variableAttack (Galent, his mirror image) has
+// .summoned when summoned, and copies that stat of the unit it promotes: the printed number, or,
+// when that unit's Equipment stays on (RULES.md f6fc20c), its total with the Equipment (baseTotal).
+const VARIABLE = { attack: "variableAttack", defense: "variableDefense" };
+function arrivingStat(card, stat, base = null, baseTotal = null) {
+  const v = card[VARIABLE[stat]];
+  if (!v) return card[stat];
   if (!base || v.promoted !== "base") return v.summoned;
-  return baseTotal ?? base.defense;
+  return baseTotal ?? base[stat];
 }
+// Both stats for a summoned unit.
+const arriving = (card) => ({ attack: arrivingStat(card, "attack"), defense: arrivingStat(card, "defense") });
 
 export function inPromotionLine(base, card) {
   if (card.promotesFrom) return card.promotesFrom.includes(catalogueId(base));
@@ -545,7 +549,7 @@ const ACTIONS = {
       const p = game.players[game.activePlayer];
       const [card] = p.hand.splice(handIndex(p, action.card), 1);
       spendEnergy(p, cardCost(card));
-      p.ups[action.slot] = { ...card, defense: arrivingDefense(card) };
+      p.ups[action.slot] = { ...card, ...arriving(card) };
       game.log.push(`${p.name} summons ${card.name}.`);
     },
   },
@@ -582,15 +586,20 @@ const ACTIONS = {
       const { under = [], equipment, artifact, ...baseCard } = base;
       const outgrown = equipment && !fitsGrade(equipment, card);
       const kept = equipment && !outgrown ? equipment : null;
-      // Drazel takes the total Defense when the Equipment stays on (and it's already working).
-      const copiesTotal = kept && !kept.readyNextTurn && card.variableDefense?.promoted === "base";
-      const defense = arrivingDefense(card, base, copiesTotal ? unitStats(game, game.activePlayer, action.slot).defense : null);
-      p.ups[action.slot] = { ...card, defense, under: [...under, baseCard], ...(kept ? { equipment: copiesTotal ? { ...kept, defenseCopied: true } : kept } : {}), ...(artifact ? { artifact } : {}) };
+      // Drazel takes the total Defense (Galent the total Attack) when the Equipment stays on and
+      // is already working; the Equipment's bonus to that stat then isn't added a second time.
+      const working = kept && !kept.readyNextTurn;
+      const totals = unitStats(game, game.activePlayer, action.slot);
+      const copies = (stat) => working && card[VARIABLE[stat]]?.promoted === "base";
+      const attack = arrivingStat(card, "attack", base, copies("attack") ? totals.attack : null);
+      const defense = arrivingStat(card, "defense", base, copies("defense") ? totals.defense : null);
+      const gear = kept && { ...kept, ...(copies("defense") ? { defenseCopied: true } : {}), ...(copies("attack") ? { attackCopied: true } : {}) };
+      p.ups[action.slot] = { ...card, attack, defense, under: [...under, baseCard], ...(gear ? { equipment: gear } : {}), ...(artifact ? { artifact } : {}) };
       game.log.push(`${p.name} promotes ${base.name} to ${card.name}.`);
       if (outgrown) {
-        const { readyNextTurn, defenseCopied, ...gear } = equipment;
-        p.graveyard.push(gear);
-        game.log.push(`${card.name} has outgrown ${gear.name}, and it goes to the Grave.`);
+        const { readyNextTurn, defenseCopied, attackCopied, ...old } = equipment;
+        p.graveyard.push(old);
+        game.log.push(`${card.name} has outgrown ${old.name}, and it goes to the Grave.`);
       }
     },
   },
