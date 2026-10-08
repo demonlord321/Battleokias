@@ -79,12 +79,21 @@ export function chooseAction(game, player = actingPlayer(game)) {
     of("setTrap").filter((a) => inFormation(a) && handCard(a)?.type === "trap" && handCard(a)?.response)[0] ||
     // Artifacts go on Formation units, so they can be activated when it attacks.
     of("attach").filter((a) => !inFormation(a))[0] ||
+    // If the attack wouldn't get through, swap a stronger unit into the Formation when that makes it land.
+    (!attackPreview(view, player).hits && of("move").find((a) => attackPreview(afterMove(view, player, a), player).hits)) ||
     (of("attack").find((a) => a.artifact == null) && attackPreview(view, player).hits && of("attack").find((a) => a.artifact == null)) ||
     // Blinding Beacon only when the plain attack can't get through: blinded, it lands for 1 counter.
     of("attack").filter((a) => a.artifact != null && attackPreview(view, player, { artifact: a.artifact }).hits)[0] ||
     of("nextPhase")[0] ||
     of("endTurn")[0];
   return pick ?? options[0];
+}
+
+// The view as it would be after a move (a swap when the target slot holds a unit), for previews.
+function afterMove(view, player, { from, to }) {
+  const ups = [...view.players[player].ups];
+  [ups[from], ups[to]] = [ups[to], ups[from]];
+  return { ...view, players: view.players.map((q, k) => (k === player ? { ...q, ups } : q)) };
 }
 
 export default chooseAction;
