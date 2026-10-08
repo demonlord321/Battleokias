@@ -85,24 +85,41 @@ export function unitStats(game, playerIndex, slot) {
 }
 
 // The slots a player's Formation counts right now. Most Formations have fixed `slots`. One with
-// `slotOptions` (Line Defense: any one full row) uses the strongest full option, by its units'
-// Attack + Defense; if none is full, the one closest to full (placeholder, Planner). Ties go to the first.
+// `slotOptions` (Line Defense: any one full row) uses the option the player picked with
+// chooseFormation (p.formationOption) while it's full (RULES.md a2392f0). Otherwise, placeholder
+// (Planner): the strongest full option by its units' Attack + Defense, or if none is full, the one
+// closest to full. Ties go to the first.
 export function formationSlots(game, playerIndex) {
-  const p = game.players[playerIndex];
-  const f = p.formationZone;
+  const f = game.players[playerIndex].formationZone;
   if (!f) return [];
   if (!f.slotOptions) return f.slots ?? [];
+  return f.slotOptions[formationOption(game, playerIndex)];
+}
+
+// Indexes into the Formation's slotOptions that are full right now ([] for fixed Formations).
+export function fullFormationOptions(game, playerIndex) {
+  const p = game.players[playerIndex];
+  const options = p.formationZone?.slotOptions ?? [];
+  return options.flatMap((slots, i) => (slots.every((s) => unitAt(p, s)) ? [i] : []));
+}
+
+// The slotOptions index in use (see formationSlots), or null for a Formation with fixed slots.
+export function formationOption(game, playerIndex) {
+  const p = game.players[playerIndex];
+  const f = p.formationZone;
+  if (!f?.slotOptions) return null;
+  if (fullFormationOptions(game, playerIndex).includes(p.formationOption)) return p.formationOption;
   const score = (slots) => {
     const missing = slots.filter((s) => !unitAt(p, s)).length;
     const total = missing ? 0 : slots.reduce((t, s) => { const u = unitStats(game, playerIndex, s); return t + u.attack + u.defense; }, 0);
     return { missing, total };
   };
-  let best = f.slotOptions[0];
-  let top = score(best);
-  for (const slots of f.slotOptions.slice(1)) {
+  let best = 0;
+  let top = score(f.slotOptions[0]);
+  f.slotOptions.forEach((slots, i) => {
     const sc = score(slots);
-    if (sc.missing < top.missing || (sc.missing === top.missing && sc.total > top.total)) { best = slots; top = sc; }
-  }
+    if (sc.missing < top.missing || (sc.missing === top.missing && sc.total > top.total)) { best = i; top = sc; }
+  });
   return best;
 }
 
@@ -138,6 +155,8 @@ export function formationStats(game, playerIndex) {
   const damageGrade = f.damageGrade ?? 1;
   return {
     name: f.name, slots, attack, defense, missing, blinded, complete: missing === 0 && !blinded,
+    options: fullFormationOptions(game, playerIndex), // slotOptions indexes that are full right now
+    option: formationOption(game, playerIndex), // the one in use (null for fixed slots)
     canAttack: damageGrade > 0, // Line Defense (Damage Grade 0) can't attack
     damageGrade, // Damage Counters dealt when its attack lands
     defenseGrade: f.defenseGrade ?? 0, // taken off an incoming attack's Damage Grade
@@ -638,6 +657,7 @@ const ACTIONS = {
       spendEnergy(p, cardCost(card));
       if (p.formationZone) p.graveyard.push(p.formationZone);
       p.formationZone = card;
+      delete p.formationOption;
       game.log.push(`${p.name} sets the Formation ${card.name}.`);
     },
   },
@@ -939,6 +959,23 @@ const ACTIONS = {
 
   // { type: "chooseLoss", player, slot }: the defender picks which of their tied
   // lowest-Grade units goes to the Grave. Only allowed while game.pending asks for it.
+  // { type: "chooseFormation", player, option }: pick which of your Formation's slotOptions it
+  // uses (Line Defense: which full row), in either Preparation Phase, for free (RULES.md a2392f0).
+  chooseFormation: {
+    check(game, action) {
+      const p = game.players[game.activePlayer];
+      if (!PREP.includes(game.phase)) return "You can only choose how your Formation activates in a Preparation Phase.";
+      if (!p.formationZone?.slotOptions) return "Your Formation doesn't have a choice to make.";
+      if (!fullFormationOptions(game, game.activePlayer).includes(action.option)) return "Those slots aren't all filled.";
+      return null;
+    },
+    apply(game, action) {
+      const p = game.players[game.activePlayer];
+      p.formationOption = action.option;
+      game.log.push(`${p.name}'s ${p.formationZone.name} uses slots ${p.formationZone.slotOptions[action.option].join(", ")}.`);
+    },
+  },
+
   // { type: "cast", player, card }: cast a Spell straight from your hand in Preparation Phase I
   // or II, paying its cost. It takes effect at once and goes to the Grave (RULES.md, Fire Arrow).
   cast: {
@@ -1104,6 +1141,7 @@ export function legalActions(game) {
     });
   });
   candidates.push({ type: "attack", player });
+  (p.formationZone?.slotOptions ?? []).forEach((_, option) => candidates.push({ type: "chooseFormation", player, option }));
   p.ups.forEach((c, slot) => c?.faceDown && candidates.push({ type: "activateSet", player, slot }));
   p.ups.forEach((u, slot) => u?.artifact?.activate && candidates.push({ type: "attack", player, artifact: slot }));
   const seenFormations = new Set();
