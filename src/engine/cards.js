@@ -1,8 +1,6 @@
 // Card and deck rules that don't depend on the board (RULES.md, Signets).
 
-// School of Arms, Magic, Alchemy, the Mercenaries, and Mystic (first seen on Blinding Beacon;
-// placeholder: its own Signet until Dyllan says whether it's Magic renamed).
-export const SIGNETS = ["arms", "magic", "alchemy", "mercenary", "mystic"];
+export const SIGNETS = ["arms", "magic", "alchemy", "mercenary"]; // School of Arms, Magic, Alchemy, and the Mercenaries
 
 // A deck is built around one Signet, and every card in it must carry that Signet.
 // A card can have several Signets, so it fits any deck that matches one of them.
