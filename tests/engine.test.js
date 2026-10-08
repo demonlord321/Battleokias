@@ -50,11 +50,12 @@ test("each player has a 3x3 grid, 4 Special Deck Zones, a Field Effect Zone and 
   assert.equal(p.formationZone, null);
 });
 
-test("a player who can't draw in their Draw Phase loses (placeholder)", () => {
+test("with an empty Draw Pile the player skips the draw and plays on", () => {
   const game = newGame({ seed: 1, decks: [deck("a", 4), deck("b", 5)], startingPlayer: 0 });
   assert.equal(game.players[0].hand.length, 4);
-  assert.equal(game.winner, 1);
-  assert.equal(game.phase, "over");
+  assert.equal(game.winner, null);
+  assert.equal(game.phase, "prep1");
+  assert.ok(game.log.some((line) => /no cards left to draw/.test(line)));
 });
 
 test("illegal actions are refused with a reason", () => {

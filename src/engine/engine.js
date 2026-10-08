@@ -416,8 +416,8 @@ function startTurn(game) {
 function startDraw(game) {
   const p = game.players[game.activePlayer];
   game.phase = "draw";
-  // RULES.md placeholder: a player who can't draw in their Draw Phase loses.
-  if (!drawCard(game, game.activePlayer)) return win(game, 1 - game.activePlayer, `${p.name} couldn't draw.`);
+  // Dyllan, 8 Oct: with an empty Draw Pile you just skip the draw; it's not a loss.
+  if (!drawCard(game, game.activePlayer)) game.log.push(`${p.name} skips the draw.`);
   game.phase = "prep1";
   for (const unit of p.ups) if (unit?.equipment?.readyNextTurn) {
     delete unit.equipment.readyNextTurn;

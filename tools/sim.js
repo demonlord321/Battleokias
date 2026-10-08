@@ -39,16 +39,19 @@ function play(a, b, seed) {
 const lists = styles.map(([name, spec]) => [name, { main: build(spec), spec }]);
 const names = lists.map(([n]) => n);
 const wins = names.map(() => names.map(() => null));
+let draws = 0;
 for (let i = 0; i < lists.length; i++)
   for (let j = i + 1; j < lists.length; j++) {
-    let iWins = 0;
+    let iWins = 0, jWins = 0;
     for (let seed = 0; seed < GAMES; seed++) {
       const iFirst = seed % 2 === 0;
       const winner = iFirst ? play(lists[i][1], lists[j][1], seed) : play(lists[j][1], lists[i][1], seed);
       if (winner === (iFirst ? 0 : 1)) iWins++;
+      else if (winner !== null) jWins++;
+      else draws++; // stalled: both Draw Piles empty and nobody can get through
     }
     wins[i][j] = iWins / GAMES;
-    wins[j][i] = 1 - iWins / GAMES;
+    wins[j][i] = jWins / GAMES;
   }
 
 const pct = (x) => (x === null ? "-" : `${Math.round(x * 100)}%`);
@@ -59,3 +62,4 @@ wins.forEach((row, i) => {
   const avg = row.filter((x) => x !== null).reduce((s, x) => s + x, 0) / (row.length - 1);
   console.log([names[i].padEnd(w), ...row.map((x) => pct(x).padStart(w)), pct(avg).padStart(w)].join(" "));
 });
+if (draws) console.log(`\n${draws} game(s) stalled with both Draw Piles empty and counted for neither deck.`);
