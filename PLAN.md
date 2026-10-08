@@ -61,7 +61,7 @@ Uses the placeholder rules in `RULES.md`; Dyllan refines them as we play.
 - [ ] Balance pass once the full Arms collection is in (on hold until then, per Dyllan): Katana, Vanguard Charge, Bloody Blade promote-vs-summon, Last Stand with Vanguard, Advisor + Developer
 - [x] Stand Strong (first Trap; engine `fb2b834` to `340e4ed`, board in progress): set face-down in an empty unit slot in Prep Phase I or II; on the opponent's landed hit, it goes to the Grave instead of the destroyed unit. Needs set-card support and the opponent-turn response choice, Developer; face-down card in a slot and the response hand-over, Mapmaker; computer player uses it, Developer
 - [ ] Spells set into empty unit slots too, the same way as Traps (basic rule), once the first real Spell exists, Developer + Mapmaker
-- [ ] Blinding Beacon (first Artifact): attach to a unit in Prep I or II, 2 charges, two-turn cooldown, deactivates the opponent's Formation for your Battle Phase; Artifact attach support and the `mystic` Signet, Developer; Beacon on the unit, charge and cooldown display, activate button, Mapmaker
+- [x] Blinding Beacon (first Artifact; engine `1703716` to `12811d9`, board `068460a`; still to do: Signets become Arms, Magic, Alchemy and the `mystic` Signet is removed): attach to a unit in Prep I or II, 2 charges, two-turn cooldown, deactivates the opponent's Formation for your Battle Phase; Artifact attach support, Developer; Beacon on the unit, charge and cooldown display, activate button, Mapmaker
 - [ ] Named units (Grade 4+): flavour text and Class fields in `data/cards.json`, shown on the card face, Developer + Mapmaker (waiting on Dyllan's first named units and Class list)
 - [ ] Dyllan playtests and replaces placeholder rules, Planner updates `RULES.md`
 

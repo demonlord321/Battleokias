@@ -45,7 +45,6 @@ Starting Signets:
 Other Signets seen on cards:
 - **Mercenary** (first seen as Drazel's sub-Signet). **(?)** Can you declare Mercenary as your deck's Signet, like the three Schools? (Placeholder: yes.)
 - **Hero** (first seen on Katana of the Fallen Hero). **(?)** Can you declare Hero as your deck's Signet? Can you declare Hero as your deck's Signet? (Placeholder: yes.)
-- **Mystic** (first seen on Blinding Beacon). **(?)** Is Mystic a new Signet, or the School of Magic renamed?
 
 - A deck is built around **one Signet**. Every card in the deck must carry that Signet.
 - A card can belong to **more than one** Signet, so it can appear in decks of any of them.
@@ -292,13 +291,13 @@ Open questions:
 
 ## Artifacts
 ### Artifact: Blinding Beacon (from Dyllan)
-- **Signets:** Arms, Mystic, Alchemy. **Cost:** 1.
+- **Signets:** Arms, Magic, Alchemy ("Mystic" meant Magic, confirmed by Dyllan). **Cost:** 1.
 - Attach it to one of your units in **Preparation Phase I or II**.
 - Only **one Blinding Beacon** can be in your Formation at a time.
 - It holds **2 charges**. When you attack, you may activate it: your opponent's Formation is **deactivated for this Battle Phase**, and it reactivates at the start of your opponent's turn.
 - **Two-turn cooldown** between uses. After its second activation, it goes to the Grave.
 - Placeholders and open questions:
-  - **(?)** Under the current rules, an inactive Formation counts as no Formation, so the hit always lands but deals only **1 Damage Counter and destroys no unit**. Is that what you want, or should the hit land with its full Damage Grade and destroy a unit as normal?
+- **Blinded Formation (confirmed by Dyllan):** it works the same as any inactive Formation, so it counts as no Formation. The hit always lands for **1 Damage Counter and destroys no unit**. The point is to let a player get a hit in even when their stats are weaker.
   - **(?)** "Two-turn cooldown": placeholder is that it can be used again two of your own turns later (use it on turn 3, again on turn 5), the same counting as Arms Academy.
   - The unit has to share a Signet with it, and it has to be in your attacking Formation to activate it.
   - A unit can hold one Equipment and one Artifact at once. If the unit leaves the field, the Beacon goes to the Grave.
