@@ -9,7 +9,7 @@ const cards = JSON.parse(readFileSync(new URL("../data/cards.json", import.meta.
 const decks = JSON.parse(readFileSync(new URL("../data/decks.json", import.meta.url)));
 const byId = Object.fromEntries(cards.map((c) => [c.id, c]));
 const build = (ids) => ids.map((id, i) => ({ ...byId[id], cardId: id, id: `${id}#${i}` }));
-const arms = () => build(decks.arms);
+const arms = () => build(decks.martial);
 const special = () => [{ type: "equipment", cards: build(["EQP-001", "EQP-001", "EQP-001"]) }, null, null, null];
 
 test("the computer plays whole games against itself with only legal moves", () => {

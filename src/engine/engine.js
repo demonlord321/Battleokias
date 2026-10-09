@@ -306,7 +306,7 @@ export function academyOf(game, playerIndex) {
 
 // RULES.md, Arms Academy: while it's in play, your units with its Signet on the
 // field can promote as often as your Energy allows. The Field Spell card says
-// which Signet with unlimitedPromotions: "arms". Every other promotion still
+// which Signet with unlimitedPromotions: "martial". Every other promotion still
 // counts toward the normal one per turn.
 export function unlimitedPromotion(game, playerIndex, base) {
   const signet = game.players[playerIndex].fieldEffect?.unlimitedPromotions;

@@ -21,7 +21,7 @@ test("summoned, Drazel has 4000 Attack and 1000 Defense", () => {
   const game = start();
   const p = game.players[0];
   p.ups[1] = copy("ARM-012"); // Player Grade 3, so a Grade 4 can come out
-  p.hand.push(copy("ARM-MER-001"));
+  p.hand.push(copy("ARM-DRA-001"));
   assert.equal(applyAction(game, { type: "summon", player: 0, card: p.hand.length - 1, slot: 0 }).ok, true);
   assert.deepEqual(unitStats(game, 0, 0), { attack: 4000, defense: 1000 });
 });
@@ -31,7 +31,7 @@ test("promoting a Graduate, he takes its printed 1500 Defense, and its Practice 
   const p = game.players[0];
   p.ups[0] = { ...copy("ARM-012"), equipment: { ...copy("EQP-001") } };
   assert.deepEqual(unitStats(game, 0, 0), { attack: 2250, defense: 1750 });
-  p.hand.push(copy("ARM-MER-001"));
+  p.hand.push(copy("ARM-DRA-001"));
   assert.equal(applyAction(game, { type: "promote", player: 0, card: p.hand.length - 1, slot: 0 }).ok, true);
   assert.equal(p.ups[0].defense, 1500);
   assert.deepEqual(unitStats(game, 0, 0), { attack: 4000, defense: 1500 });
@@ -39,10 +39,10 @@ test("promoting a Graduate, he takes its printed 1500 Defense, and its Practice 
 });
 
 test("the card check accepts his empty Defense only with variableDefense", () => {
-  assert.deepEqual(checkCards([byId["ARM-MER-001"]]), []);
-  const { variableDefense, ...noRule } = byId["ARM-MER-001"];
+  assert.deepEqual(checkCards([byId["ARM-DRA-001"]]), []);
+  const { variableDefense, ...noRule } = byId["ARM-DRA-001"];
   assert.ok(checkCards([noRule]).some((m) => /defense/.test(m)));
-  assert.ok(checkCards([{ ...byId["ARM-MER-001"], defense: 1000 }]).some((m) => /"defense": null/.test(m)));
+  assert.ok(checkCards([{ ...byId["ARM-DRA-001"], defense: 1000 }]).some((m) => /"defense": null/.test(m)));
 });
 
 test("if the Equipment stays on, he takes the total Defense, and its Defense bonus isn't counted twice", () => {
@@ -51,7 +51,7 @@ test("if the Equipment stays on, he takes the total Defense, and its Defense bon
   // An Equipment with no Grade limit, so it stays on through the promotion.
   const armour = { ...copy("EQP-001"), id: "ARMOUR#1", maxGrade: undefined, boost: { attack: 300, defense: 400 } };
   p.ups[0] = { ...copy("ARM-012"), equipment: armour };
-  p.hand.push(copy("ARM-MER-001"));
+  p.hand.push(copy("ARM-DRA-001"));
   assert.equal(applyAction(game, { type: "promote", player: 0, card: p.hand.length - 1, slot: 0 }).ok, true);
   assert.equal(p.ups[0].defense, 1900);
   assert.deepEqual(unitStats(game, 0, 0), { attack: 4300, defense: 1900 });
@@ -66,7 +66,7 @@ test("the Katana only goes on Drazel and gives him +500 Attack", () => {
   const game = start();
   const p = game.players[0];
   p.ups[0] = copy("ARM-012");
-  p.ups[1] = { ...copy("ARM-MER-001"), defense: 1000 }; // as if summoned
+  p.ups[1] = { ...copy("ARM-DRA-001"), defense: 1000 }; // as if summoned
   p.hand.push(copy("EQP-002"));
   const k = p.hand.length - 1;
   assert.equal(checkAction(game, { type: "equip", player: 0, card: k, slot: 0 }), "Drazel's Katana can't go on Graduate of Arms.");
@@ -81,7 +81,7 @@ test("with the Katana in the attacking Formation, a hit picks the highest Attack
   me.formationZone = formation;
   them.formationZone = formation;
   const slots = formation.slots;
-  slots.forEach((s, i) => (me.ups[s] = i === 0 ? { ...copy("ARM-MER-001"), defense: 1000 } : copy("ARM-012", i)));
+  slots.forEach((s, i) => (me.ups[s] = i === 0 ? { ...copy("ARM-DRA-001"), defense: 1000 } : copy("ARM-012", i)));
   // Defender: Students everywhere except one Graduate, which is the strongest.
   slots.forEach((s, i) => (them.ups[s] = copy(i === 1 ? "ARM-012" : "ARM-010", i)));
   assert.equal(attackPreview(game, 0).hits, true);
@@ -102,6 +102,6 @@ test("a card's own maxCopies overrides the 3-copy limit", async () => {
   const one = cards.map((c) => (c.id === "EQP-002" ? { ...c, maxCopies: 1 } : c));
   assert.equal(copyLimit(one.find((c) => c.id === "EQP-002")), 1);
   const deck = [...Array(28).fill("ARM-010")];
-  assert.ok(checkDecks({ arms: [...deck, "EQP-002", "EQP-002"] }, one).some((m) => /2 copies of EQP-002, the limit is 1/.test(m)));
-  assert.ok(checkDecks({ arms: [...deck, "EQP-002", "EQP-002"] }, cards).every((m) => !/EQP-002/.test(m)));
+  assert.ok(checkDecks({ martial: [...deck, "EQP-002", "EQP-002"] }, one).some((m) => /2 copies of EQP-002, the limit is 1/.test(m)));
+  assert.ok(checkDecks({ martial: [...deck, "EQP-002", "EQP-002"] }, cards).every((m) => !/EQP-002/.test(m)));
 });

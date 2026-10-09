@@ -185,7 +185,7 @@ export const copyLimit = (card) => card?.maxCopies ?? MAX_COPIES;
 // Every id must exist in cards, carry that Signet, appear at most 3 times, and the deck must have 30 cards.
 export function checkDecks(decks, cards) {
   if (typeof decks !== "object" || decks === null || Array.isArray(decks)) {
-    return ['decks.json should be an object like { "arms": ["ARM-001", ...] }.'];
+    return ['decks.json should be an object like { "martial": ["ARM-010", ...] }.'];
   }
   const byId = Object.fromEntries(cards.map((c) => [c.id, c]));
   const problems = [];

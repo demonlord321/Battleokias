@@ -5,14 +5,14 @@ import assert from "node:assert/strict";
 import { newGame, applyAction, checkAction, legalActions, academyOf, unlimitedPromotion } from "../src/engine/engine.js";
 
 let n = 0;
-const unit = (grade, signet = "arms") => ({ id: `U-${++n}`, cardId: `G${grade}-${signet}`, name: `G${grade} ${signet}`, type: "unit", signets: [signet], grade, attack: 500 * grade, defense: 500 * grade });
+const unit = (grade, signet = "martial") => ({ id: `U-${++n}`, cardId: `G${grade}-${signet}`, name: `G${grade} ${signet}`, type: "unit", signets: [signet], grade, attack: 500 * grade, defense: 500 * grade });
 // Student of Arms (ARM-010) goes in, Graduate of Arms (ARM-012) comes out.
 const student = () => ({ ...unit(1), cardId: "ARM-010", name: "Student of Arms" });
 const graduate = () => ({ ...unit(3), cardId: "ARM-012", name: "Graduate of Arms" });
 const academy = () => ({
-  id: `FLD-001#${++n}`, cardId: "FLD-001", name: "Arms Academy", type: "field_spell", signets: ["arms"], cost: 1,
+  id: `FLD-001#${++n}`, cardId: "FLD-001", name: "Arms Academy", type: "field_spell", signets: ["martial"], cost: 1,
   academy: { enroll: "ARM-010", enrollName: "Student of Arms", emerge: "ARM-012", turns: 2, capacity: 2 },
-  unlimitedPromotions: "arms",
+  unlimitedPromotions: "martial",
 });
 const filler = () => Array.from({ length: 30 }, () => unit(2));
 
@@ -48,8 +48,8 @@ test("enrolling costs the Student's Grade, takes only Student of Arms, and holds
   assert.match(checkAction(game, { type: "enroll", player: 0, card: idx(game, (c) => c.cardId === "ARM-010") }), /need an Academy/);
   playAcademy(game);
   assert.match(checkAction(game, { type: "enroll", player: 0, card: idx(game, (c) => c.grade === 2) }), /Only Student of Arms/);
-  // Another Grade 1 Arms unit isn't a Student of Arms.
-  assert.match(checkAction(game, { type: "enroll", player: 0, card: idx(game, (c) => c.cardId === "G1-arms") }), /Only Student of Arms/);
+  // Another Grade 1 Martial unit isn't a Student of Arms.
+  assert.match(checkAction(game, { type: "enroll", player: 0, card: idx(game, (c) => c.cardId === "G1-martial") }), /Only Student of Arms/);
   assert.equal(enrollOne(game).ok, true);
   assert.equal(enrollOne(game).ok, true);
   assert.equal(game.players[0].energy, 2);
@@ -147,7 +147,7 @@ test("with Arms Academy in play, Arms units on the field can promote more than o
   p.energy = 10;
   game.players[0].ups[0] = unit(1);
   game.players[0].ups[1] = unit(1);
-  game.players[0].ups[2] = unit(1, "magic");
+  game.players[0].ups[2] = unit(1, "mystic");
   p.hand.push(unit(2), unit(2), unit(2));
   const promote = (slot) => applyAction(game, { type: "promote", player: 0, card: p.hand.findIndex((c) => c.grade === 2), slot });
   // Without the Academy: one promotion per turn.
@@ -162,7 +162,7 @@ test("with Arms Academy in play, Arms units on the field can promote more than o
   assert.equal(p.ups[1].grade, 3);
   // The limit still applies to units without the Arms Signet, and Energy still counts.
   assert.equal(unlimitedPromotion(game, 0, p.ups[2]), false);
-  p.hand.push(unit(2, "magic"));
+  p.hand.push(unit(2, "mystic"));
   assert.match(checkAction(game, { type: "promote", player: 0, card: p.hand.length - 1, slot: 2 }), /already promoted/);
   p.energy = 0;
   p.ups[3] = unit(1);

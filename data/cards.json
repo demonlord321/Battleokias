@@ -5,7 +5,7 @@
     "name": "Student of Arms",
     "type": "unit",
     "signets": [
-      "arms"
+      "martial"
     ],
     "grade": 1,
     "attack": 500,
@@ -19,7 +19,7 @@
     "name": "Apprentice of Arms",
     "type": "unit",
     "signets": [
-      "arms"
+      "martial"
     ],
     "promotesFrom": [
       "ARM-010"
@@ -36,7 +36,7 @@
     "name": "Graduate of Arms",
     "type": "unit",
     "signets": [
-      "arms"
+      "martial"
     ],
     "promotesFrom": [
       "ARM-011"
@@ -51,11 +51,11 @@
 
   {"Comment": "UNITS GRADE 4-6"},
   {
-    "id": "ARM-MER-001",
+    "id": "ARM-DRA-001",
     "name": "Drazel, Instructor of the Blade",
     "type": "unit",
     "signets": [
-      "arms"
+      "martial"
     ],
     "grade": 4,
     "attack": 4000,
@@ -72,11 +72,11 @@
     "image": "images/arm-mer-001.png"
   },
   {
-    "id": "ARM-MER-002",
+    "id": "ARM-GAL-001",
     "name": "Galent, The Unbreakable Shield",
     "type": "unit",
     "signets": [
-      "arms"
+      "martial"
     ],
     "grade": 4,
     "attack": null,
@@ -93,11 +93,11 @@
     "image": "images/arm-mer-002.png"
   },
   {
-    "id": "ARM-ASS-002",
+    "id": "ARM-SEN-001",
     "name": "Sena, Mistress of the shadows",
     "type": "unit",
     "signets": [
-      "arms"
+      "martial"
     ],
     "grade": 4,
     "attack": 3500,
@@ -115,9 +115,7 @@
     "name": "Frontal Assault",
     "type": "formation",
     "signets": [
-      "arms",
-      "magic",
-      "alchemy"
+      "martial"
     ],
     "cost": 1,
     "slots": [
@@ -136,9 +134,7 @@
     "name": "Vanguard Charge",
     "type": "formation",
     "signets": [
-      "arms",
-      "magic",
-      "alchemy"
+      "martial"
     ],
     "cost": 2,
     "slots": [
@@ -160,7 +156,7 @@
     "name": "Arms Academy",
     "type": "field_spell",
     "signets": [
-      "arms"
+      "martial"
     ],
     "cost": 1,
     "academy": {
@@ -170,7 +166,7 @@
       "turns": 2,
       "capacity": 2
     },
-    "unlimitedPromotions": "arms",
+    "unlimitedPromotions": "martial",
     "text": "In your Preparation Phase I, you may enroll a Student of Arms from your hand by paying its Grade in Energy (up to 2 at a time). Two of your turns later, in your Preparation Phase I, summon a Graduate of Arms from your hand or deck to an empty slot at no cost, then send the Student of Arms to the Grave. If you took it from your deck, shuffle your deck. While this card is in play, you can promote any number of your Arms units on the field each turn, as long as you have the Energy.",
     "image": "images/fld-001.png"
   },
@@ -179,7 +175,7 @@
     "name": "Practice Gear",
     "type": "equipment",
     "signets": [
-      "arms"
+      "martial"
     ],
     "cost": 1,
     "boost": {
@@ -195,7 +191,7 @@
     "name": "Shield Sergeant",
     "type": "unit",
     "signets": [
-      "arms"
+      "martial"
     ],
     "grade": 3,
     "attack": 1200,
@@ -209,7 +205,7 @@
     "name": "Spear Militia",
     "type": "unit",
     "signets": [
-      "arms"
+      "martial"
     ],
     "grade": 1,
     "attack": 600,
@@ -223,7 +219,7 @@
     "name": "Squire",
     "type": "unit",
     "signets": [
-      "arms"
+      "martial"
     ],
     "grade": 2,
     "attack": 1300,
@@ -237,7 +233,7 @@
     "name": "Crossbow Sniper",
     "type": "unit",
     "signets": [
-      "arms"
+      "martial"
     ],
     "grade": 3,
     "attack": 2200,
@@ -251,7 +247,7 @@
     "name": "Banner Bearer",
     "type": "unit",
     "signets": [
-      "arms"
+      "martial"
     ],
     "grade": 4,
     "attack": 2000,
@@ -265,7 +261,7 @@
     "name": "Veteran Swordsman",
     "type": "unit",
     "signets": [
-      "arms"
+      "martial"
     ],
     "grade": 4,
     "attack": 2500,
@@ -279,7 +275,7 @@
     "name": "Pike Captain",
     "type": "unit",
     "signets": [
-      "arms"
+      "martial"
     ],
     "grade": 5,
     "attack": 2800,
@@ -293,7 +289,7 @@
     "name": "War Knight",
     "type": "unit",
     "signets": [
-      "arms"
+      "martial"
     ],
     "grade": 6,
     "attack": 3300,
@@ -307,7 +303,7 @@
     "name": "Apprentice Mage",
     "type": "unit",
     "signets": [
-      "magic"
+      "mystic"
     ],
     "grade": 2,
     "attack": 1600,
@@ -321,7 +317,7 @@
     "name": "Arcane Bolt",
     "type": "spell",
     "signets": [
-      "magic"
+      "mystic"
     ],
     "cost": 2,
     "text": "Spell effect text",
@@ -357,7 +353,7 @@
     "name": "Goblin Scout",
     "type": "unit",
     "signets": [
-      "arms",
+      "martial",
       "alchemy"
     ],
     "grade": 2,
@@ -372,15 +368,14 @@
     "name": "Drazel's Katana",
     "type": "equipment",
     "signets": [
-      "arms",
-      "mercenary"
+      "martial"
     ],
     "cost": 3,
     "boost": {
       "attack": 500
     },
     "onlyOn": [
-      "ARM-MER-001"
+      "ARM-DRA-001"
     ],
     "hitRule": "highestTotal",
     "text": "Equip to Drazel, Instructor of the Blade only. He gets +500 Attack. Drazel does not conform to slaying the weak: while he is in your attacking Formation and its attack lands, the opponent's unit destroyed is the one with the highest Attack plus Defense.",
@@ -391,7 +386,7 @@
     "name": "Stand Strong",
     "type": "trap",
     "signets": [
-      "arms"
+      "martial"
     ],
     "cost": 1,
     "response": "saveUnit",
@@ -403,8 +398,8 @@
     "name": "Blinding Beacon",
     "type": "artifact",
     "signets": [
-      "arms",
-      "magic",
+      "martial",
+      "mystic",
       "alchemy"
     ],
     "cost": 1,
@@ -420,10 +415,9 @@
     "name": "Line Defense",
     "type": "formation",
     "signets": [
-      "arms",
-      "mercenary"
+      "martial"
     ],
-    "cost": 2,
+    "cost": 1,
     "slotOptions": [
       [
         0,
@@ -452,8 +446,8 @@
     "name": "Fire Arrow",
     "type": "spell",
     "signets": [
-      "arms",
-      "magic",
+      "martial",
+      "mystic",
       "alchemy"
     ],
     "cost": 1,

@@ -22,7 +22,7 @@ function start() {
 }
 const summonSena = (game) => {
   const p = game.players[0];
-  p.hand.push(copy("ARM-ASS-002"));
+  p.hand.push(copy("ARM-SEN-001"));
   return applyAction(game, { type: "summon", player: 0, card: p.hand.length - 1, slot: 0 });
 };
 
@@ -89,7 +89,7 @@ test("no targets, or a promotion into Sena: no Pickpocket", () => {
 
   const promo = start();
   const p = promo.players[0];
-  p.hand.push(copy("ARM-ASS-002"));
+  p.hand.push(copy("ARM-SEN-001"));
   assert.equal(applyAction(promo, { type: "promote", player: 0, card: p.hand.length - 1, slot: 1 }).ok, true);
   assert.equal(promo.pending, null);
 });

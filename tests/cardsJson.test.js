@@ -12,7 +12,7 @@ test("data/cards.json is valid JSON with no problems", () => {
 });
 
 test("the checker catches common mistakes", () => {
-  const good = { id: "ARM-009", name: "X", type: "spell", signets: ["arms"], cost: 1, text: "", image: "" };
+  const good = { id: "ARM-009", name: "X", type: "spell", signets: ["martial"], cost: 1, text: "", image: "" };
   assert.deepEqual(checkCards([good]), []);
   assert.equal(checkCards([good, good]).length, 1); // duplicate id
   assert.equal(checkCards([{ ...good, signets: ["pirates"] }]).length, 1);

@@ -5,8 +5,8 @@ import assert from "node:assert/strict";
 import { newGame, applyAction, checkAction, legalActions, unitStats, destroyUnit } from "../src/engine/engine.js";
 
 let n = 0;
-const unit = () => ({ id: `U-${++n}`, name: `Unit${n}`, type: "unit", signets: ["arms"], grade: 1, attack: 500, defense: 500 });
-const gear = () => ({ id: `EQP-001#${++n}`, cardId: "EQP-001", name: "Practice Gear", type: "equipment", signets: ["arms"], cost: 1, boost: { attack: 250, defense: 250 } });
+const unit = () => ({ id: `U-${++n}`, name: `Unit${n}`, type: "unit", signets: ["martial"], grade: 1, attack: 500, defense: 500 });
+const gear = () => ({ id: `EQP-001#${++n}`, cardId: "EQP-001", name: "Practice Gear", type: "equipment", signets: ["martial"], cost: 1, boost: { attack: 250, defense: 250 } });
 const deckOf = () => Array.from({ length: 30 }, unit);
 const specials = () => [{ type: "equipment", cards: Array.from({ length: 5 }, gear) }, null, { type: "spell", cards: [] }, null];
 

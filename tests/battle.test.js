@@ -5,7 +5,7 @@ import { newGame, applyAction, checkAction, destroyUnit } from "../src/engine/en
 
 // A unit with the given Grade, attack and defense. Every copy gets its own instance id.
 let n = 0;
-const unit = (grade, attack, defense, signets = ["arms"]) => ({ id: `U-${++n}`, cardId: "U", name: `Unit${n}`, type: "unit", signets, grade, attack, defense });
+const unit = (grade, attack, defense, signets = ["martial"]) => ({ id: `U-${++n}`, cardId: "U", name: `Unit${n}`, type: "unit", signets, grade, attack, defense });
 const deckOf = (make, size = 30) => Array.from({ length: size }, make);
 
 // Player 0 starts. Both decks hold only Grade 1 100/100 units unless given others.
@@ -101,13 +101,13 @@ test("promote: only the next unit in the same promotion line (first Signet; prom
   me.energy = me.maxEnergy = 5;
   place(game, 0, 0, { ...unit(1, 100, 100), cardId: "ARM-001" }); // an Arms Grade 1 that isn't a Student
   place(game, 0, 1, { ...unit(1, 100, 100), cardId: "ARM-010" }); // Student of Arms
-  place(game, 0, 2, unit(1, 100, 100, ["alchemy", "arms"])); // Arms only as a sub-Signet
+  place(game, 0, 2, unit(1, 100, 100, ["alchemy", "martial"])); // Arms only as a sub-Signet
   me.hand.push({ ...unit(2, 200, 200), cardId: "ARM-011", name: "Apprentice of Arms", promotesFrom: ["ARM-010"] });
   const apprentice = me.hand.length - 1;
   assert.match(checkAction(game, { type: "promote", player: 0, card: apprentice, slot: 0 }), /isn't next in .* promotion line/);
   assert.match(checkAction(game, { type: "promote", player: 0, card: apprentice, slot: 2 }), /promotion line/);
   assert.equal(checkAction(game, { type: "promote", player: 0, card: apprentice, slot: 1 }), null);
-  me.hand.push(unit(2, 200, 200, ["arms", "alchemy"])); // no promotesFrom: any Arms-line Grade 1
+  me.hand.push(unit(2, 200, 200, ["martial", "alchemy"])); // no promotesFrom: any Arms-line Grade 1
   assert.equal(checkAction(game, { type: "promote", player: 0, card: me.hand.length - 1, slot: 0 }), null);
   assert.match(checkAction(game, { type: "promote", player: 0, card: me.hand.length - 1, slot: 2 }), /promotion line/);
 });

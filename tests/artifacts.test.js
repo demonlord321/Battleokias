@@ -47,9 +47,9 @@ test("Blinding Beacon attaches to a unit with a shared Signet in a Preparation P
   ok(game, { type: "attach", player: 0, card: second.id, slot: 4 });
   assert.match(checkAction(game, { type: "move", player: 0, from: 4, to: 1 }), /Only one/);
   // Not on a unit without a shared Signet, and not in the Battle Phase.
-  const third = copy("ART-001");
+  const third = { ...copy("ART-001", 3), signets: ["mystic"] }; // a Mystic-only Artifact on a Martial unit
   me.hand.push(third);
-  me.ups[5] = { ...copy("ARM-010"), signets: ["mercenary"] };
+  me.ups[5] = copy("ARM-010", 5);
   assert.match(checkAction(game, { type: "attach", player: 0, card: third.id, slot: 5 }), /same Signet/);
   game.phase = "battle";
   assert.match(checkAction(game, { type: "attach", player: 0, card: third.id, slot: 3 }), /Preparation Phase/);
