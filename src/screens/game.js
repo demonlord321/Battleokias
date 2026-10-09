@@ -478,20 +478,27 @@ function renderGiftPanel() {
     panel.className = "grad-panel gift-panel";
     panel.addEventListener("click", (e) => {
       const b = e.target.closest("[data-gift]");
-      if (b && gifting()) act({ type: "graduationGift", player: me(), accept: b.dataset.gift === "yes" });
+      if (!b || !gifting()) return;
+      if (b.dataset.gift === "equip") act({ type: "graduationGift", player: me(), accept: true, equip: +b.dataset.slot });
+      else act({ type: "graduationGift", player: me(), accept: b.dataset.gift === "yes" });
     });
     $("#game-screen").append(panel);
   }
   const p = game.players[me()];
   const id = game.pending.card;
   const katana = p.specialDecks.flatMap((d) => d?.cards ?? []).find((c) => c.id === id || (c.cardId ?? c.id) === id)?.name ?? "the Katana";
-  const drazel = p.ups.find((c) => c && /Practitioner/i.test(c.name))?.name ?? "Drazel";
+  const slot = game.pending.slot ?? p.ups.findIndex((c) => c?.onSummon === "graduationGift");
+  const drazel = p.ups[slot]?.name ?? "Drazel";
+  // "Equip now" (Dyllan, 9 Oct) shows once the engine puts Drazel's slot on pending and
+  // accepts { accept: true, equip: slot }; check() decides if it's allowed (e.g. Energy).
+  const canEquip = Number.isInteger(game.pending.slot) && legal({ type: "graduationGift", player: me(), accept: true, equip: slot });
   const school = p.fieldEffect?.name ?? "Military Institute";
   panel.innerHTML = `
     <div class="grad-title">&#x1F381; Graduation Gift</div>
     <div class="grad-sub">${drazel} graduated while ${school} is in play. Search your Equipment Special Deck for ${katana} and add it to your hand? The deck is shuffled afterwards.</div>
     <div class="grad-options">
-      <button class="grad-option" data-gift="yes">Take ${katana}<small>it goes to your hand; equip it as usual</small></button>
+      ${canEquip ? `<button class="grad-option" data-gift="equip" data-slot="${slot}">Equip ${katana} now<small>straight onto ${drazel} (${SLOT_NAMES[slot]})</small></button>` : ""}
+      <button class="grad-option" data-gift="yes">${canEquip ? "Keep it in hand" : `Take ${katana}`}<small>it goes to your hand; equip it later as usual</small></button>
       <button class="grad-option trap-pass" data-gift="no">No thanks<small>leave it in the deck</small></button></div>`;
 }
 
