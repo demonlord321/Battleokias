@@ -1,7 +1,7 @@
 // Checks the card list in data/cards.json for typos and missing fields.
 // Used by `npm test` and `npm run check-cards`, so a bad card is caught before it's pushed.
 
-import { SIGNETS } from "./cards.js";
+import { SIGNETS, CARD_SIGNETS, fitsDeck } from "./cards.js";
 
 // RULES.md card types. Monsters are parked until unit attacks are designed.
 export const CARD_TYPES = ["unit", "spell", "field_spell", "trap", "equipment", "artifact", "monster", "formation"];
@@ -61,7 +61,7 @@ export function checkCards(cards) {
     if (Array.isArray(card.signets)) {
       if (card.signets.length === 0) problems.push(`${where}: needs at least one Signet.`);
       for (const s of card.signets) {
-        if (!SIGNETS.includes(s)) problems.push(`${where}: unknown Signet "${s}". Use one of: ${SIGNETS.join(", ")}.`);
+        if (!CARD_SIGNETS.includes(s)) problems.push(`${where}: unknown Signet "${s}". Use one of: ${CARD_SIGNETS.join(", ")}.`);
       }
     }
     if (card.type === "unit") {
@@ -203,7 +203,7 @@ export function checkDecks(decks, cards) {
     for (const [id, n] of Object.entries(counts)) {
       const card = byId[id];
       if (!card) problems.push(`${where}: unknown card "${id}".`);
-      else if (!card.signets?.includes(signet)) problems.push(`${where}: ${id} doesn't carry the ${signet} Signet.`);
+      else if (!fitsDeck(card, signet)) problems.push(`${where}: ${id} doesn't carry the ${signet} Signet.`);
       if (n > copyLimit(card)) problems.push(`${where}: ${n} copies of ${id}, the limit is ${copyLimit(card)}.`);
     }
   }

@@ -6,6 +6,7 @@
 
 import { createRng, shuffle } from "./rng.js";
 import { createGame, createPlayer, MAX_ENERGY_CAP, MAX_DAMAGE } from "./state.js";
+import { NEUTRAL_SIGNET, sharesSignet } from "./cards.js";
 
 // Opening hands (RULES.md, Setup). Each player's first Draw Phase then takes
 // the starting player to 5 cards and the opponent to 6.
@@ -320,14 +321,14 @@ export function academyOf(game, playerIndex) {
 // counts toward the normal one per turn.
 export function unlimitedPromotion(game, playerIndex, base) {
   const signet = game.players[playerIndex].fieldEffect?.unlimitedPromotions;
-  return !!signet && (base?.signets ?? []).includes(signet);
+  return !!signet && sharesSignet({ signets: [signet] }, base);
 }
 
 // The catalogue id of a card (deck copies are "ARM-010#2" with cardId "ARM-010").
 const catalogueId = (c) => c.cardId ?? c.id;
 
 // Promotion lines (RULES.md): a unit's line is its first Signet; later Signets are
-// sub-Signets and don't count. A card with "promotesFrom" (like Apprentice of Arms,
+// sub-Signets and don't count. A card with "promotesFrom" (like Student, Second Year,
 // promotesFrom ["ARM-010"]) only goes on those cards. Placeholder until Dyllan says how
 // named units fit: a card without it goes on any unit one Grade lower in the same line.
 export const promotionLine = (card) => card.signets?.[0] ?? null;
@@ -351,6 +352,7 @@ const arriving = (card) => ({ attack: arrivingStat(card, "attack"), defense: arr
 
 export function inPromotionLine(base, card) {
   if (card.promotesFrom) return card.promotesFrom.includes(catalogueId(base));
+  if (promotionLine(base) === NEUTRAL_SIGNET) return true; // placeholder: any next-Grade unit can promote a Student, Graduate
   return promotionLine(base) !== null && promotionLine(base) === promotionLine(card);
 }
 
@@ -736,7 +738,7 @@ const ACTIONS = {
       if (card.type !== "equipment") return "That isn't an Equipment card.";
       const unit = isSlot(p, action.slot) ? unitAt(p, action.slot) : null;
       if (!unit) return "There's no unit there to equip.";
-      if (!(card.signets ?? []).some((s) => (unit.signets ?? []).includes(s))) return `${card.name} can only go on a unit with the same Signet.`;
+      if (!sharesSignet(card, unit)) return `${card.name} can only go on a unit with the same Signet.`;
       if (card.onlyOn && !card.onlyOn.includes(catalogueId(unit))) return `${card.name} can't go on ${unit.name}.`;
       if (!fitsGrade(card, unit)) return `${card.name} only goes on Grade ${card.maxGrade} or lower.`;
       if (unit.equipment) return `${unit.name} already has ${unit.equipment.name}.`;
@@ -774,7 +776,7 @@ const ACTIONS = {
       if (card.type !== "artifact") return "That isn't an Artifact card.";
       const unit = isSlot(p, action.slot) ? unitAt(p, action.slot) : null;
       if (!unit) return "There's no unit there to attach it to.";
-      if (!(card.signets ?? []).some((s) => (unit.signets ?? []).includes(s))) return `${card.name} can only go on a unit with the same Signet.`;
+      if (!sharesSignet(card, unit)) return `${card.name} can only go on a unit with the same Signet.`;
       if (unit.artifact) return `${unit.name} already has ${unit.artifact.name}.`;
       if (card.onePerFormation && formationHas(p, catalogueId(card), action.slot)) return `Only one ${card.name} can be in your Formation.`;
       if (cardCost(card) > p.energy) return `${card.name} costs ${cardCost(card)} Energy and you have ${p.energy}.`;
