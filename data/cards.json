@@ -102,9 +102,7 @@
         "field": "FLD-MAR-001",
         "count": 2,
         "cards": [
-          "UNT-BOK-001",
-          "UNT-BOK-002",
-          "UNT-BOK-003"
+          "UNT-BOK-001"
         ]
       }
     }

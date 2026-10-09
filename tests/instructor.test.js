@@ -51,27 +51,30 @@ test("a Practitioner who arrived this turn, or another Grade 4, costs the usual 
   assert.equal(checkAction(free, { type: "promote", player: 0, card: "UNT-MAR-001#1", slot: 0 }), null);
 });
 
-test("with Military Institute, he brings two Students from hand or deck, one at a time", () => {
+test("with Military Institute, he brings two First Years from hand or deck, one at a time", () => {
   const game = start();
   const p = game.players[0];
-  p.hand.push(copy("UNT-BOK-002", 1));
+  p.hand.push(copy("UNT-BOK-001", 1), copy("UNT-BOK-002", 1));
   promote(game);
   const pend = game.pending;
   assert.equal(pend.type, "freeStudents");
   assert.equal(pend.left, 2);
-  assert.ok(pend.choices.some((c) => c.card === "UNT-BOK-002#1" && c.from === "hand"));
-  assert.ok(pend.choices.some((c) => c.from === "deck" && /UNT-BOK-003/.test(c.card)));
+  const fromHand = pend.choices.find((c) => c.from === "hand");
+  assert.match(fromHand.card, /UNT-BOK-001/);
+  assert.ok(pend.choices.some((c) => c.from === "deck" && /UNT-BOK-001/.test(c.card)));
+  assert.ok(pend.choices.every((c) => /UNT-BOK-001/.test(c.card))); // First Years only
+  assert.match(checkAction(game, { type: "freeStudents", player: 0, card: "UNT-BOK-002#1", from: "hand", slot: 1 }) ?? "", /./);
   assert.equal(pend.slots.includes(0), false);
-  assert.match(checkAction(game, { type: "freeStudents", player: 0, card: "UNT-BOK-002#1", from: "hand", slot: 0 }), /empty slots/);
+  assert.match(checkAction(game, { type: "freeStudents", player: 0, card: fromHand.card, from: "hand", slot: 0 }), /empty slots/);
   const deckSize = p.deck.length;
-  const grad = pend.choices.find((c) => c.from === "deck" && /UNT-BOK-003/.test(c.card));
-  ok(game, { type: "freeStudents", player: 0, card: grad.card, from: "deck", slot: 1 });
-  assert.equal(p.ups[1].name, "Student, Graduate");
+  const fromDeck = pend.choices.find((c) => c.from === "deck");
+  ok(game, { type: "freeStudents", player: 0, card: fromDeck.card, from: "deck", slot: 1 });
+  assert.equal(p.ups[1].name, "Student, First Year");
   assert.equal(p.ups[1].arrivedTurn, game.turn);
   assert.equal(p.deck.length, deckSize - 1);
   assert.equal(game.pending.left, 1);
-  ok(game, { type: "freeStudents", player: 0, card: "UNT-BOK-002#1", from: "hand", slot: 2 });
-  assert.equal(p.ups[2].name, "Student, Second Year");
+  ok(game, { type: "freeStudents", player: 0, card: fromHand.card, from: "hand", slot: 2 });
+  assert.equal(p.ups[2].name, "Student, First Year");
   assert.equal(game.pending, null);
   assert.equal(p.energy, 10);
 });
@@ -81,7 +84,7 @@ test("stopping early, a single empty slot, and the bot's pick", () => {
   promote(game);
   assert.deepEqual(legalActions(game).at(-1), { type: "freeStudents", player: 0, done: true });
   const pick = chooseAction(game, 0);
-  assert.match(pick.card, /UNT-BOK-003/); // the highest Grade on offer
+  assert.match(pick.card, /UNT-BOK-001/); // only First Years on offer
   ok(game, { type: "freeStudents", player: 0, done: true });
   assert.equal(game.pending, null);
 
