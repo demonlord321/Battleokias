@@ -194,7 +194,7 @@ const canCast = (card) => legal({ type: "cast", player: me(), card });
 const canPlay = (card, slot) =>
   legal({ type: "summon", player: me(), card, slot }) || legal({ type: "promote", player: me(), card, slot }) || canEquip(card, slot) || canSetTrap(card, slot) || canAttach(card, slot);
 const canSetFormation = (card) => legal({ type: "setFormation", player: me(), card });
-// Field Effect Zone: play a Field Spell there, or enroll a unit in the Academy that's there.
+// Field Effect Zone: play a Field Spell there, or enroll a unit in the Military Institute that's there.
 const fezAction = (card) =>
   [{ type: "setField", player: me(), card }, { type: "enroll", player: me(), card }].find(legal) ?? null;
 
@@ -376,7 +376,7 @@ function renderDeckFormation() {
     <button class="grad-close" data-close>Cancel</button>`;
 }
 
-// Graduation panel (Arms Academy): pick which Grade 3 comes out, from hand or deck,
+// Graduation panel (Military Institute): pick which Grade 3 comes out, from hand or deck,
 // then click a glowing empty slot. Engine: game.pending = { type: "graduate", cards, slots }.
 function renderGradPanel() {
   let panel = $("#grad-panel");
@@ -396,7 +396,7 @@ function renderGradPanel() {
   const p = game.players[me()];
   const student = p.fieldEffect?.enrolled?.find((e) => e.card.id === game.pending.student)?.card;
   panel.innerHTML = `
-    <div class="grad-title">&#x1F393; ${student?.name ?? "A student"} graduates from ${p.fieldEffect?.name ?? "the Academy"}</div>
+    <div class="grad-title">&#x1F393; ${student?.name ?? "A student"} graduates from ${p.fieldEffect?.name ?? "the Military Institute"}</div>
     <div class="grad-sub">${gradCard ? "Now click a glowing empty slot." : "Pick the Grade 3 that comes out (free):"}</div>
     <div class="grad-options">${game.pending.cards
       .map((c) => `<button class="grad-option${gradCard === c.id ? " is-selected" : ""}" data-grad-id="${c.id}">${c.name}<small>from your ${c.from}</small></button>`)
@@ -624,7 +624,7 @@ function onHandClick({ index }) {
   if (blocked() || game.winner !== null) return;
   if (choosingLoss()) return toast("Pick one of the glowing units to send to the Grave.");
   if (pickpocketing()) return toast("Pickpocket: pick a glowing card on your opponent's side, or skip it in the panel.");
-  if (graduating()) return toast("Pick a Grade 3 in the Academy panel first.");
+  if (graduating()) return toast("Pick a Grade 3 in the Graduation panel first.");
   if (drawingSpecial()) return toast("Preparation Phase II: click one of your glowing Special Decks to draw from it.");
   if (responding()) return toast("Your opponent's attack landed: use a set card or choose not to respond.");
   selectedHand = selectedHand === index ? null : index;
@@ -667,7 +667,7 @@ function onSlotClick({ owner, zone, index }) {
     return;
   }
   if (graduating()) {
-    if (!gradCard) toast("Pick a Grade 3 in the Academy panel first.");
+    if (!gradCard) toast("Pick a Grade 3 in the Graduation panel first.");
     else if (zone === "ups") act({ type: "graduate", player: me(), card: gradCard, slot: index });
     return;
   }
