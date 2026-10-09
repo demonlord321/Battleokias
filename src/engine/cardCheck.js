@@ -116,8 +116,14 @@ export function checkCards(cards) {
       problems.push(`${where}: "charges" goes on an Artifact and should be a whole number of 1 or more.`);
     if ("cooldown" in card && (card.type !== "artifact" || !Number.isInteger(card.cooldown) || card.cooldown < 0))
       problems.push(`${where}: "cooldown" goes on an Artifact and counts your turns (0 or more).`);
-    if ("onSummon" in card && (card.type !== "unit" || !["pickpocket"].includes(card.onSummon)))
-      problems.push(`${where}: "onSummon" goes on a unit and can be "pickpocket".`);
+    if ("onSummon" in card && (card.type !== "unit" || !["pickpocket", "graduationGift"].includes(card.onSummon)))
+      problems.push(`${where}: "onSummon" goes on a unit and can be "pickpocket" or "graduationGift".`);
+    if (card.onSummon === "graduationGift") {
+      const g = card.gift;
+      const known = (id, type) => cards.some((c) => c?.id === id && c.type === type);
+      if (typeOf(g) !== "object" || !known(g.field, "field_spell") || !known(g.card, "equipment"))
+        problems.push(`${where}: "graduationGift" needs "gift": { "field": a Field Spell id, "card": an Equipment id }.`);
+    }
     if ("activate" in card && (card.type !== "artifact" || !["blindFormation"].includes(card.activate)))
       problems.push(`${where}: "activate" goes on an Artifact and can be "blindFormation".`);
     if ("onePerFormation" in card && (card.type !== "artifact" || typeof card.onePerFormation !== "boolean"))

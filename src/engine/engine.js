@@ -268,13 +268,28 @@ function useArtifact(game, playerIndex, slot) {
 // owner's units goes (Dyllan, 8 Oct): pending.player is the attacker, pending.owner the defender.
 // A unit's onSummon effect, when it enters the field by a summon or a promotion (Dyllan, 9 Oct:
 // any way a unit enters the field counts as a summon). Sena's Pickpocket asks for a target, if there is one.
-function onSummon(game, card) {
+function onSummon(game, card, { promoted = false } = {}) {
+  if (card.onSummon === "graduationGift") return graduationGift(game, card, promoted);
   if (card.onSummon !== "pickpocket") return;
   const targets = pickpocketTargets(game, 1 - game.activePlayer);
   if (!targets.length) return;
   game.pending = { type: "pickpocket", player: game.activePlayer, targets };
   game.log.push(`${card.name} can pickpocket an Item, Artifact or Equipment.`);
 }
+
+// Drazel, Practitioner of the Blade's Graduation Gift (Dyllan, 9 Oct): when he is promotion
+// summoned while card.gift.field (Military Institute) is your Field Spell, you may search for
+// card.gift.card (Drazel's Katana). Placeholders (QUESTIONS.md #1): any promotion counts, and the
+// search is your Equipment Special Deck; the Katana goes to your hand and is equipped as usual.
+function graduationGift(game, card, promoted) {
+  const p = game.players[game.activePlayer];
+  if (!promoted || !card.gift || catalogueId(p.fieldEffect ?? {}) !== card.gift.field) return;
+  const found = giftCard(p, card.gift.card);
+  if (!found) return;
+  game.pending = { type: "graduationGift", player: game.activePlayer, card: found.id };
+  game.log.push(`${card.name}'s Graduation Gift: ${p.name} may search for ${found.name}.`);
+}
+const giftCard = (p, id) => p.specialDecks.flatMap((d) => d?.cards ?? []).find((c) => catalogueId(c) === id) ?? null;
 
 // What Sena's Pickpocket can destroy on the opponent's side: { slot, kind } with kind "equipment"
 // or "artifact" (on a unit; one unit can carry both) or "item" (a face-up Item card in a slot).
@@ -629,7 +644,7 @@ const ACTIONS = {
       const gear = kept && { ...kept, ...(copies("defense") ? { defenseCopied: true } : {}), ...(copies("attack") ? { attackCopied: true } : {}) };
       p.ups[action.slot] = { ...card, attack, defense, under: [...under, baseCard], ...(gear ? { equipment: gear } : {}), ...(artifact ? { artifact } : {}) };
       game.log.push(`${p.name} promotes ${base.name} to ${card.name}.`);
-      onSummon(game, card); // "summon" includes promotion (Dyllan, 9 Oct)
+      onSummon(game, card, { promoted: true }); // "summon" includes promotion (Dyllan, 9 Oct)
       if (outgrown) {
         const { readyNextTurn, defenseCopied, attackCopied, ...old } = equipment;
         p.graveyard.push(old);
@@ -1100,6 +1115,27 @@ const ACTIONS = {
     },
   },
 
+  // { type: "graduationGift", player, accept }: take pending.card from your Special Deck into
+  // your hand (that deck is then shuffled), or decline.
+  graduationGift: {
+    check(game, action) {
+      if (game.pending?.type !== "graduationGift") return "There's no Graduation Gift to answer.";
+      if (typeof action.accept !== "boolean") return "Answer yes or no.";
+      return null;
+    },
+    apply(game, action) {
+      const { player, card: id } = game.pending;
+      game.pending = null;
+      const p = game.players[player];
+      if (!action.accept) return void game.log.push(`${p.name} doesn't take the Graduation Gift.`);
+      const deck = p.specialDecks.find((d) => d?.cards.some((c) => c.id === id));
+      const [card] = deck.cards.splice(deck.cards.findIndex((c) => c.id === id), 1);
+      deck.cards = shuffle(deck.cards, game.rng);
+      p.hand.push(card);
+      game.log.push(`${p.name} searches their ${deck.type} Special Deck and adds ${card.name} to their hand.`);
+    },
+  },
+
   chooseLoss: {
     check(game, action) {
       if (game.pending?.type !== "chooseLoss") return "There's nothing to choose right now.";
@@ -1150,7 +1186,7 @@ export function checkAction(game, action) {
   if (game.pending) {
     const who = game.players[game.pending.player].name;
     if (action.type !== game.pending.type) {
-      const waiting = { graduate: "choose who comes out of the Academy", specialDraw: "pick a Special Deck to draw from", chooseLoss: "choose which unit goes to the Grave", trapResponse: "decide whether to respond", pickpocket: "decide what to pickpocket" };
+      const waiting = { graduate: "choose who comes out of the Academy", specialDraw: "pick a Special Deck to draw from", chooseLoss: "choose which unit goes to the Grave", trapResponse: "decide whether to respond", pickpocket: "decide what to pickpocket", graduationGift: "decide on the Graduation Gift" };
       return `${who} has to ${waiting[game.pending.type]} first.`;
     }
     if (action.player !== undefined && action.player !== game.pending.player) return `It's ${who}'s choice.`;
@@ -1198,6 +1234,10 @@ export function legalActions(game) {
   if (game.pending?.type === "trapResponse") {
     const { player, slots } = game.pending;
     return [...slots, null].map((slot) => ({ type: "trapResponse", player, slot }));
+  }
+  if (game.pending?.type === "graduationGift") {
+    const { player } = game.pending;
+    return [true, false].map((accept) => ({ type: "graduationGift", player, accept }));
   }
   if (game.pending?.type === "pickpocket") {
     const { player, targets } = game.pending;
