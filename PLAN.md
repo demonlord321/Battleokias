@@ -73,8 +73,8 @@ Uses the placeholder rules in `RULES.md`; Dyllan refines them as we play.
 - [x] Sena, Mistress of the Shadows (`ARM-ASS-002`): Grade 4 Rogue, 3500/3500; Pickpocket destroys 1 opposing Item, Artifact or Equipment when she's summoned. Engine done (`3f995fb`, `pending.type "pickpocket"`), Developer; target picker on the board (`267717d`), Mapmaker
 - [x] Formation cost is now its Damage Grade (`226ee47`), and Damage Grade 0 costs 1 (Frontal Assault 1, Vanguard Charge 2, Line Defense keeps its printed 2 for now), Developer
 - [x] On a tie for lowest Grade, the attacker picks which unit is destroyed instead of the defender. Engine `d8bfbe7`, Developer; picker on the board `267717d`, Mapmaker
-- [ ] Signet rename (Dyllan, 9 Oct): Arms is now **Martial** and Magic is now **Mystic**, so the three starting Signets are Martial, Mystic and Alchemy. Rename the Signet values in `data/cards.json`, the engine and the tests (`arms` to `martial`, `magic` to `mystic`), Developer; Signet icons and labels on cards and the board, Mapmaker. Card names like Student of Arms and Arms Academy stay for now (QUESTIONS.md #1)
-- [ ] Dyllan's answers of 8 Oct (`dd65ab5`), Developer + Mapmaker:
+- [x] Signet rename (Dyllan, 9 Oct; done `ee3ce01` to `726f644`, board `95102de`): Arms is now **Martial** and Magic is now **Mystic**, so the three starting Signets are Martial, Mystic and Alchemy. Rename the Signet values in `data/cards.json`, the engine and the tests (`arms` to `martial`, `magic` to `mystic`), Developer; Signet icons and labels on cards and the board, Mapmaker. Card names like Student of Arms and Arms Academy stay for now (QUESTIONS.md #1)
+- [x] Dyllan's answers of 8 Oct (`dd65ab5`), Developer + Mapmaker (done up to `726f644`, except the cards not yet in `cards.json`):
   - Only the three base Signets for now. Remove Mercenary and Hero from every card (Drazel, Galent, Line Defense, Drazel's Katana, Katana of the Fallen Hero, the Bloody Blade) and drop the Mercenary coin icon
   - Frontal Assault and Vanguard Charge become Martial only (Fire Arrow and Blinding Beacon keep all three)
   - Line Defense costs 1
@@ -83,6 +83,9 @@ Uses the placeholder rules in `RULES.md`; Dyllan refines them as we play.
   - Fire Arrow can fire on the turn it's set
   - When the Bloody Blade's Last Stand fetches Katana of the Fallen Hero, Drazel's Katana goes to the Grave; Drazel's Katana stays on through promotion to the Bloody Blade and can be equipped to him directly
   - Last Stand destroys Drazel after the third Battle Phase it's active for (placeholder: his owner's Battle Phases, QUESTIONS.md #3)
+- [ ] Add Bloody Blade (`ARM-DRA-002`), Katana of the Fallen Hero and Last Stand to `cards.json` once Dyllan writes them up, Developer
+- [ ] Remove the 11 placeholder units (Dyllan, 9 Oct): Spear Militia, Squire, Apprentice Mage, Flask Thrower, Goblin Scout, Shield Sergeant, Crossbow Sniper, Banner Bearer, Veteran Swordsman, Pike Captain, War Knight. Rebuild the Martial test deck and sim decks from the units that are left (Student, Apprentice and Graduate of Arms, Drazel, Galent, Sena), Developer
+- [ ] Unit write-ups still missing: a real Formation Effect for every unit, and flavor text for Galent and Sena, Dyllan
 - [ ] All open questions for Dyllan are collected in `QUESTIONS.md`. He answers there and Planner folds the answers into `RULES.md`
 - [ ] Dyllan playtests and replaces placeholder rules, Planner updates `RULES.md`
 
