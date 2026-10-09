@@ -219,8 +219,10 @@ Open questions:
 | Grade | Name | Attack | Defense |
 |---|---|---|---|
 | 1 | Student, First Year | 500 | 500 |
-| 2 | Student, Second Year | 1500 | 1000 |
-| 3 | Student, Graduate | 2000 | 1500 |
+| 2 | Student, Second Year | 1000 | 1000 |
+| 3 | Student, Graduate | 1500 | 1500 |
+
+- **Even stats (Dyllan, 9 Oct):** each Student's Attack and Defense are the same: 500 for First Year, 1000 for Second Year, 1500 for Graduate (was 1500/1000 and 2000/1500).
 
 These three are the **only** Grade 1, 2 and 3 units for now. Since 9 Oct they carry the neutral **Battle'O'Kias** Signet instead of Martial, so every deck can use them.
 
@@ -274,7 +276,7 @@ You can only attack if you have a Formation set.
 - **Formation Attack** = sum of those units' Attack **x 1.5**.
 - **Formation Defense** = sum of those units' Defense **/ 1.5**.
 - **Damage Grade 2**, **Defense Grade 0**, **cost 2 Energy** (see Formation cost; it was 1 under the old rule).
-- Example: Student, Apprentice and Student across the front with a Graduate in the middle centre gives 4500 x 1.5 = **6750 Attack** and 3500 / 1.5 = **2333 Defense**.
+- Example: First Year, Second Year and First Year across the front with a Graduate in the middle centre gives 3500 x 1.5 = **5250 Attack** and 3500 / 1.5 = **2333 Defense**.
 - **Signets:** Martial only (confirmed by Dyllan, 8 Oct).
 - Balance note: in bot games, a Vanguard Charge deck beats a Frontal Assault deck 89% of the time, because of Damage Grade 2. Suggested fix: give Frontal Assault Defense Grade 1 (about 43%). Dyllan is leaving this for now, since Equipment may balance it.
 
@@ -290,7 +292,7 @@ You can only attack if you have a Formation set.
 - **Pattern:** all three **front-row** slots (the row nearest the centre) are filled with units.
 - **Formation Attack** = the sum of the three front-row units' Attack.
 - **Formation Defense** = the sum of the three front-row units' Defense.
-- Example: three Students, First Year make 1500 Attack and 1500 Defense. Three Students, Graduate make 6000 Attack and 4500 Defense.
+- Example: three Students, First Year make 1500 Attack and 1500 Defense. Three Students, Graduate make 4500 Attack and 4500 Defense.
 
 Built as `FRM-001` (`"slots": [0,1,2]`, `"combine": "sum"`). **Signets:** Martial only (confirmed by Dyllan, 8 Oct).
 
@@ -411,7 +413,7 @@ Open questions (placeholders in brackets):
 
 ### Equipment: Practice Gear (Martial)
 - **Effect:** the equipped Martial unit gets **+250 Attack and +250 Defense** (a flat bonus, confirmed by Dyllan).
-- Example: a Student, First Year goes from 500/500 to 750/750, and a Student, Second Year from 1500/1000 to 1750/1250.
+- Example: a Student, First Year goes from 500/500 to 750/750, and a Student, Second Year from 1000/1000 to 1250/1250.
 - **Grades 1 to 3 only (confirmed by Dyllan):** a unit that has mastered its craft has no use for practice gear. Practice Gear can only be equipped to a Grade 1, 2 or 3 unit, and when its unit is promoted to Grade 4 or higher, the Gear goes to the Grave.
 
 ### Equipment: Drazel's Katana (specialised Equipment, from Dyllan)
