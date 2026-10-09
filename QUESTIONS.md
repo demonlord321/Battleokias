@@ -6,9 +6,9 @@ Each question has a **placeholder**, which is what the game does for now so the 
 
 ## New (9 Oct)
 
-### 1. Card names after the Signet rename
-Arms is now Martial and Magic is now Mystic. Do card names change too: Student, Apprentice and Graduate of Arms, and Arms Academy?
-**Placeholder:** the names stay as they are; only the Signet is renamed.
+### 1. Arms Academy's name
+The Students are renamed (First Year, Second Year, Graduate). Does Arms Academy keep its name now that Arms is Martial?
+**Placeholder:** it stays Arms Academy.
 **Answer:**
 
 ### 2. Card ID prefixes
@@ -19,6 +19,16 @@ Named units now use Signet, short name, then a number (`ARM-SEN-001`). With Arms
 ### 3. Last Stand: whose Battle Phases count?
 Drazel is destroyed after the third Battle Phase Last Stand is active for. Do the opponent's Battle Phases count, or only yours?
 **Placeholder:** only your own, starting with the turn you start it.
+**Answer:**
+
+### 3a. The Battle'O'Kias Signet and Martial-only cards
+The Students now carry only Battle'O'Kias. Practice Gear, Frontal Assault, Vanguard Charge, Line Defense and Arms Academy's extra promotions all work with Martial units. Does a Battle'O'Kias card count as sharing a Signet with every card, so they still work on the Students?
+**Placeholder:** yes, Battle'O'Kias counts as sharing a Signet with any card.
+**Answer:**
+
+### 3b. The Students' IDs
+Should the Students' IDs change from `ARM-010` to `ARM-012` to a Battle'O'Kias prefix (for example `BOK-001`)?
+**Placeholder:** keep the current IDs for now.
 **Answer:**
 
 ## Cards
@@ -47,8 +57,8 @@ Is "15 Grade 1, 10 Grade 2, 10 Grade 3" a deck-building rule (minimums or exact 
 ## Units and promotion
 
 ### 8. From Graduate to Grade 4
-How does a Graduate of Arms move up to Grade 4?
-**Placeholder:** any named Grade 4 unit whose main Signet is Martial can promote a Graduate of Arms.
+How does a Student, Graduate move up to Grade 4?
+**Placeholder:** any named Grade 4 unit, of any Signet, can promote a Student, Graduate (the Students are Battle'O'Kias now).
 **Answer:**
 
 ### 9. Named units: one of a kind?

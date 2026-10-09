@@ -42,11 +42,15 @@ Starting Signets:
 2. **Mystic** (was Magic)
 3. **Alchemy**
 
+- **Battle'O'Kias Signet (Dyllan, 9 Oct):** a neutral Signet, not a deck theme. A card with it can go in **every** deck, whatever Signet the deck declares. The three Students (First Year, Second Year, Graduate) carry only Battle'O'Kias now, not Martial.
+  - **(?)** Does a Battle'O'Kias card count as sharing a Signet with every card, so Martial-only cards still work with the Students (Practice Gear, Frontal Assault, Vanguard Charge, Line Defense, Arms Academy's extra promotions)? Placeholder: yes, it counts as sharing a Signet with any card.
+  - **(?)** Should the Students' IDs change from `ARM-010` to `ARM-012` to a Battle'O'Kias prefix (for example `BOK-`)? Placeholder: keep them for now.
 - **Only these three Signets are used for now** (Dyllan, 8 Oct). Mercenary and Hero have been taken off every card. More Signets can come later, for example an **Assassin** Signet for Sena's line.
 - **Renamed (Dyllan, 9 Oct):** Arms is now **Martial** and Magic is now **Mystic**.
-  - **(?)** Do card names with "Arms" in them change too (Student, Apprentice and Graduate of Arms, Arms Academy)? Placeholder: the names stay as they are for now; only the Signet is renamed.
+  - **Unit renames (Dyllan, 9 Oct):** Student of Arms is now **Student, First Year**, Apprentice of Arms is **Student, Second Year**, and Graduate of Arms is **Student, Graduate**.
+  - **(?)** Does Arms Academy keep its name? Placeholder: yes, for now.
 
-- A deck is built around **one Signet**. Every card in the deck must carry that Signet.
+- A deck is built around **one Signet**. Every card in the deck must carry that Signet, except Battle'O'Kias cards, which can go in any deck.
 - A card can belong to **more than one** Signet, so it can appear in decks of any of them.
 - **Deck legality (confirmed by Dyllan):** a deck is legal as long as every card shares the deck's Signet, whether as its main Signet or a sub-Signet. This allows unusual cross-academy combinations, and that's intended.
   - **One declared Signet (confirmed by Dyllan):** like choosing your world in Future Card Buddyfight, you declare the Signet you command, for example the forces of Martial, and every card in the deck must carry Martial. Chaining through shared sub-Signets is not allowed, so a Martial deck can include a Martial/Fire card but not a pure Fire card.
@@ -153,7 +157,7 @@ Open questions:
 *Flavour text:* "Drazel found himself gifted with a blade. Upon graduation he chose to share that knowledge with the new recruits. When war came his unit was decimated, and Drazel joined the mercenaries to get stronger and make some money."
 
 **Effect:** Drazel halted his study of Defense and put everything into attack. His Defense is **1000** when he is summoned normally, or **equal to the Defense of the unit he promotes**.
-- Because his main Signet is Martial, he is in the Martial promotion line, so he can promote a Graduate of Arms (Defense 1500).
+- He can promote a Student, Graduate (Defense 1500), since any Grade 4 unit can promote one for now (placeholder).
 - **Equipment on the promoted unit (confirmed by Dyllan):** if that unit's Equipment stays on through the promotion, Drazel takes its **total** Defense, Equipment included. Practice Gear never stays (it's Grades 1 to 3 only), so this applies to future Equipment.
   - Placeholder: the Equipment's Defense bonus is already part of that total, so it isn't added a second time while it stays on Drazel. Its Attack bonus still applies.
 
@@ -209,14 +213,14 @@ Open questions:
 - Placeholder: the destroyed card goes to the opponent's Grave. Set Spells and Traps aren't Items, so she can't hit them.
 - There may be more than one Sena card later, for example a higher-Grade version. Her card image currently reuses Drazel's (`arm-mer-001.png`).
 
-### Official sample units (Martial, from Dyllan)
+### Official sample units (Battle'O'Kias, from Dyllan)
 | Grade | Name | Attack | Defense |
 |---|---|---|---|
-| 1 | Student of Arms | 500 | 500 |
-| 2 | Apprentice of Arms | 1500 | 1000 |
-| 3 | Graduate of Arms | 2000 | 1500 |
+| 1 | Student, First Year | 500 | 500 |
+| 2 | Student, Second Year | 1500 | 1000 |
+| 3 | Student, Graduate | 2000 | 1500 |
 
-These three are the **only** Grade 1, 2 and 3 units of the Martial line (confirmed by Dyllan). Other Signets will have their own Grade 1 to 3 units later.
+These three are the **only** Grade 1, 2 and 3 units for now. Since 9 Oct they carry the neutral **Battle'O'Kias** Signet instead of Martial, so every deck can use them.
 
 ### Promotion
 - **"Summon" means any way a unit enters the field**, promotion included (confirmed by Dyllan), so "when summoned" effects such as Sena's Pickpocket trigger on promotion too. Cards that give different stats "when summoned normally" or "when promoted" (Drazel, Galent, the Bloody Blade) still tell the two apart.
@@ -224,10 +228,10 @@ These three are the **only** Grade 1, 2 and 3 units of the Martial line (confirm
   higher-Grade unit from your hand **on top of it**.
 - Promotion costs the **difference** in Grade. For example, a Grade 2 played on a Grade 1 costs **1 Energy** instead of 2.
 - Promotion is **exactly one Grade** up. No skipping.
-- **Promotion lines (confirmed by Dyllan):** a unit can only be promoted by the next unit **in its own line**. The Martial line is **Student of Arms, then Apprentice of Arms, then Graduate of Arms**.
-  - Only a Student of Arms can become an Apprentice of Arms, and only an Apprentice of Arms can become a Graduate of Arms.
+- **Promotion lines (confirmed by Dyllan):** a unit can only be promoted by the next unit **in its own line**. The Student line is **Student, First Year, then Student, Second Year, then Student, Graduate** (Battle'O'Kias Signet).
+  - Only a Student, First Year can become a Student, Second Year, and only a Student, Second Year can become a Student, Graduate.
   - The line comes from the card's **main (first) Signet**. A card that only has Martial as a sub-Signet is outside the Martial line, even if it can sit in a Martial deck.
-- **(?)** How does a Graduate of Arms move up to Grade 4? Placeholder: any named Grade 4 unit whose main Signet is Martial can promote a Graduate of Arms.
+- **(?)** How does a Student, Graduate move up to Grade 4? Placeholder: any named Grade 4 unit, of any Signet, can promote a Student, Graduate.
 - **One promotion per turn** normally. Some Field Spells lift this (see Arms Academy).
 - Placeholder until Dyllan decides: the card underneath stays stacked beneath the new unit and both go to the Grave when the unit is destroyed.
 - First-player edge: with Formations and unit destruction in (`58d4e06`), bot games show the first player winning 49%, so no extra fix is needed for now.
@@ -284,7 +288,7 @@ You can only attack if you have a Formation set.
 - **Pattern:** all three **front-row** slots (the row nearest the centre) are filled with units.
 - **Formation Attack** = the sum of the three front-row units' Attack.
 - **Formation Defense** = the sum of the three front-row units' Defense.
-- Example: three Students of Arms make 1500 Attack and 1500 Defense. Three Graduates of Arms make 6000 Attack and 4500 Defense.
+- Example: three Students, First Year make 1500 Attack and 1500 Defense. Three Students, Graduate make 6000 Attack and 4500 Defense.
 
 Built as `FRM-001` (`"slots": [0,1,2]`, `"combine": "sum"`). **Signets:** Martial only (confirmed by Dyllan, 8 Oct).
 
@@ -375,18 +379,18 @@ Open questions:
 A Field Spell goes in the **Field Effect Zone (FEZ)** and stays there, giving an ongoing effect.
 
 ### Field Spell: Arms Academy (Martial, from Dyllan)
-- **Effect:** In your **Preparation Phase I**, you may send a **Student of Arms** from your hand to the Academy. (Specific to this line: Student of Arms in, Graduate of Arms out.)
-- **Two of your turns later**, in your Preparation Phase I, a **Graduate of Arms** leaves the Academy and is **summoned to the field at no cost**, in **any empty slot you choose**.
+- **Effect:** In your **Preparation Phase I**, you may send a **Student, First Year** from your hand to the Academy. (Specific to this line: Student, First Year in, Student, Graduate out.)
+- **Two of your turns later**, in your Preparation Phase I, a **Student, Graduate** leaves the Academy and is **summoned to the field at no cost**, in **any empty slot you choose**.
   - Example: send the Grade 1 in Preparation Phase I of your 3rd turn, and the Grade 3 arrives in Preparation Phase I of your 5th turn.
 - **Cost to play:** 1 Energy.
 - **Enrolling** a unit costs its Grade in Energy, so 1 Energy per Grade 1 unit.
 - **Capacity:** the Academy holds up to **2** units. Sending two costs 2 Energy.
 - When the Grade 3 emerges, the **Grade 1 goes to the Grave**.
-- You choose that Graduate of Arms **from your hand** or **from your deck**. If you take it from your deck, **reshuffle** the deck afterwards.
+- You choose that Student, Graduate **from your hand** or **from your deck**. If you take it from your deck, **reshuffle** the deck afterwards.
 
 Open questions:
 - **Second effect:** while Arms Academy is in play, you can promote **any number** of your units with the **Martial Signet** each turn, as long as you have the Energy. (The normal limit is one promotion per turn.)
-- Placeholder: if there's no empty slot or no Graduate of Arms to pick, the student stays in the Academy and tries again next turn. Playing a new Field Spell sends the old one and its students to the Grave.
+- Placeholder: if there's no empty slot or no Student, Graduate to pick, the student stays in the Academy and tries again next turn. Playing a new Field Spell sends the old one and its students to the Grave.
 - The arriving Graduate can attack that turn if it's placed in your Formation (confirmed by Dyllan).
 
 ## Equipment (confirmed by Dyllan)
@@ -405,7 +409,7 @@ Open questions (placeholders in brackets):
 
 ### Equipment: Practice Gear (Martial)
 - **Effect:** the equipped Martial unit gets **+250 Attack and +250 Defense** (a flat bonus, confirmed by Dyllan).
-- Example: a Student of Arms goes from 500/500 to 750/750, and an Apprentice from 1500/1000 to 1750/1250.
+- Example: a Student, First Year goes from 500/500 to 750/750, and a Student, Second Year from 1500/1000 to 1750/1250.
 - **Grades 1 to 3 only (confirmed by Dyllan):** a unit that has mastered its craft has no use for practice gear. Practice Gear can only be equipped to a Grade 1, 2 or 3 unit, and when its unit is promoted to Grade 4 or higher, the Gear goes to the Grave.
 
 ### Equipment: Drazel's Katana (specialised Equipment, from Dyllan)
