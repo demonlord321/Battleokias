@@ -94,8 +94,20 @@
     "class": "Swordsman",
     "flavor": "Drazel found himself gifted with a blade. Upon graduation he chose to share that knowledge with the new recruits. When war came his unit was decimated, and Drazel joined the mercenaries to get stronger and make some money.",
     "formation": "Formation effect text",
-    "text": "Drazel chose to halt his study of Defense and put it all into Attack. His Defense is 1000 when summoned, or equal to the Defense of the unit he promotes.",
-    "image": "images/arm-mer-001.png"
+    "text": "Drazel chose to halt his study of Defense and put it all into Attack. His Defense is 1000 when summoned, or equal to the Defense of the unit he promotes. When promotion summoned on top of Drazel, Practitioner of the Blade, after the Practitioner has been on the field for a full turn, this card costs nothing to play. If Military Institute is in effect, you may also summon two Students at no cost to join him on the field.",
+    "image": "images/arm-mer-001.png",
+    "freePromotion": {
+      "from": "UNT-MAR-005",
+      "students": {
+        "field": "FLD-MAR-001",
+        "count": 2,
+        "cards": [
+          "UNT-BOK-001",
+          "UNT-BOK-002",
+          "UNT-BOK-003"
+        ]
+      }
+    }
   },
   {
     "id": "UNT-MAR-002",
