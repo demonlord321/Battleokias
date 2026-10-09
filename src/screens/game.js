@@ -97,7 +97,7 @@ function basicPick(game) {
   const of = (type) => options.filter((a) => a.type === type);
   const hits = attackPreview(game, me())?.hits;
   return (
-    of("trapResponse")[0] || of("chooseLoss")[0] || of("pickpocket").sort((a, b) => (a.slot === null) - (b.slot === null))[0] || of("graduationGift").sort((a, b) => b.accept - a.accept)[0] || of("specialDraw")[0] || of("graduate").sort((a, b) => inF(a) - inF(b))[0] ||
+    of("trapResponse")[0] || of("chooseLoss")[0] || of("pickpocket").sort((a, b) => (a.slot === null) - (b.slot === null))[0] || of("graduationGift").sort((a, b) => b.accept - a.accept)[0] || of("freeStudents").filter((a) => !a.done)[0] || of("freeStudents")[0] || of("specialDraw")[0] || of("graduate").sort((a, b) => inF(a) - inF(b))[0] ||
     (!p.formationZone && (of("setFormation")[0] || of("deckFormation")[0])) ||
     (!p.fieldEffect && of("setField")[0]) ||
     of("promote").sort((a, b) => inF(a) - inF(b))[0] ||
@@ -178,6 +178,8 @@ const drawingSpecial = () => game.pending?.type === "specialDraw";
 const responding = () => game.pending?.type === "trapResponse";
 const pickpocketing = () => game.pending?.type === "pickpocket";
 const gifting = () => game.pending?.type === "graduationGift";
+const freeing = () => game.pending?.type === "freeStudents";
+let studentPick = null; // index into game.pending.choices picked in the free Students panel
 // Unit Position Slots, row*3+col with the front row first.
 const SLOT_NAMES = ["front left", "front centre", "front right", "middle left", "middle centre", "middle right", "back left", "back centre", "back right"];
 const unitIn = (p, slot) => (p.ups[slot] && !p.ups[slot].faceDown ? p.ups[slot] : null);
@@ -255,6 +257,11 @@ function render() {
   if (pickpocketing() && !blocked()) ui.pickSlots = new Set(game.pending.targets.map((t) => t.slot));
   // Graduation: once a Grade 3 is picked in the panel, its possible slots glow.
   if (graduating() && gradCard) ui.legalSlots = new Set(game.pending.slots);
+  // Drazel, Instructor of the Blade's free Students: once one is picked, the empty slots glow.
+  if (freeing() && !blocked()) {
+    if (!game.pending.choices[studentPick]) studentPick = 0;
+    ui.legalSlots = new Set(game.pending.slots);
+  } else studentPick = null;
   // Preparation Phase II: the Special Decks you can draw from glow.
   if (drawingSpecial()) ui.drawDecks = new Set(game.pending.decks);
   // The opponent's attack is about to destroy a unit and you have a set card that can answer.
@@ -269,6 +276,7 @@ function render() {
   renderRowPanel();
   renderPickpocketPanel();
   renderGiftPanel();
+  renderStudentsPanel();
   renderLossPanel();
 
   ui.formationStats = game.players.map((_, i) => formationStats(game, i));
@@ -502,6 +510,35 @@ function renderGiftPanel() {
       <button class="grad-option trap-pass" data-gift="no">No thanks<small>leave it in the deck</small></button></div>`;
 }
 
+// Drazel, Instructor of the Blade (engine: game.pending = { type: "freeStudents", player, left,
+// choices: [{ card, from, name, grade }], slots, source }): pick a Student here, then click a glowing
+// empty slot. Answered one at a time with { card, from, slot }, or { done: true } to stop.
+function renderStudentsPanel() {
+  let panel = $("#students-panel");
+  if (!freeing() || blocked()) return panel?.remove();
+  if (!panel) {
+    panel = document.createElement("div");
+    panel.id = "students-panel";
+    panel.className = "grad-panel students-panel";
+    panel.addEventListener("click", (e) => {
+      const b = e.target.closest("[data-student]");
+      if (!b || !freeing()) return;
+      if (b.dataset.student === "done") return act({ type: "freeStudents", player: me(), done: true });
+      studentPick = +b.dataset.student;
+      render();
+    });
+    $("#game-screen").append(panel);
+  }
+  const { left, choices, source } = game.pending;
+  panel.innerHTML = `
+    <div class="grad-title">&#x1F393; ${source ?? "Drazel"}: ${left} free Student${left === 1 ? "" : "s"}</div>
+    <div class="grad-sub">Pick a Student, then click a glowing empty slot. They join at no cost.</div>
+    <div class="grad-options">${choices
+      .map((c, i) => `<button class="grad-option${i === studentPick ? " is-picked" : ""}" data-student="${i}">${c.name}<small>Grade ${c.grade} · from your ${c.from}</small></button>`)
+      .join("")}
+      <button class="grad-option trap-pass" data-student="done">Stop here<small>no more free Students</small></button></div>`;
+}
+
 // Formation row picker (RULES.md a2392f0): when a Formation like Line Defense has more than one
 // full row, the player picks which one it uses. Engine: chooseFormation { option }, with
 // formationStats(...).options (full rows now) and .option (the row in use). It pops up on its own
@@ -662,6 +699,7 @@ function onHandClick({ index }) {
   if (blocked() || game.winner !== null) return;
   if (choosingLoss()) return toast("Pick one of the glowing units to send to the Grave.");
   if (gifting()) return toast("Graduation Gift: take the Katana or say no in the panel first.");
+  if (freeing()) return toast("Pick a free Student in the panel, then a glowing empty slot.");
   if (pickpocketing()) return toast("Pickpocket: pick a glowing card on your opponent's side, or skip it in the panel.");
   if (graduating()) return toast("Pick a Grade 3 in the Graduation panel first.");
   if (drawingSpecial()) return toast("Preparation Phase II: click one of your glowing Special Decks to draw from it.");
@@ -694,6 +732,12 @@ function onSlotClick({ owner, zone, index }) {
     return;
   }
   if (gifting()) return toast("Graduation Gift: take the Katana or say no in the panel first.");
+  if (freeing()) {
+    const c = game.pending.choices[studentPick];
+    if (c && zone === "ups" && owner === 0 && game.pending.slots.includes(index)) act({ type: "freeStudents", player: me(), card: c.card, from: c.from, slot: index });
+    else toast("Pick a free Student in the panel, then a glowing empty slot.");
+    return;
+  }
   if (pickpocketing()) {
     const here = zone === "ups" && owner === 1 ? game.pending.targets.filter((t) => t.slot === index) : [];
     if (here.length === 1) act({ type: "pickpocket", player: me(), slot: index, kind: here[0].kind });

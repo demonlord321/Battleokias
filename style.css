@@ -836,3 +836,7 @@ html, body {
 
 /* Graduation Gift prompt (Drazel, Practitioner of the Blade). */
 .gift-panel { top: 30%; border-color: #d9b45a; box-shadow: 0 0 18px rgba(217, 180, 90, 0.5); }
+
+/* Free Students picker (Drazel, Instructor of the Blade). */
+.students-panel { top: 24%; border-color: #d9b45a; }
+.students-panel .grad-option.is-picked { border-color: #7dffb0; box-shadow: 0 0 10px rgba(125, 255, 176, 0.6); }
