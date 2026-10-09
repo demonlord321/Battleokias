@@ -52,7 +52,7 @@ How does a Graduate of Arms move up to Grade 4?
 **Answer:**
 
 ### 9. Named units: one of a kind?
-Can you have two copies of the same named unit (say, two Drazels) on your field at once?
+Can you have two copies of the same named unit (say, two Drazels) on your field at once? And how many can a deck hold? Units currently have no copy limit, so a deck could run 20 Senas (Advisor). Options: no limit, cap named units at 3 like other cards, or give each named unit its own limit on the card (like Drazel's Katana).
 **Placeholder:** only one copy of a named unit on your field at a time, but no deck limit.
 **Answer:**
 
@@ -141,7 +141,12 @@ Galent was behind most of the stalled games. Advisor wants to re-check him now t
 **Placeholder:** no change until the sim pass.
 **Answer:**
 
-For reference, Developer's 9 Oct averages: Vanguard Charge 89%, Katana 72%, Drazel 48%, and Frontal Assault, Gear and Academy around 30%. Every game ended with a winner.
+### B9. Sena's stats
+Drazel and Galent give up one stat for a big one (about 5000 to 5500 total). Sena has 3500/3500 (7000 total) plus Pickpocket. If Pickpocket is meant to be her strength, Advisor suggests about 2500/2500.
+**Placeholder:** 3500/3500 until you decide.
+**Answer:**
+
+For reference, Developer's latest averages (9 Oct, six real units only, 20 games per pairing): Vanguard Charge 89%, Katana 77%, Academy 40%, Drazel 39%, Gear 28% and Frontal Assault 27%.
 
 ## Later (no rush)
 Answer these whenever you're ready. Nothing is waiting on them yet.

@@ -84,7 +84,7 @@ Uses the placeholder rules in `RULES.md`; Dyllan refines them as we play.
   - When the Bloody Blade's Last Stand fetches Katana of the Fallen Hero, Drazel's Katana goes to the Grave; Drazel's Katana stays on through promotion to the Bloody Blade and can be equipped to him directly
   - Last Stand destroys Drazel after the third Battle Phase it's active for (placeholder: his owner's Battle Phases, QUESTIONS.md #3)
 - [ ] Add Bloody Blade (`ARM-DRA-002`), Katana of the Fallen Hero and Last Stand to `cards.json` once Dyllan writes them up, Developer
-- [ ] Remove the 11 placeholder units (Dyllan, 9 Oct): Spear Militia, Squire, Apprentice Mage, Flask Thrower, Goblin Scout, Shield Sergeant, Crossbow Sniper, Banner Bearer, Veteran Swordsman, Pike Captain, War Knight. Rebuild the Martial test deck and sim decks from the units that are left (Student, Apprentice and Graduate of Arms, Drazel, Galent, Sena), Developer
+- [x] Remove the 11 placeholder units (done `5e91af6`, `9befed6`) (Dyllan, 9 Oct): Spear Militia, Squire, Apprentice Mage, Flask Thrower, Goblin Scout, Shield Sergeant, Crossbow Sniper, Banner Bearer, Veteran Swordsman, Pike Captain, War Knight. Rebuild the Martial test deck and sim decks from the units that are left (Student, Apprentice and Graduate of Arms, Drazel, Galent, Sena), Developer
 - [ ] Unit write-ups still missing: a real Formation Effect for every unit, and flavor text for Galent and Sena, Dyllan
 - [ ] All open questions for Dyllan are collected in `QUESTIONS.md`. He answers there and Planner folds the answers into `RULES.md`
 - [ ] Dyllan playtests and replaces placeholder rules, Planner updates `RULES.md`
