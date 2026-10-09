@@ -154,6 +154,10 @@ Drazel and Galent give up one stat for a big one (about 5000 to 5500 total). Sen
 **Answer:**
 
 For reference, Developer's latest averages (9 Oct, six real units only, 20 games per pairing): Vanguard Charge 89%, Katana 77%, Academy 40%, Drazel 39%, Gear 28% and Frontal Assault 27%.
+### B10. Instructor promoting Galent
+With the main Signet or Class rule, Drazel, Instructor of the Blade can promote Galent and copy his 4000 Defense, giving a 4000/4000 Drazel before the Katana. Advisor is parking this for the sim pass.
+**Placeholder:** allowed, no change until the sims.
+**Answer:**
 
 ## Later (no rush)
 Answer these whenever you're ready. Nothing is waiting on them yet.
