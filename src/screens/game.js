@@ -55,7 +55,8 @@ function buildDeck(cards, decks, signet) {
       return instance(byId[id], seen[id]);
     });
   }
-  const pool = cards.filter((c) => c.signets?.includes(signet) || c.signets?.includes(OLD_SIGNET[signet]));
+  // Battle'O'Kias cards aren't a deck theme: they fit in every deck.
+  const pool = cards.filter((c) => c.signets?.some((s) => [signet, OLD_SIGNET[signet], "battleokias"].includes(s)));
   if (!pool.length) throw new Error(`No cards in data/cards.json carry the "${signet}" Signet.`);
   const units = pool.filter((c) => c.type === "unit");
   const deck = [];

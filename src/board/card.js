@@ -21,9 +21,11 @@ export const SIGNETS = {
   martial: { label: "School of Martial", symbol: "⚔", color: "#c8483a" },
   mystic:  { label: "School of Mystic",  symbol: "✦", color: "#7a5ce0" },
   alchemy: { label: "School of Alchemy", symbol: "⚗", color: "#3f9a5a" },
+  // Not a deck theme: cards with it fit in every deck (Dyllan, 9 Oct).
+  battleokias: { label: "Battle'O'Kias (fits any deck)", symbol: "◆", color: "#d9b45a" },
 };
 // Old names (Dyllan, 9 Oct: Arms is now Martial, Magic is now Mystic), so older data still draws.
-const SIGNET_ALIASES = { arms: "martial", magic: "mystic" };
+const SIGNET_ALIASES = { arms: "martial", magic: "mystic", "battle'o'kias": "battleokias", bok: "battleokias" };
 // Retired Signets (only the three base Signets are used now): not drawn at all.
 const RETIRED_SIGNETS = new Set(["mercenary", "hero"]);
 
