@@ -98,6 +98,11 @@ Uses the placeholder rules in `RULES.md`; Dyllan refines them as we play.
 - [x] Dyllan's answers of 9 Oct (done `3192380`, `6a94e87`, board `9b799be`), Developer + Mapmaker:
   - Graduation Gift: the search is through the Special Deck, and you may **equip the Katana instantly** onto Drazel or keep it in hand (placeholder: still pays its 3 Energy). Board: offer "equip now" as well as "take to hand", Mapmaker
   - **Promotion lines:** a unit can be promoted by a unit one Grade higher that shares its **main Signet or its Class**. Replaces the fixed `promotesFrom` for named units (the Student line stays fixed; any Grade 4 can still promote a Graduate). Placeholder: the Class line needs both units to have a Class, Developer
+- [ ] Drazel, Instructor of the Blade's summon effect (Dyllan, 9 Oct), Developer + Mapmaker:
+  - Promoting him on top of the Practitioner costs **0 Energy**, if the Practitioner has been on the field a full turn (placeholder: since the start of your turn)
+  - With Military Institute in play, you may then **summon up to two Students free** (placeholder: any Students, from hand or deck, empty slots you choose; deck shuffled)
+  - Board: a picker for the two Students, Mapmaker
+  - Open points in QUESTIONS.md #1b
 - [ ] Unit write-ups still missing: a real Formation Effect for every unit, and flavor text for Galent and Sena, Dyllan
 - [ ] All open questions for Dyllan are collected in `QUESTIONS.md`. He answers there and Planner folds the answers into `RULES.md`
 - [ ] Dyllan playtests and replaces placeholder rules, Planner updates `RULES.md`

@@ -13,6 +13,13 @@ c) Does any promotion trigger the Gift, or only promoting a Student, Graduate? *
 d) Can the Katana go on every Drazel card now? **Placeholder:** yes.
 **Answer:**
 
+### 1b. Drazel, Instructor of the Blade's summon effect
+a) What counts as the Practitioner being on the field "for a full turn"? **Placeholder:** he was on the field at the start of your turn.
+b) Does the free promotion still use your one promotion for the turn? **Placeholder:** yes.
+c) Which Students can the Military Institute bonus summon, and from where? **Placeholder:** any Student (First Year, Second Year or Graduate), from your hand or deck (shuffle after), into empty slots you choose; only one if there's only room for one.
+d) Does the two-Student bonus only come with the free promotion on top of the Practitioner? **Placeholder:** yes.
+**Answer:**
+
 ### 2. Card IDs: codes and named characters
 IDs are now type, main Signet, number. Placeholder codes: `UNT` `FRM` `SPL` `TRP` `EQP` `ART` `FLD` for types, `BOK` `MAR` `MYS` `ALC` for Signets. Are those codes OK? And named characters lose their short name (Drazel `ARM-DRA-001` becomes `UNT-MAR-001`, the Bloody Blade `UNT-MAR-004`). Is that fine?
 **Placeholder:** the codes above, and named units numbered like any other unit.
