@@ -187,132 +187,6 @@
     "maxGrade": 3
   },
   {
-    "id": "ARM-002",
-    "name": "Shield Sergeant",
-    "type": "unit",
-    "signets": [
-      "martial"
-    ],
-    "grade": 3,
-    "attack": 1200,
-    "defense": 2200,
-    "formation": "Formation effect text",
-    "text": "Placeholder card until Dyllan's real cards replace it.",
-    "image": "images/arm-002.png"
-  },
-  {
-    "id": "ARM-003",
-    "name": "Spear Militia",
-    "type": "unit",
-    "signets": [
-      "martial"
-    ],
-    "grade": 1,
-    "attack": 600,
-    "defense": 300,
-    "formation": "Formation effect text",
-    "text": "Placeholder card until Dyllan's real cards replace it.",
-    "image": "images/arm-003.png"
-  },
-  {
-    "id": "ARM-004",
-    "name": "Squire",
-    "type": "unit",
-    "signets": [
-      "martial"
-    ],
-    "grade": 2,
-    "attack": 1300,
-    "defense": 1200,
-    "formation": "Formation effect text",
-    "text": "Placeholder card until Dyllan's real cards replace it.",
-    "image": "images/arm-004.png"
-  },
-  {
-    "id": "ARM-005",
-    "name": "Crossbow Sniper",
-    "type": "unit",
-    "signets": [
-      "martial"
-    ],
-    "grade": 3,
-    "attack": 2200,
-    "defense": 1000,
-    "formation": "Formation effect text",
-    "text": "Placeholder card until Dyllan's real cards replace it.",
-    "image": "images/arm-005.png"
-  },
-  {
-    "id": "ARM-006",
-    "name": "Banner Bearer",
-    "type": "unit",
-    "signets": [
-      "martial"
-    ],
-    "grade": 4,
-    "attack": 2000,
-    "defense": 2400,
-    "formation": "Formation effect text",
-    "text": "Placeholder card until Dyllan's real cards replace it.",
-    "image": "images/arm-006.png"
-  },
-  {
-    "id": "ARM-007",
-    "name": "Veteran Swordsman",
-    "type": "unit",
-    "signets": [
-      "martial"
-    ],
-    "grade": 4,
-    "attack": 2500,
-    "defense": 1800,
-    "formation": "Formation effect text",
-    "text": "Placeholder card until Dyllan's real cards replace it.",
-    "image": "images/arm-007.png"
-  },
-  {
-    "id": "ARM-008",
-    "name": "Pike Captain",
-    "type": "unit",
-    "signets": [
-      "martial"
-    ],
-    "grade": 5,
-    "attack": 2800,
-    "defense": 2400,
-    "formation": "Formation effect text",
-    "text": "Placeholder card until Dyllan's real cards replace it.",
-    "image": "images/arm-008.png"
-  },
-  {
-    "id": "ARM-009",
-    "name": "War Knight",
-    "type": "unit",
-    "signets": [
-      "martial"
-    ],
-    "grade": 6,
-    "attack": 3300,
-    "defense": 2800,
-    "formation": "Formation effect text",
-    "text": "Placeholder card until Dyllan's real cards replace it.",
-    "image": "images/arm-009.png"
-  },
-  {
-    "id": "MAG-001",
-    "name": "Apprentice Mage",
-    "type": "unit",
-    "signets": [
-      "mystic"
-    ],
-    "grade": 2,
-    "attack": 1600,
-    "defense": 800,
-    "formation": "Formation effect text",
-    "text": "Placeholder card until Dyllan's real cards replace it.",
-    "image": "images/mag-001.png"
-  },
-  {
     "id": "MAG-002",
     "name": "Arcane Bolt",
     "type": "spell",
@@ -324,20 +198,6 @@
     "image": "images/mag-002.png"
   },
   {
-    "id": "ALC-001",
-    "name": "Flask Thrower",
-    "type": "unit",
-    "signets": [
-      "alchemy"
-    ],
-    "grade": 2,
-    "attack": 1200,
-    "defense": 1200,
-    "formation": "Formation effect text",
-    "text": "Placeholder card until Dyllan's real cards replace it.",
-    "image": "images/alc-001.png"
-  },
-  {
     "id": "ALC-002",
     "name": "Caustic Snare",
     "type": "trap",
@@ -347,21 +207,6 @@
     "cost": 1,
     "text": "Trap effect text",
     "image": "images/alc-002.png"
-  },
-  {
-    "id": "ARM-ALC-001",
-    "name": "Goblin Scout",
-    "type": "unit",
-    "signets": [
-      "martial",
-      "alchemy"
-    ],
-    "grade": 2,
-    "attack": 1200,
-    "defense": 1000,
-    "formation": "Formation effect text",
-    "text": "Placeholder card until Dyllan's real cards replace it.",
-    "image": "images/arm-alc-001.png"
   },
   {
     "id": "EQP-002",

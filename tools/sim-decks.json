@@ -18,7 +18,7 @@
     "from": "martial",
     "swap": [
       [
-        "ARM-003",
+        "ARM-010",
         "EQP-001",
         3
       ]
@@ -28,7 +28,7 @@
     "from": "martial",
     "swap": [
       [
-        "ARM-003",
+        "ARM-011",
         "FLD-001",
         3
       ]
@@ -38,7 +38,7 @@
     "from": "martial",
     "swap": [
       [
-        "ARM-006",
+        "ARM-012",
         "ARM-DRA-001",
         3
       ]
@@ -48,7 +48,7 @@
     "from": "martial",
     "swap": [
       [
-        "ARM-006",
+        "ARM-012",
         "ARM-DRA-001",
         3
       ]
