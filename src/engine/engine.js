@@ -268,8 +268,8 @@ function useArtifact(game, playerIndex, slot) {
 // owner's units goes (Dyllan, 8 Oct): pending.player is the attacker, pending.owner the defender.
 // A unit's onSummon effect, when it enters the field by a summon or a promotion (Dyllan, 9 Oct:
 // any way a unit enters the field counts as a summon). Sena's Pickpocket asks for a target, if there is one.
-function onSummon(game, card, { promoted = false } = {}) {
-  if (card.onSummon === "graduationGift") return graduationGift(game, card, promoted);
+function onSummon(game, card, { promoted = false, slot = null } = {}) {
+  if (card.onSummon === "graduationGift") return graduationGift(game, card, promoted, slot);
   if (card.onSummon !== "pickpocket") return;
   const targets = pickpocketTargets(game, 1 - game.activePlayer);
   if (!targets.length) return;
@@ -279,14 +279,15 @@ function onSummon(game, card, { promoted = false } = {}) {
 
 // Drazel, Practitioner of the Blade's Graduation Gift (Dyllan, 9 Oct): when he is promotion
 // summoned while card.gift.field (Military Institute) is your Field Spell, you may search for
-// card.gift.card (Drazel's Katana). Placeholders (QUESTIONS.md #1): any promotion counts, and the
-// search is your Equipment Special Deck; the Katana goes to your hand and is equipped as usual.
-function graduationGift(game, card, promoted) {
+// card.gift.card (Drazel's Katana) in your Special Decks (confirmed). You may equip it on him
+// right away (Dyllan, 9 Oct; placeholder: at its usual cost and Phase timing) or keep it in hand.
+// Placeholder (QUESTIONS.md #1): any promotion counts.
+function graduationGift(game, card, promoted, slot) {
   const p = game.players[game.activePlayer];
   if (!promoted || !card.gift || catalogueId(p.fieldEffect ?? {}) !== card.gift.field) return;
   const found = giftCard(p, card.gift.card);
   if (!found) return;
-  game.pending = { type: "graduationGift", player: game.activePlayer, card: found.id };
+  game.pending = { type: "graduationGift", player: game.activePlayer, card: found.id, slot };
   game.log.push(`${card.name}'s Graduation Gift: ${p.name} may search for ${found.name}.`);
 }
 const giftCard = (p, id) => p.specialDecks.flatMap((d) => d?.cards ?? []).find((c) => catalogueId(c) === id) ?? null;
@@ -342,11 +343,13 @@ export function unlimitedPromotion(game, playerIndex, base) {
 // The catalogue id of a card (deck copies are "UNT-BOK-001#2" with cardId "UNT-BOK-001").
 const catalogueId = (c) => c.cardId ?? c.id;
 
-// Promotion lines (RULES.md): a unit's line is its first Signet; later Signets are
-// sub-Signets and don't count. A card with "promotesFrom" (like Student, Second Year,
-// promotesFrom ["UNT-BOK-001"]) only goes on those cards. Placeholder until Dyllan says how
-// named units fit: a card without it goes on any unit one Grade lower in the same line.
+// Promotion lines (Dyllan, 9 Oct): a unit promotes one a Grade lower that shares its main
+// (first) Signet or its Class; sub-Signets don't count. A card with "promotesFrom" (like
+// Student, Second Year, promotesFrom ["UNT-BOK-001"]) only goes on those cards.
+// Placeholders: the Class route needs both units to have a Class; any next-Grade unit can
+// promote a Battle'O'Kias unit (a Student, Graduate).
 export const promotionLine = (card) => card.signets?.[0] ?? null;
+const sameClass = (a, b) => !!a.class && !!b.class && a.class.toLowerCase() === b.class.toLowerCase();
 
 // Equipment with maxGrade (Practice Gear: 3) only goes on, and only stays on, units up to that Grade.
 const fitsGrade = (equipment, unit) => !Number.isInteger(equipment.maxGrade) || unit.grade <= equipment.maxGrade;
@@ -368,7 +371,8 @@ const arriving = (card) => ({ attack: arrivingStat(card, "attack"), defense: arr
 export function inPromotionLine(base, card) {
   if (card.promotesFrom) return card.promotesFrom.includes(catalogueId(base));
   if (promotionLine(base) === NEUTRAL_SIGNET) return true; // placeholder: any next-Grade unit can promote a Student, Graduate
-  return promotionLine(base) !== null && promotionLine(base) === promotionLine(card);
+  if (promotionLine(base) !== null && promotionLine(base) === promotionLine(card)) return true;
+  return sameClass(base, card);
 }
 
 // What a graduating unit could become right now: every copy of the Academy's
@@ -644,7 +648,7 @@ const ACTIONS = {
       const gear = kept && { ...kept, ...(copies("defense") ? { defenseCopied: true } : {}), ...(copies("attack") ? { attackCopied: true } : {}) };
       p.ups[action.slot] = { ...card, attack, defense, under: [...under, baseCard], ...(gear ? { equipment: gear } : {}), ...(artifact ? { artifact } : {}) };
       game.log.push(`${p.name} promotes ${base.name} to ${card.name}.`);
-      onSummon(game, card, { promoted: true }); // "summon" includes promotion (Dyllan, 9 Oct)
+      onSummon(game, card, { promoted: true, slot: action.slot }); // "summon" includes promotion (Dyllan, 9 Oct)
       if (outgrown) {
         const { readyNextTurn, defenseCopied, attackCopied, ...old } = equipment;
         p.graveyard.push(old);
@@ -1115,13 +1119,21 @@ const ACTIONS = {
     },
   },
 
-  // { type: "graduationGift", player, accept }: take pending.card from your Special Deck into
-  // your hand (that deck is then shuffled), or decline.
+  // { type: "graduationGift", player, accept, equip? }: take pending.card from your Special Deck
+  // into your hand (that deck is then shuffled), or decline. With equip: pending.slot, it goes
+  // straight onto Drazel there, following the normal equip rules (cost, one per unit, onlyOn).
   graduationGift: {
     check(game, action) {
       if (game.pending?.type !== "graduationGift") return "There's no Graduation Gift to answer.";
       if (typeof action.accept !== "boolean") return "Answer yes or no.";
-      return null;
+      if (action.equip === undefined || action.equip === null) return null;
+      if (!action.accept) return "Take the Katana to equip it.";
+      if (action.equip !== game.pending.slot) return "The Katana can only be equipped on the Drazel who found it.";
+      const p = game.players[game.pending.player];
+      p.hand.push(p.specialDecks.flatMap((d) => d?.cards ?? []).find((c) => c.id === game.pending.card) ?? {});
+      const problem = ACTIONS.equip.check(game, { type: "equip", player: game.pending.player, card: game.pending.card, slot: action.equip });
+      p.hand.pop();
+      return problem;
     },
     apply(game, action) {
       const { player, card: id } = game.pending;
@@ -1133,6 +1145,7 @@ const ACTIONS = {
       deck.cards = shuffle(deck.cards, game.rng);
       p.hand.push(card);
       game.log.push(`${p.name} searches their ${deck.type} Special Deck and adds ${card.name} to their hand.`);
+      if (action.equip !== undefined && action.equip !== null) ACTIONS.equip.apply(game, { type: "equip", player, card: card.id, slot: action.equip });
     },
   },
 
@@ -1237,7 +1250,8 @@ export function legalActions(game) {
   }
   if (game.pending?.type === "graduationGift") {
     const { player } = game.pending;
-    return [true, false].map((accept) => ({ type: "graduationGift", player, accept }));
+    const options = [{ type: "graduationGift", player, accept: true, equip: game.pending.slot }, { type: "graduationGift", player, accept: true }, { type: "graduationGift", player, accept: false }];
+    return options.filter((a) => checkAction(game, a) === null);
   }
   if (game.pending?.type === "pickpocket") {
     const { player, targets } = game.pending;

@@ -30,7 +30,7 @@ test("promoted with Military Institute in play, he may search the Equipment Spec
   assert.equal(game.pending.type, "graduationGift");
   assert.equal(game.pending.player, 0);
   assert.match(game.pending.card, /^EQP-MAR-002#/);
-  assert.deepEqual(legalActions(game).map((a) => a.accept), [true, false]);
+  assert.deepEqual(legalActions(game).map((a) => a.accept), [true, true, false]); // equip now, keep in hand, decline
   ok(game, { type: "graduationGift", player: 0, accept: true });
   const p = game.players[0];
   assert.equal(game.pending, null);
@@ -77,7 +77,31 @@ test("the Katana goes on any Drazel card and stays on when the Practitioner beco
 test("the bot takes the Gift, and the card check wants a real Field Spell and Equipment", () => {
   const game = start();
   promote(game);
-  assert.deepEqual(chooseAction(game, 0), { type: "graduationGift", player: 0, accept: true });
+  assert.deepEqual(chooseAction(game, 0), { type: "graduationGift", player: 0, accept: true, equip: 0 });
   const broken = { ...byId["UNT-MAR-005"], gift: { field: "FLD-MAR-001", card: "UNT-BOK-001" } };
   assert.ok(checkCards([...cards.filter((c) => c.id !== "UNT-MAR-005"), broken]).some((m) => /gift/.test(m)));
+});
+
+test("the Gift can equip the Katana on him straight away, at its usual cost", () => {
+  const game = start();
+  promote(game);
+  assert.equal(game.pending.slot, 0);
+  assert.deepEqual(legalActions(game).map((a) => [a.accept, a.equip]), [[true, 0], [true, undefined], [false, undefined]]);
+  assert.match(applyAction(game, { type: "graduationGift", player: 0, accept: true, equip: 3 }).reason ?? "", /found it/);
+  assert.deepEqual(chooseAction(game, 0), { type: "graduationGift", player: 0, accept: true, equip: 0 });
+  const p = game.players[0];
+  const energy = p.energy;
+  ok(game, { type: "graduationGift", player: 0, accept: true, equip: 0 });
+  assert.equal(p.ups[0].equipment.cardId, "EQP-MAR-002");
+  assert.equal(p.energy, energy - 3);
+  assert.ok(!p.hand.some((c) => c.cardId === "EQP-MAR-002"));
+  assert.deepEqual(unitStats(game, 0, 0), { attack: 4500, defense: 1500 });
+});
+
+test("without the Energy to equip it, only taking it to hand or declining is offered", () => {
+  const game = start();
+  promote(game);
+  game.players[0].energy = 2;
+  assert.deepEqual(legalActions(game).map((a) => [a.accept, a.equip]), [[true, undefined], [false, undefined]]);
+  assert.match(applyAction(game, { type: "graduationGift", player: 0, accept: true, equip: 0 }).reason ?? "", /Energy/);
 });
