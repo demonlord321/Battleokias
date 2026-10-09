@@ -118,6 +118,14 @@ export function checkCards(cards) {
       problems.push(`${where}: "cooldown" goes on an Artifact and counts your turns (0 or more).`);
     if ("onSummon" in card && (card.type !== "unit" || !["pickpocket", "graduationGift"].includes(card.onSummon)))
       problems.push(`${where}: "onSummon" goes on a unit and can be "pickpocket" or "graduationGift".`);
+    if ("freePromotion" in card) {
+      // Drazel, Instructor of the Blade: free on top of "from", optionally bringing Students.
+      const f = card.freePromotion, s = f?.students;
+      const isUnit = (id) => cards.some((c) => c?.id === id && c.type === "unit");
+      if (card.type !== "unit" || typeOf(f) !== "object" || !isUnit(f.from)) problems.push(`${where}: "freePromotion" needs "from": a unit id.`);
+      else if (s !== undefined && (typeOf(s) !== "object" || !cards.some((c) => c?.id === s.field && c.type === "field_spell") || !Number.isInteger(s.count) || s.count < 1 || !Array.isArray(s.cards) || !s.cards.length || !s.cards.every(isUnit)))
+        problems.push(`${where}: "freePromotion.students" should be { "field": a Field Spell id, "count": 2, "cards": [unit ids] }.`);
+    }
     if (card.onSummon === "graduationGift") {
       const g = card.gift;
       const known = (id, type) => cards.some((c) => c?.id === id && c.type === type);

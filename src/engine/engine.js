@@ -368,6 +368,43 @@ function arrivingStat(card, stat, base = null, baseTotal = null) {
 // Both stats for a summoned unit.
 const arriving = (card) => ({ attack: arrivingStat(card, "attack"), defense: arrivingStat(card, "defense") });
 
+// Drazel, Instructor of the Blade (Dyllan, 9 Oct): promoted on top of card.freePromotion.from
+// (the Practitioner) costs nothing, once that unit has been on the field a full turn
+// (placeholder: it was there when your turn started, so arrivedTurn is an earlier turn; units
+// without arrivedTurn count as long-standing). Placeholder: it still uses your promotion.
+export function freePromotion(game, base, card) {
+  const rule = card.freePromotion;
+  return !!rule && catalogueId(base) === rule.from && (base.arrivedTurn ?? -Infinity) < game.turn;
+}
+export const promotionCost = (game, base, card) => (freePromotion(game, base, card) ? 0 : card.grade - base.grade);
+
+// With rule.students.field (Military Institute) in play, that free promotion also summons up to
+// rule.students.count of rule.students.cards from hand or deck into empty slots, one at a time
+// (placeholders, QUESTIONS.md #1b: any Student card, only via the free promotion).
+function freeStudents(game, card, left = card.freePromotion.students.count) {
+  const player = game.activePlayer;
+  const p = game.players[player];
+  const rule = card.freePromotion.students;
+  if (catalogueId(p.fieldEffect ?? {}) !== rule.field) return;
+  const { choices, slots } = freeStudentOptions(p, rule.cards);
+  if (!left || !choices.length || !slots.length) return;
+  game.pending = { type: "freeStudents", player, left, choices, slots, cards: rule.cards, source: card.name };
+  game.log.push(`${card.name} can bring ${left} Student${left === 1 ? "" : "s"} onto the field at no cost.`);
+}
+// One choice per card and place (hand or deck), like Graduation.
+function freeStudentOptions(p, ids) {
+  const choices = [];
+  const seen = new Set();
+  for (const [from, pile] of [["hand", p.hand], ["deck", p.deck]]) for (const c of pile) {
+    const key = `${from}:${catalogueId(c)}`;
+    if (!ids.includes(catalogueId(c)) || seen.has(key)) continue;
+    seen.add(key);
+    choices.push({ card: c.id, name: c.name, grade: c.grade, from });
+  }
+  const slots = p.ups.map((u, slot) => (u ? -1 : slot)).filter((slot) => slot >= 0);
+  return { choices, slots };
+}
+
 export function inPromotionLine(base, card) {
   if (card.promotesFrom) return card.promotesFrom.includes(catalogueId(base));
   if (promotionLine(base) === NEUTRAL_SIGNET) return true; // placeholder: any next-Grade unit can promote a Student, Graduate
@@ -600,7 +637,7 @@ const ACTIONS = {
       const p = game.players[game.activePlayer];
       const [card] = p.hand.splice(handIndex(p, action.card), 1);
       spendEnergy(p, cardCost(card));
-      p.ups[action.slot] = { ...card, ...arriving(card) };
+      p.ups[action.slot] = { ...card, ...arriving(card), arrivedTurn: game.turn };
       game.log.push(`${p.name} summons ${card.name}.`);
       onSummon(game, card);
     },
@@ -622,7 +659,7 @@ const ACTIONS = {
       if (card.grade !== base.grade + 1) return `${card.name} is Grade ${card.grade} and can only promote a Grade ${card.grade - 1} unit.`;
       if (!inPromotionLine(base, card)) return `${card.name} isn't next in ${base.name}'s promotion line.`;
       if (game.promotionsLeft <= 0 && !unlimitedPromotion(game, game.activePlayer, base)) return "You've already promoted this turn.";
-      const cost = card.grade - base.grade;
+      const cost = promotionCost(game, base, card);
       if (cost > p.energy) return `Promoting costs ${cost} Energy and you have ${p.energy}.`;
       return null;
     },
@@ -630,7 +667,8 @@ const ACTIONS = {
       const p = game.players[game.activePlayer];
       const [card] = p.hand.splice(handIndex(p, action.card), 1);
       const base = p.ups[action.slot];
-      spendEnergy(p, card.grade - base.grade);
+      const free = freePromotion(game, base, card);
+      spendEnergy(p, promotionCost(game, base, card));
       // Promotions a Field Spell makes unlimited don't use up the normal one.
       if (!unlimitedPromotion(game, game.activePlayer, base)) game.promotionsLeft -= 1;
       // Equipment stays on through a promotion, unless the new Grade is above its maxGrade
@@ -646,8 +684,9 @@ const ACTIONS = {
       const attack = arrivingStat(card, "attack", base, copies("attack") ? totals.attack : null);
       const defense = arrivingStat(card, "defense", base, copies("defense") ? totals.defense : null);
       const gear = kept && { ...kept, ...(copies("defense") ? { defenseCopied: true } : {}), ...(copies("attack") ? { attackCopied: true } : {}) };
-      p.ups[action.slot] = { ...card, attack, defense, under: [...under, baseCard], ...(gear ? { equipment: gear } : {}), ...(artifact ? { artifact } : {}) };
-      game.log.push(`${p.name} promotes ${base.name} to ${card.name}.`);
+      p.ups[action.slot] = { ...card, attack, defense, arrivedTurn: game.turn, under: [...under, baseCard], ...(gear ? { equipment: gear } : {}), ...(artifact ? { artifact } : {}) };
+      game.log.push(`${p.name} promotes ${base.name} to ${card.name}${free ? " at no cost" : ""}.`);
+      if (free && card.freePromotion.students) freeStudents(game, card);
       onSummon(game, card, { promoted: true, slot: action.slot }); // "summon" includes promotion (Dyllan, 9 Oct)
       if (outgrown) {
         const { readyNextTurn, defenseCopied, attackCopied, ...old } = equipment;
@@ -891,7 +930,7 @@ const ACTIONS = {
       const pile = from === "hand" ? p.hand : p.deck;
       const [card] = pile.splice(pile.findIndex((c) => c.id === action.card), 1);
       if (from === "deck") p.deck = shuffle(p.deck, game.rng);
-      p.ups[action.slot] = { ...card };
+      p.ups[action.slot] = { ...card, arrivedTurn: game.turn };
       game.log.push(`${leaving.card.name} graduates from ${field.name}: ${card.name} is summoned from ${p.name}'s ${from}, and ${leaving.card.name} goes to the Grave.`);
       nextGraduation(game);
     },
@@ -1149,6 +1188,31 @@ const ACTIONS = {
     },
   },
 
+  // { type: "freeStudents", player, card, from, slot }: summon one of pending.choices into an
+  // empty slot at no cost; { type: "freeStudents", player, done: true } stops early.
+  freeStudents: {
+    check(game, action) {
+      if (game.pending?.type !== "freeStudents") return "There are no free Students to summon right now.";
+      if (action.done === true) return null;
+      if (!game.pending.choices.some((c) => c.card === action.card && c.from === action.from)) return "Pick one of the Students on offer.";
+      if (!game.pending.slots.includes(action.slot)) return "Pick one of your empty slots.";
+      return null;
+    },
+    apply(game, action) {
+      const { player, left, cards, source } = game.pending;
+      game.pending = null;
+      const p = game.players[player];
+      if (action.done === true) return void game.log.push(`${p.name} doesn't summon any more Students.`);
+      const pile = action.from === "hand" ? p.hand : p.deck;
+      const [card] = pile.splice(pile.findIndex((c) => c.id === action.card), 1);
+      if (action.from === "deck") p.deck = shuffle(p.deck, game.rng);
+      p.ups[action.slot] = { ...card, ...arriving(card), arrivedTurn: game.turn };
+      game.log.push(`${card.name} joins ${source} from ${p.name}'s ${action.from}, at no cost.`);
+      const { choices, slots } = freeStudentOptions(p, cards);
+      if (left > 1 && choices.length && slots.length) game.pending = { type: "freeStudents", player, left: left - 1, choices, slots, cards, source };
+    },
+  },
+
   chooseLoss: {
     check(game, action) {
       if (game.pending?.type !== "chooseLoss") return "There's nothing to choose right now.";
@@ -1199,7 +1263,7 @@ export function checkAction(game, action) {
   if (game.pending) {
     const who = game.players[game.pending.player].name;
     if (action.type !== game.pending.type) {
-      const waiting = { graduate: "choose who comes out of the Academy", specialDraw: "pick a Special Deck to draw from", chooseLoss: "choose which unit goes to the Grave", trapResponse: "decide whether to respond", pickpocket: "decide what to pickpocket", graduationGift: "decide on the Graduation Gift" };
+      const waiting = { graduate: "choose who comes out of the Academy", specialDraw: "pick a Special Deck to draw from", chooseLoss: "choose which unit goes to the Grave", trapResponse: "decide whether to respond", pickpocket: "decide what to pickpocket", graduationGift: "decide on the Graduation Gift", freeStudents: "choose the free Students" };
       return `${who} has to ${waiting[game.pending.type]} first.`;
     }
     if (action.player !== undefined && action.player !== game.pending.player) return `It's ${who}'s choice.`;
@@ -1247,6 +1311,10 @@ export function legalActions(game) {
   if (game.pending?.type === "trapResponse") {
     const { player, slots } = game.pending;
     return [...slots, null].map((slot) => ({ type: "trapResponse", player, slot }));
+  }
+  if (game.pending?.type === "freeStudents") {
+    const { player, choices, slots } = game.pending;
+    return [...choices.flatMap(({ card, from }) => slots.map((slot) => ({ type: "freeStudents", player, card, from, slot }))), { type: "freeStudents", player, done: true }];
   }
   if (game.pending?.type === "graduationGift") {
     const { player } = game.pending;

@@ -53,6 +53,11 @@ export function chooseAction(game, player = actingPlayer(game)) {
     return of("chooseLoss").sort((a, b) => power(b) - power(a))[0];
   }
   if (view.pending?.type === "trapResponse") return of("trapResponse")[0]; // always use the Trap (the last option is pass)
+  if (view.pending?.type === "freeStudents") {
+    // The highest-Grade Student on offer, into the first empty slot.
+    const grade = (a) => view.pending.choices.find((c) => c.card === a.card)?.grade ?? 0;
+    return of("freeStudents").filter((a) => !a.done).sort((a, b) => grade(b) - grade(a) || a.slot - b.slot)[0] ?? of("freeStudents")[0];
+  }
   if (view.pending?.type === "graduationGift") return of("graduationGift")[0]; // take the Katana, equipping it now when allowed
   if (view.pending?.type === "pickpocket") {
     // Take an Artifact first (it can switch off our Formation), then Equipment, then an Item.
