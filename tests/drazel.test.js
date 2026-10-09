@@ -35,7 +35,7 @@ test("promoting a Graduate, he takes its printed 1500 Defense, and its Practice 
   assert.equal(applyAction(game, { type: "promote", player: 0, card: p.hand.length - 1, slot: 0 }).ok, true);
   assert.equal(p.ups[0].defense, 1500);
   assert.deepEqual(unitStats(game, 0, 0), { attack: 4000, defense: 1500 });
-  assert.equal(p.ups[0].under[0].name, "Graduate of Arms");
+  assert.equal(p.ups[0].under[0].name, "Student, Graduate");
 });
 
 test("the card check accepts his empty Defense only with variableDefense", () => {
@@ -69,7 +69,7 @@ test("the Katana only goes on Drazel and gives him +500 Attack", () => {
   p.ups[1] = { ...copy("ARM-DRA-001"), defense: 1000 }; // as if summoned
   p.hand.push(copy("EQP-002"));
   const k = p.hand.length - 1;
-  assert.equal(checkAction(game, { type: "equip", player: 0, card: k, slot: 0 }), "Drazel's Katana can't go on Graduate of Arms.");
+  assert.equal(checkAction(game, { type: "equip", player: 0, card: k, slot: 0 }), "Drazel's Katana can't go on Student, Graduate.");
   assert.equal(applyAction(game, { type: "equip", player: 0, card: k, slot: 1 }).ok, true);
   assert.deepEqual(unitStats(game, 0, 1), { attack: 4500, defense: 1000 });
 });

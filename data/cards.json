@@ -2,10 +2,10 @@
   {"Comment": "UNITS GRADE 1-3"},
   {
     "id": "ARM-010",
-    "name": "Student of Arms",
+    "name": "Student, First Year",
     "type": "unit",
     "signets": [
-      "martial"
+      "battleokias"
     ],
     "grade": 1,
     "attack": 500,
@@ -16,10 +16,10 @@
   },
   {
     "id": "ARM-011",
-    "name": "Apprentice of Arms",
+    "name": "Student, Second Year",
     "type": "unit",
     "signets": [
-      "martial"
+      "battleokias"
     ],
     "promotesFrom": [
       "ARM-010"
@@ -33,10 +33,10 @@
   },
   {
     "id": "ARM-012",
-    "name": "Graduate of Arms",
+    "name": "Student, Graduate",
     "type": "unit",
     "signets": [
-      "martial"
+      "battleokias"
     ],
     "promotesFrom": [
       "ARM-011"

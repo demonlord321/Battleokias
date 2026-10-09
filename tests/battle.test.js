@@ -100,9 +100,9 @@ test("promote: only the next unit in the same promotion line (first Signet; prom
   const me = game.players[0];
   me.energy = me.maxEnergy = 5;
   place(game, 0, 0, { ...unit(1, 100, 100), cardId: "ARM-001" }); // an Arms Grade 1 that isn't a Student
-  place(game, 0, 1, { ...unit(1, 100, 100), cardId: "ARM-010" }); // Student of Arms
+  place(game, 0, 1, { ...unit(1, 100, 100), cardId: "ARM-010" }); // Student, First Year
   place(game, 0, 2, unit(1, 100, 100, ["alchemy", "martial"])); // Arms only as a sub-Signet
-  me.hand.push({ ...unit(2, 200, 200), cardId: "ARM-011", name: "Apprentice of Arms", promotesFrom: ["ARM-010"] });
+  me.hand.push({ ...unit(2, 200, 200), cardId: "ARM-011", name: "Student, Second Year", promotesFrom: ["ARM-010"] });
   const apprentice = me.hand.length - 1;
   assert.match(checkAction(game, { type: "promote", player: 0, card: apprentice, slot: 0 }), /isn't next in .* promotion line/);
   assert.match(checkAction(game, { type: "promote", player: 0, card: apprentice, slot: 2 }), /promotion line/);

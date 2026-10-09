@@ -97,11 +97,11 @@ test("on a landed hit the defender may respond; Stand Strong goes to the Grave i
     { type: "trapResponse", player: 1, slot: null },
   ]);
   ok(game, { type: "trapResponse", player: 1, slot: 4 });
-  assert.equal(them.ups[0].name, "Student of Arms");
+  assert.equal(them.ups[0].name, "Student, First Year");
   assert.equal(them.ups[4], null);
   assert.equal(them.graveyard.at(-1).name, "Stand Strong");
   assert.equal(them.graveyard.at(-1).faceDown, undefined);
-  assert.match(game.log.at(-1), /Student of Arms is saved/);
+  assert.match(game.log.at(-1), /Student, First Year is saved/);
 });
 
 test("passing lets the unit be destroyed as usual", () => {

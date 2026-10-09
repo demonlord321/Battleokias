@@ -6,12 +6,12 @@ import { newGame, applyAction, checkAction, legalActions, academyOf, unlimitedPr
 
 let n = 0;
 const unit = (grade, signet = "martial") => ({ id: `U-${++n}`, cardId: `G${grade}-${signet}`, name: `G${grade} ${signet}`, type: "unit", signets: [signet], grade, attack: 500 * grade, defense: 500 * grade });
-// Student of Arms (ARM-010) goes in, Graduate of Arms (ARM-012) comes out.
-const student = () => ({ ...unit(1), cardId: "ARM-010", name: "Student of Arms" });
-const graduate = () => ({ ...unit(3), cardId: "ARM-012", name: "Graduate of Arms" });
+// Student, First Year (ARM-010) goes in, Student, Graduate (ARM-012) comes out.
+const student = () => ({ ...unit(1), cardId: "ARM-010", name: "Student, First Year" });
+const graduate = () => ({ ...unit(3), cardId: "ARM-012", name: "Student, Graduate" });
 const academy = () => ({
   id: `FLD-001#${++n}`, cardId: "FLD-001", name: "Arms Academy", type: "field_spell", signets: ["martial"], cost: 1,
-  academy: { enroll: "ARM-010", enrollName: "Student of Arms", emerge: "ARM-012", turns: 2, capacity: 2 },
+  academy: { enroll: "ARM-010", enrollName: "Student, First Year", emerge: "ARM-012", turns: 2, capacity: 2 },
   unlimitedPromotions: "martial",
 });
 const filler = () => Array.from({ length: 30 }, () => unit(2));
@@ -43,13 +43,13 @@ test("Arms Academy costs 1 Energy and goes into the Field Effect Zone", () => {
   assert.equal(game.players[0].energy, 4);
 });
 
-test("enrolling costs the Student's Grade, takes only Student of Arms, and holds 2", () => {
+test("enrolling costs the Student's Grade, takes only Student, First Year, and holds 2", () => {
   const game = start();
   assert.match(checkAction(game, { type: "enroll", player: 0, card: idx(game, (c) => c.cardId === "ARM-010") }), /need an Academy/);
   playAcademy(game);
-  assert.match(checkAction(game, { type: "enroll", player: 0, card: idx(game, (c) => c.grade === 2) }), /Only Student of Arms/);
-  // Another Grade 1 Martial unit isn't a Student of Arms.
-  assert.match(checkAction(game, { type: "enroll", player: 0, card: idx(game, (c) => c.cardId === "G1-martial") }), /Only Student of Arms/);
+  assert.match(checkAction(game, { type: "enroll", player: 0, card: idx(game, (c) => c.grade === 2) }), /Only Student, First Year/);
+  // Another Grade 1 Martial unit isn't a Student, First Year.
+  assert.match(checkAction(game, { type: "enroll", player: 0, card: idx(game, (c) => c.cardId === "G1-martial") }), /Only Student, First Year/);
   assert.equal(enrollOne(game).ok, true);
   assert.equal(enrollOne(game).ok, true);
   assert.equal(game.players[0].energy, 2);
@@ -67,7 +67,7 @@ test("only in Preparation Phase I, and only with enough Energy", () => {
   assert.match(checkAction(game, { type: "setField", player: 0, card: 0 }), /Preparation Phase I/);
 });
 
-test("sent on turn 1, a Graduate of Arms comes out on turn 3 from the deck, free, and the Student goes to the Grave", () => {
+test("sent on turn 1, a Student, Graduate comes out on turn 3 from the deck, free, and the Student goes to the Grave", () => {
   const game = start();
   playAcademy(game);
   enrollOne(game);
@@ -83,7 +83,7 @@ test("sent on turn 1, a Graduate of Arms comes out on turn 3 from the deck, free
   assert.equal(game.pending.cards.length, 1); // only the Graduate, not the other Grade 3
   const [choice] = game.pending.cards;
   assert.equal(choice.from, "deck");
-  assert.equal(choice.name, "Graduate of Arms");
+  assert.equal(choice.name, "Student, Graduate");
   // Nothing else can happen until the choice is made.
   assert.match(checkAction(game, { type: "endTurn", player: 0 }), /Academy/);
   assert.deepEqual(legalActions(game).map((a) => a.type), Array(9).fill("graduate"));

@@ -49,7 +49,7 @@ test("Blinding Beacon attaches to a unit with a shared Signet in a Preparation P
   // Not on a unit without a shared Signet, and not in the Battle Phase.
   const third = { ...copy("ART-001", 3), signets: ["mystic"] }; // a Mystic-only Artifact on a Martial unit
   me.hand.push(third);
-  me.ups[5] = copy("ARM-010", 5);
+  me.ups[5] = { ...copy("ARM-010", 5), signets: ["martial"] }; // a Martial-only unit (the real Students are Battle'O'Kias and share with anything)
   assert.match(checkAction(game, { type: "attach", player: 0, card: third.id, slot: 5 }), /same Signet/);
   game.phase = "battle";
   assert.match(checkAction(game, { type: "attach", player: 0, card: third.id, slot: 3 }), /Preparation Phase/);
@@ -68,7 +68,7 @@ test("activating it on attack deactivates the opponent's Formation until their t
   assert.equal(them.blinded, true);
   assert.equal(formationStats(game, 1).complete, false);
   assert.equal(them.damage, 1);
-  assert.deepEqual(them.ups.slice(0, 3).map((u) => u.name), Array(3).fill("Graduate of Arms")); // nothing destroyed
+  assert.deepEqual(them.ups.slice(0, 3).map((u) => u.name), Array(3).fill("Student, Graduate")); // nothing destroyed
   assert.equal(me.ups[1].artifact.chargesLeft, 1);
   assert.equal(me.ups[1].artifact.readyOnTurn, game.turn + 2);
   ok(game, { type: "endTurn", player: 0 });
@@ -109,7 +109,7 @@ test("it only works from a Formation unit, waits a turn when attached in Phase I
   game.phase = "battle";
   assert.match(checkAction(game, { type: "attack", player: 0, artifact: 2 }), /takes effect next turn/);
   destroyUnit(game, 0, 2);
-  assert.deepEqual(me.graveyard.slice(-2).map((c) => c.name), ["Student of Arms", "Blinding Beacon"]);
+  assert.deepEqual(me.graveyard.slice(-2).map((c) => c.name), ["Student, First Year", "Blinding Beacon"]);
   assert.equal(me.graveyard.at(-1).readyNextTurn, undefined);
 });
 
