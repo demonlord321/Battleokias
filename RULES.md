@@ -44,7 +44,6 @@ Starting Signets:
 
 - **Battle'O'Kias Signet (Dyllan, 9 Oct):** a neutral Signet, not a deck theme. A card with it can go in **every** deck, whatever Signet the deck declares. The three Students (First Year, Second Year, Graduate) carry only Battle'O'Kias now, not Martial.
   - **(?)** Does a Battle'O'Kias card count as sharing a Signet with every card, so Martial-only cards still work with the Students (Practice Gear, Frontal Assault, Vanguard Charge, Line Defense, Arms Academy's extra promotions)? Placeholder: yes, it counts as sharing a Signet with any card.
-  - **(?)** Should the Students' IDs change from `ARM-010` to `ARM-012` to a Battle'O'Kias prefix (for example `BOK-`)? Placeholder: keep them for now.
 - **Only these three Signets are used for now** (Dyllan, 8 Oct). Mercenary and Hero have been taken off every card. More Signets can come later, for example an **Assassin** Signet for Sena's line.
 - **Renamed (Dyllan, 9 Oct):** Arms is now **Martial** and Magic is now **Mystic**.
   - **Unit renames (Dyllan, 9 Oct):** Student of Arms is now **Student, First Year**, Apprentice of Arms is **Student, Second Year**, and Graduate of Arms is **Student, Graduate**.
@@ -141,8 +140,11 @@ Open questions:
 - **(?)** Does a unit's Class do anything in play (for example, a Formation or Field Spell that needs a certain Class), or is it just a label for now?
 - **(?)** Is each named unit one of a kind? (Placeholder: only one copy of the same named unit on your field at a time, but still no deck limit.)
 - Class shows next to "Unit" on the card, and named units get a gold frame (Mapmaker, `2505553`).
-- **Named unit IDs (Dyllan, 8 Oct):** Signet, then a short form of the name, then a number, for example `ARM-SEN-001`. A character can have several cards (a higher-Grade Sena, say), numbered 001, 002 and so on: Drazel, Instructor of the Blade is `ARM-DRA-001` and Drazel, the Bloody Blade is `ARM-DRA-002`.
-  - **(?)** With Arms renamed to Martial, should the prefix change from `ARM-` to `MAR-` (and Magic's to `MYS-`)? Placeholder: IDs keep `ARM-` for now so nothing breaks.
+- **Card IDs (Dyllan, 9 Oct):** card type, then main Signet, then a number: `TYPE-SIGNET-###`. This replaces the older `ARM-SEN-001` style. Numbers count up separately for each type and Signet pair, starting at 001.
+  - Type codes (placeholder): `UNT` unit, `FRM` Formation, `SPL` Spell, `TRP` Trap, `EQP` Equipment, `ART` Artifact, `FLD` Field Spell.
+  - Signet codes (placeholder): `BOK` Battle'O'Kias, `MAR` Martial, `MYS` Mystic, `ALC` Alchemy.
+  - **(?)** Named characters lose their short name in the ID (Drazel was `ARM-DRA-001`). Is that fine, or should a character's cards stay grouped some other way? Placeholder: named units are numbered like any other unit.
+  - Current cards: Students `UNT-BOK-001` to `003` (First Year, Second Year, Graduate); Drazel `UNT-MAR-001`, Galent `UNT-MAR-002`, Sena `UNT-MAR-003` (the Bloody Blade will be `UNT-MAR-004`); Frontal Assault `FRM-MAR-001`, Vanguard Charge `FRM-MAR-002`, Line Defense `FRM-MAR-003`; Arms Academy `FLD-MAR-001`; Practice Gear `EQP-MAR-001`, Drazel's Katana `EQP-MAR-002`; Stand Strong `TRP-MAR-001`; Fire Arrow `SPL-MAR-001`; Blinding Beacon `ART-MAR-001` (Martial is listed first on both); Arcane Bolt `SPL-MYS-001`; Caustic Snare `TRP-ALC-001`.
 
 #### Drazel, Instructor of the Blade (`ARM-DRA-001`, from Dyllan)
 | Field | Value |

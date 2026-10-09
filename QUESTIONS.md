@@ -11,9 +11,9 @@ The Students are renamed (First Year, Second Year, Graduate). Does Arms Academy 
 **Placeholder:** it stays Arms Academy.
 **Answer:**
 
-### 2. Card ID prefixes
-Named units now use Signet, short name, then a number (`ARM-SEN-001`). With Arms renamed, should IDs start `MAR-` instead of `ARM-` (and `MYS-` for Mystic)?
-**Placeholder:** keep `ARM-` for now so nothing breaks.
+### 2. Card IDs: codes and named characters
+IDs are now type, main Signet, number. Placeholder codes: `UNT` `FRM` `SPL` `TRP` `EQP` `ART` `FLD` for types, `BOK` `MAR` `MYS` `ALC` for Signets. Are those codes OK? And named characters lose their short name (Drazel `ARM-DRA-001` becomes `UNT-MAR-001`, the Bloody Blade `UNT-MAR-004`). Is that fine?
+**Placeholder:** the codes above, and named units numbered like any other unit.
 **Answer:**
 
 ### 3. Last Stand: whose Battle Phases count?
@@ -24,11 +24,6 @@ Drazel is destroyed after the third Battle Phase Last Stand is active for. Do th
 ### 3a. The Battle'O'Kias Signet and Martial-only cards
 The Students now carry only Battle'O'Kias. Practice Gear, Frontal Assault, Vanguard Charge, Line Defense and Arms Academy's extra promotions all work with Martial units. Does a Battle'O'Kias card count as sharing a Signet with every card, so they still work on the Students?
 **Placeholder:** yes, Battle'O'Kias counts as sharing a Signet with any card.
-**Answer:**
-
-### 3b. The Students' IDs
-Should the Students' IDs change from `ARM-010` to `ARM-012` to a Battle'O'Kias prefix (for example `BOK-001`)?
-**Placeholder:** keep the current IDs for now.
 **Answer:**
 
 ## Cards
