@@ -6,9 +6,12 @@ Each question has a **placeholder**, which is what the game does for now so the 
 
 ## New (9 Oct)
 
-### 1. Arms Academy's name
-The Students are renamed (First Year, Second Year, Graduate). Does Arms Academy keep its name now that Arms is Martial?
-**Placeholder:** it stays Arms Academy.
+### 1. Drazel, Practitioner of the Blade
+a) Do Galent and Sena move up a Grade too, or only the Drazel cards? **Placeholder:** only Drazel's cards.
+b) Graduation Gift searches for Drazel's Katana, but Equipment is Special Deck only. Does it come from the Equipment Special Deck, and does it go to your hand or straight onto him? **Placeholder:** Equipment Special Deck, into your hand.
+c) Does any promotion trigger it, or only promoting a Student, Graduate? **Placeholder:** any promotion.
+d) Can the Katana go on every Drazel card now? **Placeholder:** yes.
+e) Promotion between Drazel cards: Practitioner (4) promotes a Graduate, Instructor (5) promotes Practitioner, the Bloody Blade (6) promotes Instructor? **Placeholder:** yes.
 **Answer:**
 
 ### 2. Card IDs: codes and named characters
@@ -22,7 +25,7 @@ Drazel is destroyed after the third Battle Phase Last Stand is active for. Do th
 **Answer:**
 
 ### 3a. The Battle'O'Kias Signet and Martial-only cards
-The Students now carry only Battle'O'Kias. Practice Gear, Frontal Assault, Vanguard Charge, Line Defense and Arms Academy's extra promotions all work with Martial units. Does a Battle'O'Kias card count as sharing a Signet with every card, so they still work on the Students?
+The Students now carry only Battle'O'Kias. Practice Gear, Frontal Assault, Vanguard Charge, Line Defense and Military Institute's extra promotions all work with Martial units. Does a Battle'O'Kias card count as sharing a Signet with every card, so they still work on the Students?
 **Placeholder:** yes, Battle'O'Kias counts as sharing a Signet with any card.
 **Answer:**
 
@@ -159,4 +162,4 @@ Answer these whenever you're ready. Nothing is waiting on them yet.
 - What do Items do, and how do Monsters work?
 - What triggers a unit's own Formation Effect (the "Formation effect text" on unit cards), and how does it relate to Formation cards?
 - How should each Signet shape its units (stats, abilities, play style)?
-- What fills the rest of a 60-card deck, beyond the 35 units, Formations and Arms Academy?
+- What fills the rest of a 60-card deck, beyond the 35 units, Formations and Military Institute?

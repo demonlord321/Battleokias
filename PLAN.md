@@ -88,6 +88,13 @@ Uses the placeholder rules in `RULES.md`; Dyllan refines them as we play.
 - [x] Students renamed and given the new Battle'O'Kias Signet (Dyllan, 9 Oct; done `23f4089`, `96e774c`, icon `07a9df6`): Student, First Year; Student, Second Year; Student, Graduate. They carry only Battle'O'Kias (no Martial), which can go in any deck. Rename them and add the `battleokias` Signet in `cards.json`, the deck checker (allowed in every deck), the engine and tests. Keep Martial-only cards working on them and let any Grade 4 promote a Student, Graduate (placeholders, QUESTIONS.md #3a and #8). Developer. Signet icon and label on cards and the board, Mapmaker
 - [x] New card IDs (Dyllan, 9 Oct; done `c6502e5`, `e7dec2b`, board checked): `TYPE-SIGNET-###`, mapping in RULES.md under Card IDs. Re-ID every card in `cards.json`, `decks.json`, the engine, tests and the sims (`promotesFrom` too), Developer. Check that card images and anything on the board keyed by ID still match, Mapmaker
 - [x] Student stats (Dyllan, 9 Oct; done `983a5f8`): Attack equals Defense, so First Year 500/500, Second Year 1000/1000 (was 1500/1000) and Graduate 1500/1500 (was 2000/1500). Update `cards.json`, any tests that use the old numbers, and re-run the sims, Developer
+- [ ] Drazel's cards shifted (Dyllan, 9 Oct), Developer + Mapmaker:
+  - New Grade 4 **Drazel, Practitioner of the Blade** (`UNT-MAR-005`), Martial Swordsman, same stats as Instructor (4000 Attack; Defense 1000 or the promoted unit's)
+  - Summon effect **Graduation Gift**: if he is promotion summoned while Military Institute is in play, you may fetch Drazel's Katana (placeholder: from the Equipment Special Deck to your hand; any promotion counts)
+  - Instructor of the Blade goes to Grade 5, the Bloody Blade to Grade 6; Galent and Sena stay Grade 4 (placeholder)
+  - The Katana's `onlyOn` covers every Drazel card (placeholder)
+  - **Arms Academy is renamed Military Institute** (same ID, `FLD-MAR-001`); board labels and card text, Mapmaker
+  - Open points are in QUESTIONS.md #1
 - [ ] Unit write-ups still missing: a real Formation Effect for every unit, and flavor text for Galent and Sena, Dyllan
 - [ ] All open questions for Dyllan are collected in `QUESTIONS.md`. He answers there and Planner folds the answers into `RULES.md`
 - [ ] Dyllan playtests and replaces placeholder rules, Planner updates `RULES.md`

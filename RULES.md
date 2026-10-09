@@ -43,11 +43,11 @@ Starting Signets:
 3. **Alchemy**
 
 - **Battle'O'Kias Signet (Dyllan, 9 Oct):** a neutral Signet, not a deck theme. A card with it can go in **every** deck, whatever Signet the deck declares. The three Students (First Year, Second Year, Graduate) carry only Battle'O'Kias now, not Martial.
-  - **(?)** Does a Battle'O'Kias card count as sharing a Signet with every card, so Martial-only cards still work with the Students (Practice Gear, Frontal Assault, Vanguard Charge, Line Defense, Arms Academy's extra promotions)? Placeholder: yes, it counts as sharing a Signet with any card.
+  - **(?)** Does a Battle'O'Kias card count as sharing a Signet with every card, so Martial-only cards still work with the Students (Practice Gear, Frontal Assault, Vanguard Charge, Line Defense, Military Institute's extra promotions)? Placeholder: yes, it counts as sharing a Signet with any card.
 - **Only these three Signets are used for now** (Dyllan, 8 Oct). Mercenary and Hero have been taken off every card. More Signets can come later, for example an **Assassin** Signet for Sena's line.
 - **Renamed (Dyllan, 9 Oct):** Arms is now **Martial** and Magic is now **Mystic**.
   - **Unit renames (Dyllan, 9 Oct):** Student of Arms is now **Student, First Year**, Apprentice of Arms is **Student, Second Year**, and Graduate of Arms is **Student, Graduate**.
-  - **(?)** Does Arms Academy keep its name? Placeholder: yes, for now.
+  - **(?)** Does Military Institute keep its name? Placeholder: yes, for now.
 
 - A deck is built around **one Signet**. Every card in the deck must carry that Signet, except Battle'O'Kias cards, which can go in any deck.
 - A card can belong to **more than one** Signet, so it can appear in decks of any of them.
@@ -56,7 +56,7 @@ Starting Signets:
 - The card's Signet symbol(s) sit in the **top left** corner of the card.
 - **Main Signet and sub-Signets (confirmed by Dyllan):** a card's **first** Signet is its **main Signet**, and it decides the card's **promotion line**. Any Signets after it are **sub-Signets**: they let the card into those decks, but play no part in promotion.
 - **Support cards and Signets (confirmed by Dyllan):** Equipment, Artifacts and other cards that attach to or affect a unit can be used on it if they share **any** Signet, main or sub-Signet, unless the card says otherwise. So Practice Gear (Martial) can go on another academy's unit that has Martial as a sub-Signet.
-  - Placeholder: the same goes for Arms Academy's "Martial units" (its unlimited promotions), since it doesn't say otherwise.
+  - Placeholder: the same goes for Military Institute's "Martial units" (its unlimited promotions), since it doesn't say otherwise.
 
 Open questions:
 - **(?)** How does a Signet shape its Units (stats, abilities, play style)?
@@ -68,7 +68,7 @@ The game simulates medieval warfare: your units are your army, and armies need n
 - **Every other card** (Spells, Field Spells, Traps, Formations and so on) is limited to **3 copies**.
 - **Starter unit spread:** 15 Grade 1, 10 Grade 2 and 10 Grade 3 units.
 - **(?)** Is that spread a deck-building rule (minimums, or exact numbers), or just how the starter and test decks are built?
-- **(?)** What fills the other 25 cards? With 3 Frontal Assault and 3 Arms Academy, 19 slots are still open.
+- **(?)** What fills the other 25 cards? With 3 Frontal Assault and 3 Military Institute, 19 slots are still open.
 
 ## Special Decks (confirmed by Dyllan)
 Alongside the 60-card main deck, each player has **four Special Decks**, one in each Special Deck Zone.
@@ -144,9 +144,9 @@ Open questions:
   - Type codes (placeholder): `UNT` unit, `FRM` Formation, `SPL` Spell, `TRP` Trap, `EQP` Equipment, `ART` Artifact, `FLD` Field Spell.
   - Signet codes (placeholder): `BOK` Battle'O'Kias, `MAR` Martial, `MYS` Mystic, `ALC` Alchemy.
   - **(?)** Named characters lose their short name in the ID (Drazel was `ARM-DRA-001`). Is that fine, or should a character's cards stay grouped some other way? Placeholder: named units are numbered like any other unit.
-  - Current cards: Students `UNT-BOK-001` to `003` (First Year, Second Year, Graduate); Drazel `UNT-MAR-001`, Galent `UNT-MAR-002`, Sena `UNT-MAR-003` (the Bloody Blade will be `UNT-MAR-004`); Frontal Assault `FRM-MAR-001`, Vanguard Charge `FRM-MAR-002`, Line Defense `FRM-MAR-003`; Arms Academy `FLD-MAR-001`; Practice Gear `EQP-MAR-001`, Drazel's Katana `EQP-MAR-002`; Stand Strong `TRP-MAR-001`; Fire Arrow `SPL-MAR-001`; Blinding Beacon `ART-MAR-001` (Martial is listed first on both); Arcane Bolt `SPL-MYS-001`; Caustic Snare `TRP-ALC-001`.
+  - Current cards: Students `UNT-BOK-001` to `003` (First Year, Second Year, Graduate); Drazel `UNT-MAR-001`, Galent `UNT-MAR-002`, Sena `UNT-MAR-003` (the Bloody Blade will be `UNT-MAR-004`, Drazel, Practitioner of the Blade `UNT-MAR-005`); Frontal Assault `FRM-MAR-001`, Vanguard Charge `FRM-MAR-002`, Line Defense `FRM-MAR-003`; Military Institute `FLD-MAR-001`; Practice Gear `EQP-MAR-001`, Drazel's Katana `EQP-MAR-002`; Stand Strong `TRP-MAR-001`; Fire Arrow `SPL-MAR-001`; Blinding Beacon `ART-MAR-001` (Martial is listed first on both); Arcane Bolt `SPL-MYS-001`; Caustic Snare `TRP-ALC-001`.
 
-#### Drazel, Instructor of the Blade (`UNT-MAR-001`, was `ARM-DRA-001`, from Dyllan)
+#### Drazel, Practitioner of the Blade (`UNT-MAR-005`, from Dyllan, 9 Oct)
 | Field | Value |
 |---|---|
 | Type | Unit |
@@ -156,10 +156,33 @@ Open questions:
 | Attack | 4000 |
 | Defense | Set by his effect (see below) |
 
+*Flavour text:* placeholder (to come from Dyllan).
+
+**Effect:** same stats as Drazel, Instructor of the Blade: 4000 Attack, and his Defense is **1000** when summoned normally, or **equal to the Defense of the unit he promotes**.
+
+**Graduation Gift (summon effect):** if Drazel is **promotion summoned** while **Military Institute** is in play, you may search for **Drazel's Katana**.
+- **(?)** Where does the Katana come from? Equipment is Special Deck only. Placeholder: search your Equipment Special Deck and add it to your hand.
+- **(?)** Does any promotion count, or only promoting a Student, Graduate? Placeholder: any promotion.
+- Drazel's Katana can now go on **any Drazel card** (placeholder; it used to say Drazel, Instructor of the Blade only).
+
+- **Grades shifted (Dyllan, 9 Oct):** Drazel, Practitioner of the Blade is the new Grade 4. The other Drazel cards went up 1 Grade: Instructor of the Blade is Grade 5, the Bloody Blade Grade 6.
+  - **(?)** Do Galent and Sena move up too? Placeholder: no, they stay Grade 4.
+  - **(?)** Promotion between Drazel cards: placeholder is that Practitioner (4) promotes a Student, Graduate, Instructor (5) promotes Practitioner, and the Bloody Blade (6) promotes Instructor.
+
+#### Drazel, Instructor of the Blade (`UNT-MAR-001`, was `ARM-DRA-001`, from Dyllan)
+| Field | Value |
+|---|---|
+| Type | Unit |
+| Grade | 5 (was 4) |
+| Signets | Martial |
+| Class | Swordsman |
+| Attack | 4000 |
+| Defense | Set by his effect (see below) |
+
 *Flavour text:* "Drazel found himself gifted with a blade. Upon graduation he chose to share that knowledge with the new recruits. When war came his unit was decimated, and Drazel joined the mercenaries to get stronger and make some money."
 
 **Effect:** Drazel halted his study of Defense and put everything into attack. His Defense is **1000** when he is summoned normally, or **equal to the Defense of the unit he promotes**.
-- He can promote a Student, Graduate (Defense 1500), since any Grade 4 unit can promote one for now (placeholder).
+- As Grade 5, he promotes a Grade 4: placeholder, Drazel, Practitioner of the Blade.
 - **Equipment on the promoted unit (confirmed by Dyllan):** if that unit's Equipment stays on through the promotion, Drazel takes its **total** Defense, Equipment included. Practice Gear never stays (it's Grades 1 to 3 only), so this applies to future Equipment.
   - Placeholder: the Equipment's Defense bonus is already part of that total, so it isn't added a second time while it stays on Drazel. Its Attack bonus still applies.
 
@@ -167,7 +190,7 @@ Open questions:
 | Field | Value |
 |---|---|
 | Type | Unit |
-| Grade | 5 |
+| Grade | 6 (was 5) |
 | Signets | Martial |
 | Class | Swordsman |
 | Attack / Defense | Set by his effect (see below) |
@@ -236,7 +259,7 @@ These three are the **only** Grade 1, 2 and 3 units for now. Since 9 Oct they ca
   - Only a Student, First Year can become a Student, Second Year, and only a Student, Second Year can become a Student, Graduate.
   - The line comes from the card's **main (first) Signet**. A card that only has Martial as a sub-Signet is outside the Martial line, even if it can sit in a Martial deck.
 - **(?)** How does a Student, Graduate move up to Grade 4? Placeholder: any named Grade 4 unit, of any Signet, can promote a Student, Graduate.
-- **One promotion per turn** normally. Some Field Spells lift this (see Arms Academy).
+- **One promotion per turn** normally. Some Field Spells lift this (see Military Institute).
 - Placeholder until Dyllan decides: the card underneath stays stacked beneath the new unit and both go to the Grave when the unit is destroyed.
 - First-player edge: with Formations and unit destruction in (`58d4e06`), bot games show the first player winning 49%, so no extra fix is needed for now.
 - Placeholder until Dyllan decides: a promoted unit can attack this turn if the unit beneath was already on the field at the start of the turn.
@@ -365,7 +388,7 @@ Open questions:
 - **Two-turn cooldown** between uses. After its second activation, it goes to the Grave.
 - Placeholders and open questions:
 - **Blinded Formation (confirmed by Dyllan):** it works the same as any inactive Formation, so it counts as no Formation. The hit always lands for **1 Damage Counter and destroys no unit**. The point is to let a player get a hit in even when their stats are weaker.
-  - **(?)** "Two-turn cooldown": placeholder is that it can be used again two of your own turns later (use it on turn 3, again on turn 5), the same counting as Arms Academy.
+  - **(?)** "Two-turn cooldown": placeholder is that it can be used again two of your own turns later (use it on turn 3, again on turn 5), the same counting as Military Institute.
   - The unit has to share a Signet with it, and it has to be in your attacking Formation to activate it.
   - A unit can hold one Equipment and one Artifact at once. If the unit leaves the field, the Beacon goes to the Grave.
   - Attached in Phase II, it works from your next Preparation Phase I, like Equipment.
@@ -382,7 +405,7 @@ Open questions:
 ## Field Spells
 A Field Spell goes in the **Field Effect Zone (FEZ)** and stays there, giving an ongoing effect.
 
-### Field Spell: Arms Academy (Martial, from Dyllan)
+### Field Spell: Military Institute (was Arms Academy; Martial, from Dyllan)
 - **Effect:** In your **Preparation Phase I**, you may send a **Student, First Year** from your hand to the Academy. (Specific to this line: Student, First Year in, Student, Graduate out.)
 - **Two of your turns later**, in your Preparation Phase I, a **Student, Graduate** leaves the Academy and is **summoned to the field at no cost**, in **any empty slot you choose**.
   - Example: send the Grade 1 in Preparation Phase I of your 3rd turn, and the Grade 3 arrives in Preparation Phase I of your 5th turn.
@@ -393,7 +416,7 @@ A Field Spell goes in the **Field Effect Zone (FEZ)** and stays there, giving an
 - You choose that Student, Graduate **from your hand** or **from your deck**. If you take it from your deck, **reshuffle** the deck afterwards.
 
 Open questions:
-- **Second effect:** while Arms Academy is in play, you can promote **any number** of your units with the **Martial Signet** each turn, as long as you have the Energy. (The normal limit is one promotion per turn.)
+- **Second effect:** while Military Institute is in play, you can promote **any number** of your units with the **Martial Signet** each turn, as long as you have the Energy. (The normal limit is one promotion per turn.)
 - Placeholder: if there's no empty slot or no Student, Graduate to pick, the student stays in the Academy and tries again next turn. Playing a new Field Spell sends the old one and its students to the Grave.
 - The arriving Graduate can attack that turn if it's placed in your Formation (confirmed by Dyllan).
 
@@ -417,7 +440,7 @@ Open questions (placeholders in brackets):
 - **Grades 1 to 3 only (confirmed by Dyllan):** a unit that has mastered its craft has no use for practice gear. Practice Gear can only be equipped to a Grade 1, 2 or 3 unit, and when its unit is promoted to Grade 4 or higher, the Gear goes to the Grave.
 
 ### Equipment: Drazel's Katana (specialised Equipment, from Dyllan)
-- **Restricted:** can only be equipped to **Drazel, Instructor of the Blade**.
+- **Restricted:** can only be equipped to **Drazel** (placeholder since 9 Oct: any Drazel card, including Practitioner of the Blade).
 - *"Drazel does not conform to slaying the weak."*
 - **+500 Attack** (no Defense bonus).
 - **Effect:** while Drazel holds his Katana, when your Formation's attack lands, the defender loses the unit in their Formation with the **highest Attack + Defense**, instead of their lowest-Grade unit.
@@ -464,10 +487,10 @@ Shown alongside each player's **Hand** (the zone where drawn cards go).
     not carry over beyond that.
 - **Player Grade** (confirmed by Dyllan): the **highest Grade you've had on the field this game**. It goes up when a unit of a higher Grade comes onto your field, and it **never drops**. Example: if your Player Grade is 3 and your Grade 3 is destroyed, you can still summon a Grade 4 next round.
   - You can't bring out a unit more than one Grade above your Player Grade, even if a spell or effect makes it cheap. Example: with a Grade 4 in hand and a spell that cuts its cost to 1, you still can't summon it while your Player Grade is 2. You first need a Grade 3 out to raise your Player Grade to 3.
-  - Normally your Player Grade can rise by only **one per turn**, through your one promotion. Spells and effects (like Arms Academy's extra promotions) can raise it faster.
+  - Normally your Player Grade can rise by only **one per turn**, through your one promotion. Spells and effects (like Military Institute's extra promotions) can raise it faster.
   - Placeholders until Dyllan decides:
     - With no units on the field, your Player Grade is **0**, so only Grade 1 units can be summoned.
-    - Arms Academy's free Graduate still arrives even if your Player Grade is only 1, because the card says it's summoned automatically.
+    - Military Institute's free Graduate still arrives even if your Player Grade is only 1, because the card says it's summoned automatically.
 
 ## Empty Draw Pile
 - Running out of cards **doesn't make you lose straight away** (Dyllan, 8 Oct).
