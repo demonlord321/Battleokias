@@ -6,7 +6,7 @@ import { buildBoard, renderBoard, PHASE_NAMES, getSlot } from "../board/board.js
 // up to four (null for an empty zone). With none listed, the player has no Special Decks.
 function buildSpecialDecks(cards, decks, signet) {
   const byId = Object.fromEntries(cards.map((c) => [c.id, c]));
-  const list = decks?.special?.[signet] ?? [];
+  const list = decks?.special?.[signet] ?? decks?.special?.[OLD_SIGNET[signet]] ?? [];
   return [0, 1, 2, 3].map((i) => {
     const d = list[i];
     if (!d) return null;
@@ -46,7 +46,7 @@ const MAX_COPIES = 3; // non-unit cards only
 // then units round-robin until the deck reaches 60.
 function buildDeck(cards, decks, signet) {
   const byId = Object.fromEntries(cards.map((c) => [c.id, c]));
-  const list = decks?.[signet];
+  const list = decks?.[signet] ?? decks?.[OLD_SIGNET[signet]];
   if (Array.isArray(list)) {
     const seen = {};
     return list.map((id) => {
@@ -55,7 +55,7 @@ function buildDeck(cards, decks, signet) {
       return instance(byId[id], seen[id]);
     });
   }
-  const pool = cards.filter((c) => c.signets?.includes(signet));
+  const pool = cards.filter((c) => c.signets?.includes(signet) || c.signets?.includes(OLD_SIGNET[signet]));
   if (!pool.length) throw new Error(`No cards in data/cards.json carry the "${signet}" Signet.`);
   const units = pool.filter((c) => c.type === "unit");
   const deck = [];
@@ -66,8 +66,10 @@ function buildDeck(cards, decks, signet) {
   return deck;
 }
 
-// The first test game: School of Arms against School of Arms, hot-seat.
-const SIGNETS = ["arms", "arms"];
+// The first test game: School of Martial against School of Martial (formerly Arms).
+const SIGNETS = ["martial", "martial"];
+// decks.json and cards.json may still use the old names until the rename lands everywhere.
+const OLD_SIGNET = { martial: "arms", mystic: "magic" };
 const NAMES = ["Player 1", "Player 2"];
 
 // ---------- Game mode: vs Computer or Hot-seat ----------

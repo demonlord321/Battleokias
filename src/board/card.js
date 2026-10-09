@@ -18,11 +18,14 @@ export const CARD_TYPES = {
 // Signets (RULES.md): the card's Signet symbols sit in its top-left corner.
 // A card can carry more than one.
 export const SIGNETS = {
-  arms:    { label: "School of Arms",    symbol: "⚔", color: "#c8483a" },
-  magic:   { label: "School of Magic",   symbol: "✦", color: "#7a5ce0" },
+  martial: { label: "School of Martial", symbol: "⚔", color: "#c8483a" },
+  mystic:  { label: "School of Mystic",  symbol: "✦", color: "#7a5ce0" },
   alchemy: { label: "School of Alchemy", symbol: "⚗", color: "#3f9a5a" },
-  mercenary: { label: "Mercenary",       symbol: "¤", color: "#b8892e" },
 };
+// Old names (Dyllan, 9 Oct: Arms is now Martial, Magic is now Mystic), so older data still draws.
+const SIGNET_ALIASES = { arms: "martial", magic: "mystic" };
+// Retired Signets (only the three base Signets are used now): not drawn at all.
+const RETIRED_SIGNETS = new Set(["mercenary", "hero"]);
 
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 
@@ -41,11 +44,14 @@ export function formationPattern(slots, options = null) {
 
 function signetIcons(signets = []) {
   return signets
+    .map((id) => String(id).toLowerCase())
+    .map((id) => SIGNET_ALIASES[id] ?? id)
+    .filter((id) => !RETIRED_SIGNETS.has(id))
     .map((id, i) => {
       // The first Signet sets the promotion line; any after it are sub-Signets, drawn smaller.
       const cls = i === 0 ? "signet" : "signet is-sub";
       const role = i === 0 ? " (promotion line)" : " (sub-Signet)";
-      const sg = SIGNETS[String(id).toLowerCase()];
+      const sg = SIGNETS[id];
       if (!sg) return `<span class="${cls}" title="${esc(id)}${role}">?</span>`;
       return `<span class="${cls}" title="${sg.label}${role}" style="--signet-color:${sg.color}">${sg.symbol}</span>`;
     })
