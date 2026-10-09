@@ -20,8 +20,11 @@ const BY_TYPE = {
 export const COMBINE_RULES = ["sum", "scaled", "wall"];
 const DEFAULT_FIELDS = { cost: "number" };
 
-// IDs look like ARM-001, or ARM-ALC-001 for a card with more than one Signet.
-const ID_PATTERN = /^[A-Z]{3}(-[A-Z]{3})*-\d{3}$/;
+// IDs are CardType-MainSignet-number (Dyllan, 9 Oct), like UNT-MAR-001 or FRM-MAR-002.
+// The codes are Planner's placeholders (RULES.md, Card IDs).
+const ID_PATTERN = /^([A-Z]{3})-([A-Z]{3})-\d{3}$/;
+export const TYPE_CODES = { unit: "UNT", formation: "FRM", spell: "SPL", trap: "TRP", equipment: "EQP", artifact: "ART", field_spell: "FLD" };
+export const SIGNET_CODES = { martial: "MAR", mystic: "MYS", alchemy: "ALC", battleokias: "BOK" };
 
 function typeOf(value) {
   return Array.isArray(value) ? "array" : typeof value;
@@ -51,7 +54,13 @@ export function checkCards(cards) {
     }
 
     if (typeof card.id === "string") {
-      if (!ID_PATTERN.test(card.id)) problems.push(`${where}: id should look like ARM-001.`);
+      const m = card.id.match(ID_PATTERN);
+      if (!m) problems.push(`${where}: id should look like UNT-MAR-001 (card type, main Signet, number).`);
+      else {
+        const type = TYPE_CODES[card.type], signet = SIGNET_CODES[card.signets?.[0]];
+        if (type && m[1] !== type) problems.push(`${where}: id should start with ${type} for a ${card.type}.`);
+        if (signet && m[2] !== signet) problems.push(`${where}: id's Signet part should be ${signet}, its main Signet.`);
+      }
       if (seen.has(card.id)) problems.push(`${where}: id ${card.id} is used more than once.`);
       seen.add(card.id);
     }
@@ -144,7 +153,7 @@ export function checkCards(cards) {
       // Promotion lines: the cards this unit can go on, each a unit one Grade lower in the same line.
       const from = card.promotesFrom;
       if (card.type !== "unit") problems.push(`${where}: only units can have "promotesFrom".`);
-      else if (!Array.isArray(from) || !from.length) problems.push(`${where}: "promotesFrom" should be a list of card ids, like ["ARM-010"].`);
+      else if (!Array.isArray(from) || !from.length) problems.push(`${where}: "promotesFrom" should be a list of card ids, like ["UNT-BOK-001"].`);
       else for (const id of from) {
         const base = cards.find((c) => c?.id === id);
         if (!base) problems.push(`${where}: promotesFrom "${id}" isn't a card in cards.json.`);
@@ -182,11 +191,11 @@ export const MAX_COPIES = 3;
 // are in decks.json.
 export const copyLimit = (card) => card?.maxCopies ?? (card?.type === "unit" ? Infinity : MAX_COPIES);
 
-// Checks data/decks.json: { "<signet>": ["ARM-001", ...], ... }.
+// Checks data/decks.json: { "<signet>": ["UNT-BOK-001", ...], ... }.
 // Every id must exist in cards, carry that Signet, stay within copyLimit, and the deck must have 60 cards.
 export function checkDecks(decks, cards) {
   if (typeof decks !== "object" || decks === null || Array.isArray(decks)) {
-    return ['decks.json should be an object like { "martial": ["ARM-010", ...] }.'];
+    return ['decks.json should be an object like { "martial": ["UNT-BOK-001", ...] }.'];
   }
   const byId = Object.fromEntries(cards.map((c) => [c.id, c]));
   const problems = [];
