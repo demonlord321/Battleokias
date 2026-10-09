@@ -1,5 +1,5 @@
 // Fire Arrow (RULES.md d751b3f): cast from hand in Preparation Phase I or II, or set face-down and
-// activated on your own turn. Placeholder (Planner): one set this turn waits until your next turn.
+// activated on your own turn, including the turn it was set (Dyllan, 9 Oct).
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -36,18 +36,28 @@ test("Fire Arrow cast from hand deals 1 Damage Counter and goes to the Grave", (
   assert.match(checkAction(game, { type: "cast", player: 0, card: me.hand.length - 1 }), /doesn't do anything yet/);
 });
 
-test("a set Fire Arrow waits a turn, then fires in your own phases; Start and End wait for it", () => {
+test("a set Fire Arrow can fire the turn it's set, and the End Phase waits while it's ready", () => {
   const game = start();
   const [me, them] = game.players;
   const arrow = copy("SPL-001");
   me.hand.push(arrow);
   game.phase = "prep2";
   ok(game, { type: "setTrap", player: 0, card: arrow.id, slot: 6 });
-  assert.match(checkAction(game, { type: "activateSet", player: 0, slot: 6 }), /set this turn/);
-  assert.deepEqual(readySetSpells(game, 0), []);
-  ok(game, { type: "nextPhase", player: 0 }); // End Phase passes: nothing ready
+  assert.equal(checkAction(game, { type: "activateSet", player: 0, slot: 6 }), null);
+  assert.deepEqual(readySetSpells(game, 0), [6]);
+  ok(game, { type: "nextPhase", player: 0 });
+  assert.equal(game.phase, "end"); // waits, because the Arrow is ready
+  ok(game, { type: "activateSet", player: 0, slot: 6 });
+  assert.equal(them.damage, 1);
+  assert.equal(game.activePlayer, 1); // nothing left, so the turn moves on
+});
+
+test("a set Fire Arrow kept for later fires in your own phases; the Start Phase waits for it", () => {
+  const game = start();
+  const [me, them] = game.players;
+  me.ups[6] = { ...copy("SPL-001"), faceDown: true, setTurn: 0 };
+  ok(game, { type: "endTurn", player: 0 });
   assert.equal(game.activePlayer, 1);
-  assert.equal(game.phase, "prep1");
   assert.match(checkAction(game, { type: "activateSet", player: 1, slot: 6 }), /no set card/); // not on their turn
   ok(game, { type: "endTurn", player: 1 });
   // Player 0's Start Phase stops, because the Arrow is ready.

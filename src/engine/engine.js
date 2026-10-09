@@ -469,10 +469,10 @@ function hasSetCardsToActivate(game, playerIndex) {
 const SPELL_PHASES = ["start", "prep1", "battle", "prep2", "end"];
 
 // Slots holding the player's set Spells that do something and can be activated now.
-// Placeholder (Planner): one set this turn waits until your next turn, like Equipment.
+// Dyllan, 9 Oct: a set Spell can fire on the turn it was set too.
 export function readySetSpells(game, playerIndex) {
   if (playerIndex !== game.activePlayer || !SPELL_PHASES.includes(game.phase) || game.pending) return [];
-  return game.players[playerIndex].ups.flatMap((c, slot) => (c?.faceDown && c.type === "spell" && spellDoes(c) && c.setTurn !== game.turn ? [slot] : []));
+  return game.players[playerIndex].ups.flatMap((c, slot) => (c?.faceDown && c.type === "spell" && spellDoes(c) ? [slot] : []));
 }
 
 // Whether a Spell has an effect the engine knows (Fire Arrow: damage).
@@ -1049,7 +1049,6 @@ const ACTIONS = {
       if (!c?.faceDown) return "There's no set card there.";
       if (c.type !== "spell" || !spellDoes(c)) return "That set card can't be activated now.";
       if (!SPELL_PHASES.includes(game.phase)) return "You can't activate it in this phase.";
-      if (c.setTurn === game.turn) return `${c.name} was set this turn, so it's ready next turn.`;
       return null;
     },
     apply(game, action) {
