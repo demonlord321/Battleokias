@@ -40,7 +40,7 @@ test("units have no copy limit; other cards stop at 3", async () => {
   const { checkDecks } = await import("../src/engine/cardCheck.js");
   const unit = { id: "ARM-010", name: "U", type: "unit", signets: ["martial"], grade: 1, attack: 1, defense: 1, text: "", image: "" };
   const trap = { id: "TRP-001", name: "T", type: "trap", signets: ["martial"], cost: 1, text: "", image: "" };
-  const deck = [...Array(26).fill("ARM-010"), ...Array(4).fill("TRP-001")];
+  const deck = [...Array(56).fill("ARM-010"), ...Array(4).fill("TRP-001")];
   const problems = checkDecks({ martial: deck }, [unit, trap]);
   assert.deepEqual(problems, ["The martial deck: 4 copies of TRP-001, the limit is 3."]);
 });

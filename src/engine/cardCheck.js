@@ -174,8 +174,8 @@ export function checkCards(cards) {
   return problems;
 }
 
-// RULES.md placeholder deck rules, until Dyllan sets deck size and copy limits.
-export const DECK_SIZE = 30;
+// RULES.md deck rules (confirmed by Dyllan): 60 cards.
+export const DECK_SIZE = 60;
 export const MAX_COPIES = 3;
 // RULES.md (confirmed): units have no copy limit; every other card is limited to MAX_COPIES.
 // A card's own "maxCopies" overrides that, counted across the whole deck once Special Decks
@@ -183,7 +183,7 @@ export const MAX_COPIES = 3;
 export const copyLimit = (card) => card?.maxCopies ?? (card?.type === "unit" ? Infinity : MAX_COPIES);
 
 // Checks data/decks.json: { "<signet>": ["ARM-001", ...], ... }.
-// Every id must exist in cards, carry that Signet, appear at most 3 times, and the deck must have 30 cards.
+// Every id must exist in cards, carry that Signet, stay within copyLimit, and the deck must have 60 cards.
 export function checkDecks(decks, cards) {
   if (typeof decks !== "object" || decks === null || Array.isArray(decks)) {
     return ['decks.json should be an object like { "martial": ["ARM-010", ...] }.'];
