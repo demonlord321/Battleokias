@@ -146,7 +146,7 @@ Open questions:
   - **(?)** Named characters lose their short name in the ID (Drazel was `ARM-DRA-001`). Is that fine, or should a character's cards stay grouped some other way? Placeholder: named units are numbered like any other unit.
   - Current cards: Students `UNT-BOK-001` to `003` (First Year, Second Year, Graduate); Drazel `UNT-MAR-001`, Galent `UNT-MAR-002`, Sena `UNT-MAR-003` (the Bloody Blade will be `UNT-MAR-004`); Frontal Assault `FRM-MAR-001`, Vanguard Charge `FRM-MAR-002`, Line Defense `FRM-MAR-003`; Arms Academy `FLD-MAR-001`; Practice Gear `EQP-MAR-001`, Drazel's Katana `EQP-MAR-002`; Stand Strong `TRP-MAR-001`; Fire Arrow `SPL-MAR-001`; Blinding Beacon `ART-MAR-001` (Martial is listed first on both); Arcane Bolt `SPL-MYS-001`; Caustic Snare `TRP-ALC-001`.
 
-#### Drazel, Instructor of the Blade (`ARM-DRA-001`, from Dyllan)
+#### Drazel, Instructor of the Blade (`UNT-MAR-001`, was `ARM-DRA-001`, from Dyllan)
 | Field | Value |
 |---|---|
 | Type | Unit |
@@ -163,7 +163,7 @@ Open questions:
 - **Equipment on the promoted unit (confirmed by Dyllan):** if that unit's Equipment stays on through the promotion, Drazel takes its **total** Defense, Equipment included. Practice Gear never stays (it's Grades 1 to 3 only), so this applies to future Equipment.
   - Placeholder: the Equipment's Defense bonus is already part of that total, so it isn't added a second time while it stays on Drazel. Its Attack bonus still applies.
 
-#### Drazel, the Bloody Blade (`ARM-DRA-002`, from Dyllan, card list in progress)
+#### Drazel, the Bloody Blade (`UNT-MAR-004`, was `ARM-DRA-002`, from Dyllan, card list in progress)
 | Field | Value |
 |---|---|
 | Type | Unit |
@@ -184,7 +184,7 @@ Open questions:
   - When you fetch Katana of the Fallen Hero, **Drazel's Katana goes to the Grave** (confirmed by Dyllan).
   - The 50% applies to his stats with Equipment included, rounded down.
 
-#### Galent, The Unbreakable Shield (`ARM-GAL-001`, from Dyllan, 8 Oct)
+#### Galent, The Unbreakable Shield (`UNT-MAR-002`, was `ARM-GAL-001`, from Dyllan, 8 Oct)
 | Field | Value |
 |---|---|
 | Type | Unit |
@@ -199,7 +199,7 @@ Open questions:
 **Effect:** Drazel's mirror image. His **Attack** is **1000** when summoned normally, or **equal to the Attack of the unit he promotes**.
 - Placeholder: Equipment that stays on through the promotion works the same as for Drazel. He takes the total Attack, and the Equipment's Attack bonus isn't added a second time.
 
-#### Sena, Mistress of the Shadows (`ARM-SEN-001`, from Dyllan, 8 Oct)
+#### Sena, Mistress of the Shadows (`UNT-MAR-003`, was `ARM-SEN-001`, from Dyllan, 8 Oct)
 | Field | Value |
 |---|---|
 | Type | Unit |
