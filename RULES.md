@@ -190,7 +190,8 @@ Open questions:
 **Summon effect (Dyllan, 9 Oct):** when he is **promotion summoned on top of Drazel, Practitioner of the Blade**, he **costs nothing** to play. The Practitioner must have been on the field for **a full turn** first. If **Military Institute** is in effect, you may also **summon two Students at no cost** to join him on the field.
 - **(?)** What counts as a full turn? Placeholder: the Practitioner was already on the field at the start of your turn, so you can't promote him into the Instructor on the turn he arrived.
 - **(?)** Does the free promotion still use your one promotion for the turn? Placeholder: yes.
-- **(?)** Which Students, and from where? Placeholder: any Student cards (First Year, Second Year or Graduate), from your hand or deck (shuffle the deck after), into empty slots you choose. If there's only room for one, you summon one.
+- The free Students are **Student, First Year only** (confirmed by Dyllan, 9 Oct).
+  - **(?)** From where? Placeholder: your hand or deck (shuffle the deck after), into empty slots you choose. If there's only room for one, you summon one.
 - **(?)** Does the two-Student bonus need the free promotion, or does any summon of the Instructor count? Placeholder: only the free promotion on top of the Practitioner.
 - **Equipment on the promoted unit (confirmed by Dyllan):** if that unit's Equipment stays on through the promotion, Drazel takes its **total** Defense, Equipment included. Practice Gear never stays (it's Grades 1 to 3 only), so this applies to future Equipment.
   - Placeholder: the Equipment's Defense bonus is already part of that total, so it isn't added a second time while it stays on Drazel. Its Attack bonus still applies.

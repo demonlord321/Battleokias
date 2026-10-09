@@ -16,7 +16,7 @@ d) Can the Katana go on every Drazel card now? **Placeholder:** yes.
 ### 1b. Drazel, Instructor of the Blade's summon effect
 a) What counts as the Practitioner being on the field "for a full turn"? **Placeholder:** he was on the field at the start of your turn.
 b) Does the free promotion still use your one promotion for the turn? **Placeholder:** yes.
-c) Which Students can the Military Institute bonus summon, and from where? **Placeholder:** any Student (First Year, Second Year or Graduate), from your hand or deck (shuffle after), into empty slots you choose; only one if there's only room for one.
+c) The free Students are First Years only (answered). Can they come from your hand or deck? **Placeholder:** either (shuffle after), into empty slots you choose; only one if there's only room for one.
 d) Does the two-Student bonus only come with the free promotion on top of the Practitioner? **Placeholder:** yes.
 **Answer:**
 
