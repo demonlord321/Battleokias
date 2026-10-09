@@ -6,7 +6,7 @@ Written up from Dyllan's notes. Open questions are marked **(?)**, and all of th
 
 **Balance approach (Dyllan):** deck building is most of the battle in a TCG. Exact mirror matches (both players with identical decks) are not a fair way to judge balance. Test with different deck builds from the same card pool instead.
 
-**Balance on hold (Dyllan, 8 Oct):** don't tune balance yet. Draw rates, card types and effects will shift it, so once the full Arms collection is in, we run simulations and fine-tune the effects then.
+**Balance on hold (Dyllan, 8 Oct):** don't tune balance yet. Draw rates, card types and effects will shift it, so once the full Martial collection is in, we run simulations and fine-tune the effects then.
 
 ## Setup
 1. A coin flip decides who goes first.
@@ -38,22 +38,22 @@ Each turn runs through six phases, shown on screen with their short names:
 ## Signets
 A deck is built around a **Signet**, a faction (like houses or clans in other games).
 Starting Signets:
-1. **School of Arms**
-2. **School of Magic**
-3. **School of Alchemy**
+1. **Martial** (was Arms)
+2. **Mystic** (was Magic)
+3. **Alchemy**
 
-Other Signets seen on cards:
-- **Mercenary** (first seen as Drazel's sub-Signet). **(?)** Can you declare Mercenary as your deck's Signet, like the three Schools? (Placeholder: yes.)
-- **Hero** (first seen on Katana of the Fallen Hero). **(?)** Can you declare Hero as your deck's Signet? Can you declare Hero as your deck's Signet? (Placeholder: yes.)
+- **Only these three Signets are used for now** (Dyllan, 8 Oct). Mercenary and Hero have been taken off every card. More Signets can come later, for example an **Assassin** Signet for Sena's line.
+- **Renamed (Dyllan, 9 Oct):** Arms is now **Martial** and Magic is now **Mystic**.
+  - **(?)** Do card names with "Arms" in them change too (Student, Apprentice and Graduate of Arms, Arms Academy)? Placeholder: the names stay as they are for now; only the Signet is renamed.
 
 - A deck is built around **one Signet**. Every card in the deck must carry that Signet.
 - A card can belong to **more than one** Signet, so it can appear in decks of any of them.
 - **Deck legality (confirmed by Dyllan):** a deck is legal as long as every card shares the deck's Signet, whether as its main Signet or a sub-Signet. This allows unusual cross-academy combinations, and that's intended.
-  - **One declared Signet (confirmed by Dyllan):** like choosing your world in Future Card Buddyfight, you declare the Signet you command, for example the forces of Arms, and every card in the deck must carry Arms. Chaining through shared sub-Signets is not allowed, so an Arms deck can include an Arms/Fire card but not a pure Fire card.
+  - **One declared Signet (confirmed by Dyllan):** like choosing your world in Future Card Buddyfight, you declare the Signet you command, for example the forces of Martial, and every card in the deck must carry Martial. Chaining through shared sub-Signets is not allowed, so a Martial deck can include a Martial/Fire card but not a pure Fire card.
 - The card's Signet symbol(s) sit in the **top left** corner of the card.
 - **Main Signet and sub-Signets (confirmed by Dyllan):** a card's **first** Signet is its **main Signet**, and it decides the card's **promotion line**. Any Signets after it are **sub-Signets**: they let the card into those decks, but play no part in promotion.
-- **Support cards and Signets (confirmed by Dyllan):** Equipment, Artifacts and other cards that attach to or affect a unit can be used on it if they share **any** Signet, main or sub-Signet, unless the card says otherwise. So Practice Gear (Arms) can go on another academy's unit that has Arms as a sub-Signet.
-  - Placeholder: the same goes for Arms Academy's "Arms units" (its unlimited promotions), since it doesn't say otherwise.
+- **Support cards and Signets (confirmed by Dyllan):** Equipment, Artifacts and other cards that attach to or affect a unit can be used on it if they share **any** Signet, main or sub-Signet, unless the card says otherwise. So Practice Gear (Martial) can go on another academy's unit that has Martial as a sub-Signet.
+  - Placeholder: the same goes for Arms Academy's "Martial units" (its unlimited promotions), since it doesn't say otherwise.
 
 Open questions:
 - **(?)** How does a Signet shape its Units (stats, abilities, play style)?
@@ -137,13 +137,15 @@ Open questions:
 - **(?)** Does a unit's Class do anything in play (for example, a Formation or Field Spell that needs a certain Class), or is it just a label for now?
 - **(?)** Is each named unit one of a kind? (Placeholder: only one copy of the same named unit on your field at a time, but still no deck limit.)
 - Class shows next to "Unit" on the card, and named units get a gold frame (Mapmaker, `2505553`).
+- **Named unit IDs (Dyllan, 8 Oct):** Signet, then a short form of the name, then a number, for example `ARM-SEN-001`. A character can have several cards (a higher-Grade Sena, say), numbered 001, 002 and so on: Drazel, Instructor of the Blade is `ARM-DRA-001` and Drazel, the Bloody Blade is `ARM-DRA-002`.
+  - **(?)** With Arms renamed to Martial, should the prefix change from `ARM-` to `MAR-` (and Magic's to `MYS-`)? Placeholder: IDs keep `ARM-` for now so nothing breaks.
 
-#### Drazel, Instructor of the Blade (from Dyllan)
+#### Drazel, Instructor of the Blade (`ARM-DRA-001`, from Dyllan)
 | Field | Value |
 |---|---|
 | Type | Unit |
 | Grade | 4 |
-| Signets | Arms (main), Mercenary (sub). **(?)** Dyllan's 8 Oct `cards.json` lists only Arms; the ID `ARM-MER-001` still says Mercenary. Placeholder: keep Mercenary |
+| Signets | Martial |
 | Class | Swordsman |
 | Attack | 4000 |
 | Defense | Set by his effect (see below) |
@@ -151,16 +153,16 @@ Open questions:
 *Flavour text:* "Drazel found himself gifted with a blade. Upon graduation he chose to share that knowledge with the new recruits. When war came his unit was decimated, and Drazel joined the mercenaries to get stronger and make some money."
 
 **Effect:** Drazel halted his study of Defense and put everything into attack. His Defense is **1000** when he is summoned normally, or **equal to the Defense of the unit he promotes**.
-- Because his main Signet is Arms, he is in the Arms promotion line, so he can promote a Graduate of Arms (Defense 1500).
+- Because his main Signet is Martial, he is in the Martial promotion line, so he can promote a Graduate of Arms (Defense 1500).
 - **Equipment on the promoted unit (confirmed by Dyllan):** if that unit's Equipment stays on through the promotion, Drazel takes its **total** Defense, Equipment included. Practice Gear never stays (it's Grades 1 to 3 only), so this applies to future Equipment.
   - Placeholder: the Equipment's Defense bonus is already part of that total, so it isn't added a second time while it stays on Drazel. Its Attack bonus still applies.
 
-#### Drazel, the Bloody Blade (from Dyllan, card list in progress)
+#### Drazel, the Bloody Blade (`ARM-DRA-002`, from Dyllan, card list in progress)
 | Field | Value |
 |---|---|
 | Type | Unit |
 | Grade | 5 |
-| Signets | Arms (main), Mercenary (sub) |
+| Signets | Martial |
 | Class | Swordsman |
 | Attack / Defense | Set by his effect (see below) |
 
@@ -168,20 +170,20 @@ Open questions:
 
 **Effect:** Drazel learnt a lot with the mercenaries, but his strengths didn't grow. When he promotes a unit, his Attack and Defense **equal that unit's**. When summoned normally, he is **4000 / 2500**.
 
-**Last Stand:** in Preparation Phase I you can start Drazel's Last Stand. His Attack and Defense rise by **50%** for **3 turns**, and when the 3 turns end, Drazel is destroyed.
+**Last Stand:** in Preparation Phase I you can start Drazel's Last Stand. His Attack and Defense rise by **50%**, and Drazel is destroyed **after the third Battle Phase it has been active for** (confirmed by Dyllan).
 - If he holds **Drazel's Katana**, the Equipment changes: you may take **Katana of the Fallen Hero** from your Equipment Special Deck and add it to your hand.
 - Placeholders and open questions:
-  - **(?)** Are the 3 turns three of your own turns? (Placeholder: yes, counting the turn you start it.)
-  - **(?)** Drazel's Katana currently goes only on Drazel, Instructor of the Blade. Does it stay on when he promotes to the Bloody Blade, and can it be equipped to the Bloody Blade directly? (Placeholder: yes to both.)
-  - **(?)** What happens to Drazel's Katana when you fetch Katana of the Fallen Hero? (Placeholder: it goes to the Grave.)
+  - **(?)** Do the opponent's Battle Phases count, or only yours? Placeholder: only your own, starting with the Battle Phase of the turn you start it. So he is destroyed at the end of your third Battle Phase.
+  - **Drazel's Katana stays on** when Drazel promotes to the Bloody Blade, and it **can be equipped to the Bloody Blade directly** (confirmed by Dyllan).
+  - When you fetch Katana of the Fallen Hero, **Drazel's Katana goes to the Grave** (confirmed by Dyllan).
   - The 50% applies to his stats with Equipment included, rounded down.
 
-#### Galent, The Unbreakable Shield (`ARM-MER-002`, from Dyllan, 8 Oct)
+#### Galent, The Unbreakable Shield (`ARM-GAL-001`, from Dyllan, 8 Oct)
 | Field | Value |
 |---|---|
 | Type | Unit |
 | Grade | 4 |
-| Signets | Arms. **(?)** The ID says Mercenary too. Placeholder: Arms (main), Mercenary (sub), the same as Drazel |
+| Signets | Martial |
 | Class | Guardian |
 | Attack | Set by his effect (see below) |
 | Defense | 4000 |
@@ -191,40 +193,41 @@ Open questions:
 **Effect:** Drazel's mirror image. His **Attack** is **1000** when summoned normally, or **equal to the Attack of the unit he promotes**.
 - Placeholder: Equipment that stays on through the promotion works the same as for Drazel. He takes the total Attack, and the Equipment's Attack bonus isn't added a second time.
 
-#### Sena, Mistress of the Shadows (`ARM-ASS-002`, from Dyllan, 8 Oct)
+#### Sena, Mistress of the Shadows (`ARM-SEN-001`, from Dyllan, 8 Oct)
 | Field | Value |
 |---|---|
 | Type | Unit |
 | Grade | 4 |
-| Signets | Arms. **(?)** The ID `ARM-ASS` suggests a second Signet (Assassin?). Placeholder: Arms only until Dyllan names it |
+| Signets | Martial only for now. Dyllan plans an Assassin Signet later |
 | Class | Rogue |
 | Attack / Defense | 3500 / 3500 |
 
 *Flavour text:* placeholder (to come from Dyllan).
 
 **Pickpocket (summon effect):** when Sena is summoned, you may **destroy 1 Item, Artifact or Equipment** on your opponent's side of the field. She doesn't need to be in a Formation, and it only triggers when she is summoned.
-- **(?)** Does promoting into Sena count as "summoned"? Placeholder: no, only a normal summon (the same way Drazel's text separates "summoned" from "promoted").
+- **Promoting into Sena counts** (confirmed by Dyllan): "summoned" means any way a unit enters the field, promotion included.
 - Placeholder: the destroyed card goes to the opponent's Grave. Set Spells and Traps aren't Items, so she can't hit them.
-- Her ID is `ARM-ASS-002`, and there is no `-001` yet. Her card image currently reuses Drazel's (`arm-mer-001.png`).
+- There may be more than one Sena card later, for example a higher-Grade version. Her card image currently reuses Drazel's (`arm-mer-001.png`).
 
-### Official sample units (School of Arms, from Dyllan)
+### Official sample units (Martial, from Dyllan)
 | Grade | Name | Attack | Defense |
 |---|---|---|---|
 | 1 | Student of Arms | 500 | 500 |
 | 2 | Apprentice of Arms | 1500 | 1000 |
 | 3 | Graduate of Arms | 2000 | 1500 |
 
-These three are the **only** Grade 1, 2 and 3 units of the Arms line (confirmed by Dyllan). Other Signets will have their own Grade 1 to 3 units later.
+These three are the **only** Grade 1, 2 and 3 units of the Martial line (confirmed by Dyllan). Other Signets will have their own Grade 1 to 3 units later.
 
 ### Promotion
+- **"Summon" means any way a unit enters the field**, promotion included (confirmed by Dyllan), so "when summoned" effects such as Sena's Pickpocket trigger on promotion too. Cards that give different stats "when summoned normally" or "when promoted" (Drazel, Galent, the Bloody Blade) still tell the two apart.
 - Instead of summoning normally, you can **promote** a unit already on the field by playing a
   higher-Grade unit from your hand **on top of it**.
 - Promotion costs the **difference** in Grade. For example, a Grade 2 played on a Grade 1 costs **1 Energy** instead of 2.
 - Promotion is **exactly one Grade** up. No skipping.
-- **Promotion lines (confirmed by Dyllan):** a unit can only be promoted by the next unit **in its own line**. The Arms line is **Student of Arms, then Apprentice of Arms, then Graduate of Arms**.
+- **Promotion lines (confirmed by Dyllan):** a unit can only be promoted by the next unit **in its own line**. The Martial line is **Student of Arms, then Apprentice of Arms, then Graduate of Arms**.
   - Only a Student of Arms can become an Apprentice of Arms, and only an Apprentice of Arms can become a Graduate of Arms.
-  - The line comes from the card's **main (first) Signet**. A card that only has Arms as a sub-Signet is outside the Arms line, even if it can sit in an Arms deck.
-- **(?)** How does a Graduate of Arms move up to Grade 4? Placeholder: any named Grade 4 unit whose main Signet is Arms can promote a Graduate of Arms.
+  - The line comes from the card's **main (first) Signet**. A card that only has Martial as a sub-Signet is outside the Martial line, even if it can sit in a Martial deck.
+- **(?)** How does a Graduate of Arms move up to Grade 4? Placeholder: any named Grade 4 unit whose main Signet is Martial can promote a Graduate of Arms.
 - **One promotion per turn** normally. Some Field Spells lift this (see Arms Academy).
 - Placeholder until Dyllan decides: the card underneath stays stacked beneath the new unit and both go to the Grave when the unit is destroyed.
 - First-player edge: with Formations and unit destruction in (`58d4e06`), bot games show the first player winning 49%, so no extra fix is needed for now.
@@ -249,11 +252,11 @@ You can only attack if you have a Formation set.
 - Each Formation has its own formula for its power. Basic Formations use the **sum**.
 - **Fractions always round down** (confirmed by Dyllan).
 - **Formation cost (updated by Dyllan, 8 Oct):** a Formation costs **its Damage Grade** in Energy. One with **no Damage Grade (0) costs 1**. So Frontal Assault (Damage Grade 1) costs 1 and Vanguard Charge (Damage Grade 2) costs 2. This replaces the old rule, where cost was the Damage Grade minus one.
-  - **(?)** Line Defense has 2 printed on the card, but the new rule gives 1. Placeholder: the printed cost wins, so it stays 2.
+  - Line Defense follows the rule and costs **1** (confirmed by Dyllan).
 - **Playing and swapping Formations (confirmed by Dyllan):** you can play a Formation in **either Preparation Phase** (I or II). To swap, play a new Formation on top of your current one: the old one goes to the **Grave**, and you pay the new one's normal cost.
   - This means you can attack with one Formation, then swap to a defensive one like Line Defense in Phase II for your opponent's turn.
 - **Choosing between conditions (confirmed by Dyllan):** if a Formation can be activated in more than one way and more than one condition is met, a choice pops up and **the player picks which one to use**. For example, if Line Defense's first and second rows are both full, you choose which row it uses.
-  - **(?)** When is the choice made, and can it change? Placeholder: you pick when the Formation is played, and you can re-pick in either of your Prep Phases. If only one condition is met, it's picked automatically. If the picked condition stops being met (say a unit in that row is destroyed) and another one is met, you pick again, and on the opponent's turn the strongest one is used.
+  - **Timing (Dyllan accepted the placeholder for now):** you pick when the Formation is played, and you can re-pick in either of your Prep Phases. If only one condition is met, it's picked automatically. If the picked condition stops being met (say a unit in that row is destroyed) and another one is met, you pick again, and on the opponent's turn the strongest one is used.
 
 ### Formation: Vanguard Charge (from Dyllan)
 - **Pattern:** the **whole front row** plus the **middle-centre** slot, four slots in a T shape (grid positions `[0, 1, 2, 4]`).
@@ -266,7 +269,7 @@ You can only attack if you have a Formation set.
 - **Formation Defense** = sum of those units' Defense **/ 1.5**.
 - **Damage Grade 2**, **Defense Grade 0**, **cost 2 Energy** (see Formation cost; it was 1 under the old rule).
 - Example: Student, Apprentice and Student across the front with a Graduate in the middle centre gives 4500 x 1.5 = **6750 Attack** and 3500 / 1.5 = **2333 Defense**.
-- **(?)** Which Signets does it carry? Placeholder: all three, the same as Frontal Assault.
+- **Signets:** Martial only (confirmed by Dyllan, 8 Oct).
 - Balance note: in bot games, a Vanguard Charge deck beats a Frontal Assault deck 89% of the time, because of Damage Grade 2. Suggested fix: give Frontal Assault Defense Grade 1 (about 43%). Dyllan is leaving this for now, since Equipment may balance it.
 
 ### Formation from the deck (confirmed by Dyllan)
@@ -283,10 +286,10 @@ You can only attack if you have a Formation set.
 - **Formation Defense** = the sum of the three front-row units' Defense.
 - Example: three Students of Arms make 1500 Attack and 1500 Defense. Three Graduates of Arms make 6000 Attack and 4500 Defense.
 
-Built as `FRM-001` (all three Signets, `"slots": [0,1,2]`, `"combine": "sum"`).
+Built as `FRM-001` (`"slots": [0,1,2]`, `"combine": "sum"`). **Signets:** Martial only (confirmed by Dyllan, 8 Oct).
 
 ### Formation: Line Defense (from Dyllan)
-- **Signets:** Arms, Mercenary. **Cost:** 2 (printed on the card; the usual Formation cost rule doesn't cover Damage Grade 0).
+- **Signets:** Martial. **Cost:** 1 (Damage Grade 0 costs 1; confirmed by Dyllan).
 - **Slots:** any **one full row**, front, middle or back. Only the units in that row count.
 - **Attack 0.** Its **Defense** is the sum of that row's units' Attack **and** Defense.
 - **Damage Grade 0, Defense Grade 1.** It can't attack at all unless a card or effect raises its Damage Grade.
@@ -337,17 +340,17 @@ Open questions:
 
 ## Spells
 ### Spell: Fire Arrow (from Dyllan)
-- **Signets:** Arms, Magic, Alchemy. **Cost:** 1.
+- **Signets:** Martial, Mystic, Alchemy. **Cost:** 1.
 - **Cast** it straight from your hand in Preparation Phase I or II, or **set** it face-down in an empty unit slot.
 - A set Fire Arrow can be activated in your own **Start, Preparation I, Battle, Preparation II or End Phase**.
 - **Effect:** deals **1 Damage Counter** to your opponent. Then it goes to the Grave.
 - Placeholders and open questions:
-  - **(?)** Can a Fire Arrow set this turn be activated in the same turn (for example set in Phase II, fired in the End Phase)? (Placeholder: no, not until your next turn. That's the same as Equipment, and it means setting it is a real commitment.)
+  - **A Fire Arrow can fire on the turn it's set** (confirmed by Dyllan). The effect is the same either way, so you'd normally just cast it.
   - The cost is paid once, when it's cast or set.
 
 ## Artifacts
 ### Artifact: Blinding Beacon (from Dyllan)
-- **Signets:** Arms, Magic, Alchemy ("Mystic" meant Magic, confirmed by Dyllan). **Cost:** 1.
+- **Signets:** Martial, Mystic, Alchemy. **Cost:** 1.
 - Attach it to one of your units in **Preparation Phase I or II**.
 - Only **one Blinding Beacon** can be in your Formation at a time.
 - It holds **2 charges**. When you attack, you may activate it: your opponent's Formation is **deactivated for this Battle Phase**, and it reactivates at the start of your opponent's turn.
@@ -360,8 +363,8 @@ Open questions:
   - Attached in Phase II, it works from your next Preparation Phase I, like Equipment.
 
 ## Traps
-### Trap: Stand Strong (School of Arms, from Dyllan)
-- **Signet:** Arms. **Cost:** 1.
+### Trap: Stand Strong (Martial, from Dyllan)
+- **Signet:** Martial. **Cost:** 1.
 - Set it in **Preparation Phase I or II**, face-down in an **empty Unit Position Slot**.
 - Activate it during your **opponent's Battle Phase**: when their attack lands, send Stand Strong to the Grave **instead of** the unit that would have been destroyed.
 - Placeholders and open questions:
@@ -371,7 +374,7 @@ Open questions:
 ## Field Spells
 A Field Spell goes in the **Field Effect Zone (FEZ)** and stays there, giving an ongoing effect.
 
-### Field Spell: Arms Academy (School of Arms, from Dyllan)
+### Field Spell: Arms Academy (Martial, from Dyllan)
 - **Effect:** In your **Preparation Phase I**, you may send a **Student of Arms** from your hand to the Academy. (Specific to this line: Student of Arms in, Graduate of Arms out.)
 - **Two of your turns later**, in your Preparation Phase I, a **Graduate of Arms** leaves the Academy and is **summoned to the field at no cost**, in **any empty slot you choose**.
   - Example: send the Grade 1 in Preparation Phase I of your 3rd turn, and the Grade 3 arrives in Preparation Phase I of your 5th turn.
@@ -382,7 +385,7 @@ A Field Spell goes in the **Field Effect Zone (FEZ)** and stays there, giving an
 - You choose that Graduate of Arms **from your hand** or **from your deck**. If you take it from your deck, **reshuffle** the deck afterwards.
 
 Open questions:
-- **Second effect:** while Arms Academy is in play, you can promote **any number** of your units with the **Arms Signet** each turn, as long as you have the Energy. (The normal limit is one promotion per turn.)
+- **Second effect:** while Arms Academy is in play, you can promote **any number** of your units with the **Martial Signet** each turn, as long as you have the Energy. (The normal limit is one promotion per turn.)
 - Placeholder: if there's no empty slot or no Graduate of Arms to pick, the student stays in the Academy and tries again next turn. Playing a new Field Spell sends the old one and its students to the Grave.
 - The arriving Graduate can attack that turn if it's placed in your Formation (confirmed by Dyllan).
 
@@ -400,8 +403,8 @@ Open questions (placeholders in brackets):
 - **(?)** When an equipped unit is promoted, does the Equipment stay on the new unit? (Yes, if it still shares a Signet.)
 - **(?)** Which phase can you equip in? (Preparation Phase I.)
 
-### Equipment: Practice Gear (School of Arms)
-- **Effect:** the equipped Arms unit gets **+250 Attack and +250 Defense** (a flat bonus, confirmed by Dyllan).
+### Equipment: Practice Gear (Martial)
+- **Effect:** the equipped Martial unit gets **+250 Attack and +250 Defense** (a flat bonus, confirmed by Dyllan).
 - Example: a Student of Arms goes from 500/500 to 750/750, and an Apprentice from 1500/1000 to 1750/1250.
 - **Grades 1 to 3 only (confirmed by Dyllan):** a unit that has mastered its craft has no use for practice gear. Practice Gear can only be equipped to a Grade 1, 2 or 3 unit, and when its unit is promoted to Grade 4 or higher, the Gear goes to the Grave.
 
@@ -412,19 +415,19 @@ Open questions (placeholders in brackets):
 - **Effect:** while Drazel holds his Katana, when your Formation's attack lands, the defender loses the unit in their Formation with the **highest Attack + Defense**, instead of their lowest-Grade unit.
 - **Drazel must be in your attacking Formation** for the Katana's effect to work (confirmed by Dyllan).
 - Placeholders until Dyllan decides:
-  - Attack + Defense uses each unit's current stats, Equipment included. On a tie, the defender picks, as with the normal rule.
-  - Signets Arms and Mercenary, the same as Drazel; Special Deck only like all Equipment; no Grade limit.
+  - Attack + Defense uses each unit's current stats, Equipment included. On a tie, the attacker picks, as with the normal rule.
+  - Signets: Martial only; Special Deck only like all Equipment; no Grade limit.
 - **Cost 3 Energy**, printed on the card (confirmed by Dyllan), and up to **3 copies** like other Equipment. A 1-per-deck limit was tried and **removed**: Dyllan expects the odds to drop once decks are full size and other Special Deck types exist, since players may not pick Equipment. Making the destroy need Drazel's Attack to beat the target's Defense was turned down, since Dyllan thinks it would swing balance too far the other way.
 - Specialised Equipment is a new idea: Equipment that names the one unit it can go on.
 
 ### Equipment: Katana of the Fallen Hero (from Dyllan, card list in progress)
-- **Signets:** Arms, Hero. **Cost:** 3.
+- **Signets:** Martial (Hero was dropped; only the three base Signets for now). **Cost:** 3.
 - Equip to any unit that shares a Signet with it. The unit gets **+250 Attack and +250 Defense** and gains **Last Stand** (see Drazel, the Bloody Blade).
 - When the unit falls at the end of Last Stand, this card **doesn't go to the Grave**. It returns to your hand with **1 Soul Charge**.
 - Each Soul Charge adds **+100 Attack and +100 Defense** to this card's bonus, stacking up to **5** (so up to +750 / +750).
 - Placeholders: Soul Charges stay on the card while it's in your hand; if the unit is destroyed any other way, the Katana goes to the Grave as usual and keeps no charges.
 
-## Placeholder rules for the first Arms vs Arms test game
+## Placeholder rules for the first Martial vs Martial test game
 These are **temporary** so a units-only game can be played and tuned. Dyllan will replace them.
 - **Deck:** see **Deck building** (60 cards).
 - **Summoning (Preparation Phase I):** play a Unit from hand into any empty Unit Position Slot by paying its Energy cost. No limit per turn beyond Energy.
@@ -461,8 +464,8 @@ Shown alongside each player's **Hand** (the zone where drawn cards go).
 ## Empty Draw Pile
 - Running out of cards **doesn't make you lose straight away** (Dyllan, 8 Oct).
 - **Main Draw Pile empty (Advisor's suggestion, accepted by Dyllan for now, 8 Oct):** when you would draw from it, you take **1 Damage Counter** instead. This makes stalled games (for example two Galent walls with both piles empty) wind down to a winner in about 10 turns, and Fire Arrow or Blinding Beacon become the ways to break a wall before then. It replaces "skip the draw", which let about 1 in 13 computer games go on forever.
-  - **(?)** Is it 1 counter per Draw Phase, or 1 for each card you can't draw (you draw 2 a turn)? Placeholder: 1 per Draw Phase.
-- **Special Deck empty:** you just skip that draw and play continues.
+  - It's **1 counter per Draw Phase**, not per card (confirmed by Dyllan).
+- **Special Deck empty:** you just skip that draw (in Preparation Phase II), take no damage, and play continues (confirmed by Dyllan).
 - You can concede at any time.
 
 ## Field layout
