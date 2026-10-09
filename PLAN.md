@@ -102,8 +102,8 @@ Uses the placeholder rules in `RULES.md`; Dyllan refines them as we play.
   - Promoting him on top of the Practitioner costs **0 Energy**, if the Practitioner has been on the field a full turn (placeholder: since the start of your turn)
   - With Military Institute in play, you may then **summon up to two Students free** (placeholder: any Students, from hand or deck, empty slots you choose; deck shuffled)
   - Board: a picker for the two Students, Mapmaker
-  - [ ] Free Students are **First Year only** (Dyllan, 9 Oct): set `freePromotion.students.cards` to `UNT-BOK-001`, Developer
-  - [ ] Student picker on the board (`freeStudents` pending), Mapmaker
+  - [x] Free Students are **First Year only** (`e381796`) (Dyllan, 9 Oct): set `freePromotion.students.cards` to `UNT-BOK-001`, Developer
+  - [x] Student picker on the board (`ddae282`) (`freeStudents` pending), Mapmaker
   - Open points in QUESTIONS.md #1b
 - [ ] Unit write-ups still missing: a real Formation Effect for every unit, and flavor text for Galent and Sena, Dyllan
 - [ ] All open questions for Dyllan are collected in `QUESTIONS.md`. He answers there and Planner folds the answers into `RULES.md`
