@@ -25,7 +25,7 @@
       "UNT-BOK-001"
     ],
     "grade": 2,
-    "attack": 1500,
+    "attack": 1000,
     "defense": 1000,
     "formation": "Formation effect text",
     "text": "",
@@ -42,7 +42,7 @@
       "UNT-BOK-002"
     ],
     "grade": 3,
-    "attack": 2000,
+    "attack": 1500,
     "defense": 1500,
     "formation": "Formation effect text",
     "text": "",

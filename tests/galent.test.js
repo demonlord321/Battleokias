@@ -26,13 +26,13 @@ test("summoned, Galent has 1000 Attack and 4000 Defense", () => {
   assert.deepEqual(unitStats(game, 0, 0), { attack: 1000, defense: 4000 });
 });
 
-test("promoting a Graduate, he takes its printed 2000 Attack", () => {
+test("promoting a Graduate, he takes its printed 1500 Attack", () => {
   const game = start();
   const p = game.players[0];
   p.ups[0] = { ...copy("UNT-BOK-003"), equipment: { ...copy("EQP-MAR-001") } }; // the Gear goes to the Grave at Grade 4
   p.hand.push(copy("UNT-MAR-002"));
   assert.equal(applyAction(game, { type: "promote", player: 0, card: p.hand.length - 1, slot: 0 }).ok, true);
-  assert.deepEqual(unitStats(game, 0, 0), { attack: 2000, defense: 4000 });
+  assert.deepEqual(unitStats(game, 0, 0), { attack: 1500, defense: 4000 });
 });
 
 test("if the Equipment stays on, he takes the total Attack, and its Attack bonus isn't counted twice", () => {
@@ -42,8 +42,8 @@ test("if the Equipment stays on, he takes the total Attack, and its Attack bonus
   p.ups[0] = { ...copy("UNT-BOK-003"), equipment: armour };
   p.hand.push(copy("UNT-MAR-002"));
   assert.equal(applyAction(game, { type: "promote", player: 0, card: p.hand.length - 1, slot: 0 }).ok, true);
-  assert.equal(p.ups[0].attack, 2300);
-  assert.deepEqual(unitStats(game, 0, 0), { attack: 2300, defense: 4400 });
+  assert.equal(p.ups[0].attack, 1800);
+  assert.deepEqual(unitStats(game, 0, 0), { attack: 1800, defense: 4400 });
   assert.equal(applyAction(game, { type: "retire", player: 0, slot: 0 }).ok, true);
   assert.equal(p.graveyard.find((c) => c.id === "ARMOUR#1").attackCopied, undefined);
 });

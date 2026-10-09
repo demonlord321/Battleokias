@@ -30,7 +30,7 @@ test("promoting a Graduate, he takes its printed 1500 Defense, and its Practice 
   const game = start();
   const p = game.players[0];
   p.ups[0] = { ...copy("UNT-BOK-003"), equipment: { ...copy("EQP-MAR-001") } };
-  assert.deepEqual(unitStats(game, 0, 0), { attack: 2250, defense: 1750 });
+  assert.deepEqual(unitStats(game, 0, 0), { attack: 1750, defense: 1750 });
   p.hand.push(copy("UNT-MAR-001"));
   assert.equal(applyAction(game, { type: "promote", player: 0, card: p.hand.length - 1, slot: 0 }).ok, true);
   assert.equal(p.ups[0].defense, 1500);

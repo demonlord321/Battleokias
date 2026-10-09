@@ -49,7 +49,7 @@ test("the Equipment goes to the opponent's Grave, cleaned, and the unit loses it
   assert.equal(game.pending, null);
   assert.equal(them.ups[0].equipment, undefined);
   assert.ok(them.ups[0].artifact);
-  assert.deepEqual(unitStats(game, 1, 0), { attack: 2000, defense: 1500 });
+  assert.deepEqual(unitStats(game, 1, 0), { attack: 1500, defense: 1500 });
   assert.equal(them.graveyard.at(-1).id, "EQP-MAR-001#1");
   assert.equal(them.graveyard.at(-1).readyNextTurn, undefined);
 });
