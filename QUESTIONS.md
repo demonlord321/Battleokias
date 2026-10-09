@@ -12,6 +12,7 @@ b) Graduation Gift searches for Drazel's Katana, but Equipment is Special Deck o
 c) Does any promotion trigger it, or only promoting a Student, Graduate? **Placeholder:** any promotion.
 d) Can the Katana go on every Drazel card now? **Placeholder:** yes.
 e) Promotion between Drazel cards: Practitioner (4) promotes a Graduate, Instructor (5) promotes Practitioner, the Bloody Blade (6) promotes Instructor? **Placeholder:** yes.
+f) Timing (Advisor): can the searched Katana go straight onto the Practitioner, or does it wait like any Equipment? **Placeholder:** normal Equipment timing. It costs 3 Energy to equip, works at once in Prep I, and waits until your next Prep I if equipped in Prep II. So he can attack with it the turn he arrives if you have the Energy.
 **Answer:**
 
 ### 2. Card IDs: codes and named characters

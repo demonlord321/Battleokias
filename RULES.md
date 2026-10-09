@@ -163,6 +163,8 @@ Open questions:
 **Graduation Gift (summon effect):** if Drazel is **promotion summoned** while **Military Institute** is in play, you may search for **Drazel's Katana**.
 - **(?)** Where does the Katana come from? Equipment is Special Deck only. Placeholder: search your Equipment Special Deck and add it to your hand.
 - **(?)** Does any promotion count, or only promoting a Student, Graduate? Placeholder: any promotion.
+- **(?)** Can the searched Katana go straight onto him (Advisor)? Placeholder: normal Equipment timing, 3 Energy; in Prep I it works at once.
+- The prompt only appears if a Katana is still in your Equipment Special Deck; taking it shuffles that deck.
 - Drazel's Katana can now go on **any Drazel card** (placeholder; it used to say Drazel, Instructor of the Blade only).
 
 - **Grades shifted (Dyllan, 9 Oct):** Drazel, Practitioner of the Blade is the new Grade 4. The other Drazel cards went up 1 Grade: Instructor of the Blade is Grade 5, the Bloody Blade Grade 6.
