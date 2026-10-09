@@ -833,3 +833,6 @@ html, body {
 .loss-panel .grad-title { color: #ffb0b4; }
 .loss-option { border-color: #e0484f; }
 .slot.choose-loss { outline: 2px solid #e0484f; outline-offset: 2px; }
+
+/* Graduation Gift prompt (Drazel, Practitioner of the Blade). */
+.gift-panel { top: 30%; border-color: #d9b45a; box-shadow: 0 0 18px rgba(217, 180, 90, 0.5); }

@@ -97,7 +97,7 @@ function basicPick(game) {
   const of = (type) => options.filter((a) => a.type === type);
   const hits = attackPreview(game, me())?.hits;
   return (
-    of("trapResponse")[0] || of("chooseLoss")[0] || of("pickpocket").sort((a, b) => (a.slot === null) - (b.slot === null))[0] || of("specialDraw")[0] || of("graduate").sort((a, b) => inF(a) - inF(b))[0] ||
+    of("trapResponse")[0] || of("chooseLoss")[0] || of("pickpocket").sort((a, b) => (a.slot === null) - (b.slot === null))[0] || of("graduationGift").sort((a, b) => b.accept - a.accept)[0] || of("specialDraw")[0] || of("graduate").sort((a, b) => inF(a) - inF(b))[0] ||
     (!p.formationZone && (of("setFormation")[0] || of("deckFormation")[0])) ||
     (!p.fieldEffect && of("setField")[0]) ||
     of("promote").sort((a, b) => inF(a) - inF(b))[0] ||
@@ -177,6 +177,7 @@ const graduating = () => game.pending?.type === "graduate";
 const drawingSpecial = () => game.pending?.type === "specialDraw";
 const responding = () => game.pending?.type === "trapResponse";
 const pickpocketing = () => game.pending?.type === "pickpocket";
+const gifting = () => game.pending?.type === "graduationGift";
 // Unit Position Slots, row*3+col with the front row first.
 const SLOT_NAMES = ["front left", "front centre", "front right", "middle left", "middle centre", "middle right", "back left", "back centre", "back right"];
 const unitIn = (p, slot) => (p.ups[slot] && !p.ups[slot].faceDown ? p.ups[slot] : null);
@@ -267,6 +268,7 @@ function render() {
   renderTrapPanel();
   renderRowPanel();
   renderPickpocketPanel();
+  renderGiftPanel();
   renderLossPanel();
 
   ui.formationStats = game.players.map((_, i) => formationStats(game, i));
@@ -464,6 +466,35 @@ function renderPickpocketPanel() {
       <button class="grad-option trap-pass" data-pick-slot="skip">Don't pickpocket<small>leave their cards alone</small></button></div>`;
 }
 
+// Graduation Gift (engine: game.pending = { type: "graduationGift", player, card }): Drazel,
+// Practitioner of the Blade was promoted with Military Institute in play, so you may search the
+// Equipment Special Deck for his Katana. Answered with { type: "graduationGift", player, accept }.
+function renderGiftPanel() {
+  let panel = $("#gift-panel");
+  if (!gifting() || blocked()) return panel?.remove();
+  if (!panel) {
+    panel = document.createElement("div");
+    panel.id = "gift-panel";
+    panel.className = "grad-panel gift-panel";
+    panel.addEventListener("click", (e) => {
+      const b = e.target.closest("[data-gift]");
+      if (b && gifting()) act({ type: "graduationGift", player: me(), accept: b.dataset.gift === "yes" });
+    });
+    $("#game-screen").append(panel);
+  }
+  const p = game.players[me()];
+  const id = game.pending.card;
+  const katana = p.specialDecks.flatMap((d) => d?.cards ?? []).find((c) => c.id === id || (c.cardId ?? c.id) === id)?.name ?? "the Katana";
+  const drazel = p.ups.find((c) => c && /Practitioner/i.test(c.name))?.name ?? "Drazel";
+  const school = p.fieldEffect?.name ?? "Military Institute";
+  panel.innerHTML = `
+    <div class="grad-title">&#x1F381; Graduation Gift</div>
+    <div class="grad-sub">${drazel} graduated while ${school} is in play. Search your Equipment Special Deck for ${katana} and add it to your hand? The deck is shuffled afterwards.</div>
+    <div class="grad-options">
+      <button class="grad-option" data-gift="yes">Take ${katana}<small>it goes to your hand; equip it as usual</small></button>
+      <button class="grad-option trap-pass" data-gift="no">No thanks<small>leave it in the deck</small></button></div>`;
+}
+
 // Formation row picker (RULES.md a2392f0): when a Formation like Line Defense has more than one
 // full row, the player picks which one it uses. Engine: chooseFormation { option }, with
 // formationStats(...).options (full rows now) and .option (the row in use). It pops up on its own
@@ -623,6 +654,7 @@ async function startGame() {
 function onHandClick({ index }) {
   if (blocked() || game.winner !== null) return;
   if (choosingLoss()) return toast("Pick one of the glowing units to send to the Grave.");
+  if (gifting()) return toast("Graduation Gift: take the Katana or say no in the panel first.");
   if (pickpocketing()) return toast("Pickpocket: pick a glowing card on your opponent's side, or skip it in the panel.");
   if (graduating()) return toast("Pick a Grade 3 in the Graduation panel first.");
   if (drawingSpecial()) return toast("Preparation Phase II: click one of your glowing Special Decks to draw from it.");
@@ -654,6 +686,7 @@ function onSlotClick({ owner, zone, index }) {
     else toast("Pick one of the glowing units to send to the Grave.");
     return;
   }
+  if (gifting()) return toast("Graduation Gift: take the Katana or say no in the panel first.");
   if (pickpocketing()) {
     const here = zone === "ups" && owner === 1 ? game.pending.targets.filter((t) => t.slot === index) : [];
     if (here.length === 1) act({ type: "pickpocket", player: me(), slot: index, kind: here[0].kind });
