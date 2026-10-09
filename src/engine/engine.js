@@ -265,6 +265,16 @@ function useArtifact(game, playerIndex, slot) {
 
 // owner is the player losing a unit. When candidates tie, the attacker picks which of the
 // owner's units goes (Dyllan, 8 Oct): pending.player is the attacker, pending.owner the defender.
+// A unit's onSummon effect, when it enters the field by a summon or a promotion (Dyllan, 9 Oct:
+// any way a unit enters the field counts as a summon). Sena's Pickpocket asks for a target, if there is one.
+function onSummon(game, card) {
+  if (card.onSummon !== "pickpocket") return;
+  const targets = pickpocketTargets(game, 1 - game.activePlayer);
+  if (!targets.length) return;
+  game.pending = { type: "pickpocket", player: game.activePlayer, targets };
+  game.log.push(`${card.name} can pickpocket an Item, Artifact or Equipment.`);
+}
+
 // What Sena's Pickpocket can destroy on the opponent's side: { slot, kind } with kind "equipment"
 // or "artifact" (on a unit; one unit can carry both) or "item" (a face-up Item card in a slot).
 export function pickpocketTargets(game, opponent) {
@@ -571,14 +581,7 @@ const ACTIONS = {
       spendEnergy(p, cardCost(card));
       p.ups[action.slot] = { ...card, ...arriving(card) };
       game.log.push(`${p.name} summons ${card.name}.`);
-      // Sena's Pickpocket: only on a normal summon (not a promotion), and only if there's a target.
-      if (card.onSummon === "pickpocket") {
-        const targets = pickpocketTargets(game, 1 - game.activePlayer);
-        if (targets.length) {
-          game.pending = { type: "pickpocket", player: game.activePlayer, targets };
-          game.log.push(`${card.name} can pickpocket an Item, Artifact or Equipment.`);
-        }
-      }
+      onSummon(game, card);
     },
   },
 
@@ -624,6 +627,7 @@ const ACTIONS = {
       const gear = kept && { ...kept, ...(copies("defense") ? { defenseCopied: true } : {}), ...(copies("attack") ? { attackCopied: true } : {}) };
       p.ups[action.slot] = { ...card, attack, defense, under: [...under, baseCard], ...(gear ? { equipment: gear } : {}), ...(artifact ? { artifact } : {}) };
       game.log.push(`${p.name} promotes ${base.name} to ${card.name}.`);
+      onSummon(game, card); // "summon" includes promotion (Dyllan, 9 Oct)
       if (outgrown) {
         const { readyNextTurn, defenseCopied, attackCopied, ...old } = equipment;
         p.graveyard.push(old);

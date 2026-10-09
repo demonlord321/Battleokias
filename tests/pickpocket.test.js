@@ -1,4 +1,4 @@
-// Sena, Mistress of the shadows: Pickpocket. On a normal summon (not a promotion), she may destroy
+// Sena, Mistress of the shadows: Pickpocket. When she's summoned, promotion included, she may destroy
 // one Item, Artifact or Equipment on the opponent's side; it goes to their Grave.
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -81,17 +81,20 @@ test("an Item card in a slot can be taken too", () => {
   assert.equal(game.players[1].graveyard.at(-1).name, "Test Item");
 });
 
-test("no targets, or a promotion into Sena: no Pickpocket", () => {
+test("no targets: no Pickpocket", () => {
   const game = start();
   game.players[1].ups[0] = copy("ARM-012", 2);
   summonSena(game);
   assert.equal(game.pending, null);
+});
 
+test("promoting into Sena counts as a summon, so Pickpocket triggers too", () => {
   const promo = start();
   const p = promo.players[0];
   p.hand.push(copy("ARM-SEN-001"));
   assert.equal(applyAction(promo, { type: "promote", player: 0, card: p.hand.length - 1, slot: 1 }).ok, true);
-  assert.equal(promo.pending, null);
+  assert.equal(promo.pending?.type, "pickpocket");
+  assert.equal(promo.pending.targets.length, 2);
 });
 
 test("the computer takes the Artifact first", () => {
