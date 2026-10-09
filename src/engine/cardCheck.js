@@ -177,9 +177,10 @@ export function checkCards(cards) {
 // RULES.md placeholder deck rules, until Dyllan sets deck size and copy limits.
 export const DECK_SIZE = 30;
 export const MAX_COPIES = 3;
-// A card's own "maxCopies" (Drazel's Katana: 1) overrides the usual limit, counted across the
-// whole deck once Special Decks are in decks.json.
-export const copyLimit = (card) => card?.maxCopies ?? MAX_COPIES;
+// RULES.md (confirmed): units have no copy limit; every other card is limited to MAX_COPIES.
+// A card's own "maxCopies" overrides that, counted across the whole deck once Special Decks
+// are in decks.json.
+export const copyLimit = (card) => card?.maxCopies ?? (card?.type === "unit" ? Infinity : MAX_COPIES);
 
 // Checks data/decks.json: { "<signet>": ["ARM-001", ...], ... }.
 // Every id must exist in cards, carry that Signet, appear at most 3 times, and the deck must have 30 cards.
