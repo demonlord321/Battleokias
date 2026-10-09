@@ -21,7 +21,7 @@ test("summoned, Drazel has 4000 Attack and 1000 Defense", () => {
   const game = start();
   const p = game.players[0];
   p.ups[1] = copy("UNT-BOK-003"); // Player Grade 3, so a Grade 4 can come out
-  p.hand.push(copy("UNT-MAR-001"));
+  p.hand.push(copy("UNT-MAR-005"));
   assert.equal(applyAction(game, { type: "summon", player: 0, card: p.hand.length - 1, slot: 0 }).ok, true);
   assert.deepEqual(unitStats(game, 0, 0), { attack: 4000, defense: 1000 });
 });
@@ -31,7 +31,7 @@ test("promoting a Graduate, he takes its printed 1500 Defense, and its Practice 
   const p = game.players[0];
   p.ups[0] = { ...copy("UNT-BOK-003"), equipment: { ...copy("EQP-MAR-001") } };
   assert.deepEqual(unitStats(game, 0, 0), { attack: 1750, defense: 1750 });
-  p.hand.push(copy("UNT-MAR-001"));
+  p.hand.push(copy("UNT-MAR-005"));
   assert.equal(applyAction(game, { type: "promote", player: 0, card: p.hand.length - 1, slot: 0 }).ok, true);
   assert.equal(p.ups[0].defense, 1500);
   assert.deepEqual(unitStats(game, 0, 0), { attack: 4000, defense: 1500 });
@@ -39,10 +39,11 @@ test("promoting a Graduate, he takes its printed 1500 Defense, and its Practice 
 });
 
 test("the card check accepts his empty Defense only with variableDefense", () => {
-  assert.deepEqual(checkCards([byId["UNT-MAR-001"]]), []);
-  const { variableDefense, ...noRule } = byId["UNT-MAR-001"];
+  const { gift, onSummon, ...drazel } = byId["UNT-MAR-005"]; // checked alone, without the cards his Gift names
+  assert.deepEqual(checkCards([drazel]), []);
+  const { variableDefense, ...noRule } = drazel;
   assert.ok(checkCards([noRule]).some((m) => /defense/.test(m)));
-  assert.ok(checkCards([{ ...byId["UNT-MAR-001"], defense: 1000 }]).some((m) => /"defense": null/.test(m)));
+  assert.ok(checkCards([{ ...drazel, defense: 1000 }]).some((m) => /"defense": null/.test(m)));
 });
 
 test("if the Equipment stays on, he takes the total Defense, and its Defense bonus isn't counted twice", () => {
@@ -51,7 +52,7 @@ test("if the Equipment stays on, he takes the total Defense, and its Defense bon
   // An Equipment with no Grade limit, so it stays on through the promotion.
   const armour = { ...copy("EQP-MAR-001"), id: "ARMOUR#1", maxGrade: undefined, boost: { attack: 300, defense: 400 } };
   p.ups[0] = { ...copy("UNT-BOK-003"), equipment: armour };
-  p.hand.push(copy("UNT-MAR-001"));
+  p.hand.push(copy("UNT-MAR-005"));
   assert.equal(applyAction(game, { type: "promote", player: 0, card: p.hand.length - 1, slot: 0 }).ok, true);
   assert.equal(p.ups[0].defense, 1900);
   assert.deepEqual(unitStats(game, 0, 0), { attack: 4300, defense: 1900 });
@@ -66,7 +67,7 @@ test("the Katana only goes on Drazel and gives him +500 Attack", () => {
   const game = start();
   const p = game.players[0];
   p.ups[0] = copy("UNT-BOK-003");
-  p.ups[1] = { ...copy("UNT-MAR-001"), defense: 1000 }; // as if summoned
+  p.ups[1] = { ...copy("UNT-MAR-005"), defense: 1000 }; // as if summoned
   p.hand.push(copy("EQP-MAR-002"));
   const k = p.hand.length - 1;
   assert.equal(checkAction(game, { type: "equip", player: 0, card: k, slot: 0 }), "Drazel's Katana can't go on Student, Graduate.");
@@ -81,7 +82,7 @@ test("with the Katana in the attacking Formation, a hit picks the highest Attack
   me.formationZone = formation;
   them.formationZone = formation;
   const slots = formation.slots;
-  slots.forEach((s, i) => (me.ups[s] = i === 0 ? { ...copy("UNT-MAR-001"), defense: 1000 } : copy("UNT-BOK-003", i)));
+  slots.forEach((s, i) => (me.ups[s] = i === 0 ? { ...copy("UNT-MAR-005"), defense: 1000 } : copy("UNT-BOK-003", i)));
   // Defender: Students everywhere except one Graduate, which is the strongest.
   slots.forEach((s, i) => (them.ups[s] = copy(i === 1 ? "UNT-BOK-003" : "UNT-BOK-001", i)));
   assert.equal(attackPreview(game, 0).hits, true);

@@ -39,8 +39,13 @@
     "swap": [
       [
         "UNT-BOK-003",
-        "UNT-MAR-001",
+        "UNT-MAR-005",
         3
+      ],
+      [
+        "UNT-BOK-002",
+        "UNT-MAR-001",
+        2
       ]
     ]
   },
@@ -49,7 +54,17 @@
     "swap": [
       [
         "UNT-BOK-003",
+        "UNT-MAR-005",
+        3
+      ],
+      [
+        "UNT-BOK-002",
         "UNT-MAR-001",
+        2
+      ],
+      [
+        "UNT-BOK-001",
+        "FLD-MAR-001",
         3
       ]
     ],

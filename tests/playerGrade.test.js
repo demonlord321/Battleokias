@@ -27,10 +27,10 @@ test("even a cheap unit can't come out more than one Grade above your Player Gra
   const p = game.players[0];
   p.energy = 10;
   p.ups[0] = copy("UNT-BOK-002"); // Grade 2
-  p.hand.push({ ...copy("UNT-MAR-001"), cost: 1 }); // as if a spell made it cost 1
-  assert.match(checkAction(game, { type: "summon", player: 0, card: "UNT-MAR-001#1", slot: 1 }), /Player Grade is 2, so you can only bring out units up to Grade 3/);
+  p.hand.push({ ...copy("UNT-MAR-005"), cost: 1 }); // as if a spell made it cost 1
+  assert.match(checkAction(game, { type: "summon", player: 0, card: "UNT-MAR-005#1", slot: 1 }), /Player Grade is 2, so you can only bring out units up to Grade 3/);
   p.ups[2] = copy("UNT-BOK-003"); // a Grade 3 raises it to 3
-  assert.equal(checkAction(game, { type: "summon", player: 0, card: "UNT-MAR-001#1", slot: 1 }), null);
+  assert.equal(checkAction(game, { type: "summon", player: 0, card: "UNT-MAR-005#1", slot: 1 }), null);
 });
 
 test("Player Grade never drops: lose your Grade 3 and you can still bring out a Grade 4", () => {
@@ -43,6 +43,6 @@ test("Player Grade never drops: lose your Grade 3 and you can still bring out a 
   assert.equal(p.playerGrade, 3);
   assert.equal(applyAction(game, { type: "retire", player: 0, slot: 1 }).ok, true);
   assert.equal(p.playerGrade, 3);
-  p.hand.push(copy("UNT-MAR-001"));
-  assert.equal(checkAction(game, { type: "summon", player: 0, card: "UNT-MAR-001#1", slot: 1 }), null);
+  p.hand.push(copy("UNT-MAR-005"));
+  assert.equal(checkAction(game, { type: "summon", player: 0, card: "UNT-MAR-005#1", slot: 1 }), null);
 });

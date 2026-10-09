@@ -104,13 +104,13 @@ test("Practice Gear can't go on a Grade 4, and falls off into the Grave when its
   const game = newGame({ seed: 3, decks: [filler, [...filler]], startingPlayer: 0 });
   const p = game.players[0];
   p.energy = 20;
-  p.ups[0] = card("UNT-MAR-001", 1);
+  p.ups[0] = card("UNT-MAR-005", 1);
   p.ups[1] = card("UNT-BOK-003", 1);
-  p.hand.push(card("EQP-MAR-001", 1), card("EQP-MAR-001", 2), card("UNT-MAR-001", 2));
+  p.hand.push(card("EQP-MAR-001", 1), card("EQP-MAR-001", 2), card("UNT-MAR-005", 2));
   const gear = () => p.hand.findIndex((c) => c.cardId === "EQP-MAR-001");
   assert.match(checkAction(game, { type: "equip", player: 0, card: gear(), slot: 0 }), /Grade 3 or lower/);
   assert.equal(applyAction(game, { type: "equip", player: 0, card: gear(), slot: 1 }).ok, true);
-  const drazel = p.hand.findIndex((c) => c.cardId === "UNT-MAR-001");
+  const drazel = p.hand.findIndex((c) => c.cardId === "UNT-MAR-005");
   assert.equal(applyAction(game, { type: "promote", player: 0, card: drazel, slot: 1 }).ok, true);
   assert.equal(p.ups[1].equipment, undefined);
   assert.equal(p.graveyard.at(-1).cardId, "EQP-MAR-001");
