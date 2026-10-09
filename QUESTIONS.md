@@ -8,11 +8,9 @@ Each question has a **placeholder**, which is what the game does for now so the 
 
 ### 1. Drazel, Practitioner of the Blade
 a) Do Galent and Sena move up a Grade too, or only the Drazel cards? **Placeholder:** only Drazel's cards.
-b) Graduation Gift searches for Drazel's Katana, but Equipment is Special Deck only. Does it come from the Equipment Special Deck, and does it go to your hand or straight onto him? **Placeholder:** Equipment Special Deck, into your hand.
-c) Does any promotion trigger it, or only promoting a Student, Graduate? **Placeholder:** any promotion.
+b) If you equip the Katana instantly with Graduation Gift, do you still pay its 3 Energy? **Placeholder:** yes.
+c) Does any promotion trigger the Gift, or only promoting a Student, Graduate? **Placeholder:** any promotion.
 d) Can the Katana go on every Drazel card now? **Placeholder:** yes.
-e) Promotion between Drazel cards: Practitioner (4) promotes a Graduate, Instructor (5) promotes Practitioner, the Bloody Blade (6) promotes Instructor? **Placeholder:** yes.
-f) Timing (Advisor): can the searched Katana go straight onto the Practitioner, or does it wait like any Equipment? **Placeholder:** normal Equipment timing. It costs 3 Energy to equip, works at once in Prep I, and waits until your next Prep I if equipped in Prep II. So he can attack with it the turn he arrives if you have the Energy.
 **Answer:**
 
 ### 2. Card IDs: codes and named characters

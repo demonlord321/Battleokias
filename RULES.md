@@ -161,15 +161,16 @@ Open questions:
 **Effect:** same stats as Drazel, Instructor of the Blade: 4000 Attack, and his Defense is **1000** when summoned normally, or **equal to the Defense of the unit he promotes**.
 
 **Graduation Gift (summon effect):** if Drazel is **promotion summoned** while **Military Institute** is in play, you may search for **Drazel's Katana**.
-- **(?)** Where does the Katana come from? Equipment is Special Deck only. Placeholder: search your Equipment Special Deck and add it to your hand.
+- The search is through your **Special Deck** (Equipment Special Deck) (confirmed by Dyllan, 9 Oct).
 - **(?)** Does any promotion count, or only promoting a Student, Graduate? Placeholder: any promotion.
-- **(?)** Can the searched Katana go straight onto him (Advisor)? Placeholder: normal Equipment timing, 3 Energy; in Prep I it works at once.
+- **You may equip it instantly** onto him when you use the Gift, or keep it in your hand (confirmed by Dyllan, 9 Oct).
+  - **(?)** Does equipping it instantly still cost its 3 Energy? Placeholder: yes.
 - The prompt only appears if a Katana is still in your Equipment Special Deck; taking it shuffles that deck.
 - Drazel's Katana can now go on **any Drazel card** (placeholder; it used to say Drazel, Instructor of the Blade only).
 
 - **Grades shifted (Dyllan, 9 Oct):** Drazel, Practitioner of the Blade is the new Grade 4. The other Drazel cards went up 1 Grade: Instructor of the Blade is Grade 5, the Bloody Blade Grade 6.
   - **(?)** Do Galent and Sena move up too? Placeholder: no, they stay Grade 4.
-  - **(?)** Promotion between Drazel cards: placeholder is that Practitioner (4) promotes a Student, Graduate, Instructor (5) promotes Practitioner, and the Bloody Blade (6) promotes Instructor.
+  - Promotion between Drazel cards follows the main Signet or Class rule (see Promotion), so Drazel isn't limited to promoting Drazel.
 
 #### Drazel, Instructor of the Blade (`UNT-MAR-001`, was `ARM-DRA-001`, from Dyllan)
 | Field | Value |
@@ -257,7 +258,9 @@ These three are the **only** Grade 1, 2 and 3 units for now. Since 9 Oct they ca
   higher-Grade unit from your hand **on top of it**.
 - Promotion costs the **difference** in Grade. For example, a Grade 2 played on a Grade 1 costs **1 Energy** instead of 2.
 - Promotion is **exactly one Grade** up. No skipping.
-- **Promotion lines (confirmed by Dyllan):** a unit can only be promoted by the next unit **in its own line**. The Student line is **Student, First Year, then Student, Second Year, then Student, Graduate** (Battle'O'Kias Signet).
+- **Promotion lines (Dyllan, 9 Oct):** a unit can be promoted by a unit one Grade higher that shares its **main Signet** (main Signet line) **or** its **Class** (Class line). Example: Drazel, Instructor of the Blade (Grade 5, Martial, Swordsman) can promote any Grade 4 Martial unit (Practitioner, Galent, Sena) or any Grade 4 Swordsman of any Signet. Dyllan considered "only Drazel promotes Drazel" but chose this so games don't stall.
+  - **(?)** Do both units need a Class for the Class line to count? Placeholder: yes. A unit with no Class (like the Students) only uses the main Signet line.
+- **The Student line (confirmed by Dyllan):** the Students promote only within their own line, **Student, First Year, then Student, Second Year, then Student, Graduate** (Battle'O'Kias Signet).
   - Only a Student, First Year can become a Student, Second Year, and only a Student, Second Year can become a Student, Graduate.
   - The line comes from the card's **main (first) Signet**. A card that only has Martial as a sub-Signet is outside the Martial line, even if it can sit in a Martial deck.
 - **(?)** How does a Student, Graduate move up to Grade 4? Placeholder: any named Grade 4 unit, of any Signet, can promote a Student, Graduate.

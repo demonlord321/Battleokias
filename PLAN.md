@@ -95,6 +95,9 @@ Uses the placeholder rules in `RULES.md`; Dyllan refines them as we play.
   - The Katana's `onlyOn` covers every Drazel card (placeholder)
   - **Arms Academy is renamed Military Institute** (same ID, `FLD-MAR-001`); board labels and card text, Mapmaker
   - Open points are in QUESTIONS.md #1
+- [ ] Dyllan's answers of 9 Oct, Developer + Mapmaker:
+  - Graduation Gift: the search is through the Special Deck, and you may **equip the Katana instantly** onto Drazel or keep it in hand (placeholder: still pays its 3 Energy). Board: offer "equip now" as well as "take to hand", Mapmaker
+  - **Promotion lines:** a unit can be promoted by a unit one Grade higher that shares its **main Signet or its Class**. Replaces the fixed `promotesFrom` for named units (the Student line stays fixed; any Grade 4 can still promote a Graduate). Placeholder: the Class line needs both units to have a Class, Developer
 - [ ] Unit write-ups still missing: a real Formation Effect for every unit, and flavor text for Galent and Sena, Dyllan
 - [ ] All open questions for Dyllan are collected in `QUESTIONS.md`. He answers there and Planner folds the answers into `RULES.md`
 - [ ] Dyllan playtests and replaces placeholder rules, Planner updates `RULES.md`
