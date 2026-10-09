@@ -9,20 +9,20 @@ import { chooseAction } from "../src/engine/bot.js";
 const cards = JSON.parse(readFileSync(new URL("../data/cards.json", import.meta.url)));
 const byId = Object.fromEntries(cards.map((c) => [c.id, c]));
 const copy = (id, k = 1) => ({ ...byId[id], cardId: id, id: `${id}#${k}` });
-const filler = () => Array.from({ length: 30 }, (_, i) => copy("ARM-010", i + 10));
+const filler = () => Array.from({ length: 30 }, (_, i) => copy("UNT-BOK-001", i + 10));
 
 // Player 0 can bring out Sena; player 1 has a unit with Practice Gear and a Blinding Beacon.
 function start() {
   const game = newGame({ seed: 2, decks: [filler(), filler()], startingPlayer: 0 });
   const [me, them] = game.players;
   me.energy = 10;
-  me.ups[1] = copy("ARM-012");
-  them.ups[0] = { ...copy("ARM-012", 2), equipment: copy("EQP-001"), artifact: { ...copy("ART-001"), chargesLeft: 2, readyOnTurn: 0 } };
+  me.ups[1] = copy("UNT-BOK-003");
+  them.ups[0] = { ...copy("UNT-BOK-003", 2), equipment: copy("EQP-MAR-001"), artifact: { ...copy("ART-MAR-001"), chargesLeft: 2, readyOnTurn: 0 } };
   return game;
 }
 const summonSena = (game) => {
   const p = game.players[0];
-  p.hand.push(copy("ARM-SEN-001"));
+  p.hand.push(copy("UNT-MAR-003"));
   return applyAction(game, { type: "summon", player: 0, card: p.hand.length - 1, slot: 0 });
 };
 
@@ -50,7 +50,7 @@ test("the Equipment goes to the opponent's Grave, cleaned, and the unit loses it
   assert.equal(them.ups[0].equipment, undefined);
   assert.ok(them.ups[0].artifact);
   assert.deepEqual(unitStats(game, 1, 0), { attack: 2000, defense: 1500 });
-  assert.equal(them.graveyard.at(-1).id, "EQP-001#1");
+  assert.equal(them.graveyard.at(-1).id, "EQP-MAR-001#1");
   assert.equal(them.graveyard.at(-1).readyNextTurn, undefined);
 });
 
@@ -59,7 +59,7 @@ test("an Artifact goes to the Grave without its charges; skipping leaves everyth
   summonSena(game);
   assert.equal(applyAction(game, { type: "pickpocket", player: 0, slot: 0, kind: "artifact" }).ok, true);
   const grave = game.players[1].graveyard.at(-1);
-  assert.equal(grave.id, "ART-001#1");
+  assert.equal(grave.id, "ART-MAR-001#1");
   assert.equal(grave.chargesLeft, undefined);
   assert.equal(game.players[1].ups[0].artifact, undefined);
 
@@ -83,7 +83,7 @@ test("an Item card in a slot can be taken too", () => {
 
 test("no targets: no Pickpocket", () => {
   const game = start();
-  game.players[1].ups[0] = copy("ARM-012", 2);
+  game.players[1].ups[0] = copy("UNT-BOK-003", 2);
   summonSena(game);
   assert.equal(game.pending, null);
 });
@@ -91,7 +91,7 @@ test("no targets: no Pickpocket", () => {
 test("promoting into Sena counts as a summon, so Pickpocket triggers too", () => {
   const promo = start();
   const p = promo.players[0];
-  p.hand.push(copy("ARM-SEN-001"));
+  p.hand.push(copy("UNT-MAR-003"));
   assert.equal(applyAction(promo, { type: "promote", player: 0, card: p.hand.length - 1, slot: 1 }).ok, true);
   assert.equal(promo.pending?.type, "pickpocket");
   assert.equal(promo.pending.targets.length, 2);

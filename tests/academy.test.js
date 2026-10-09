@@ -6,12 +6,12 @@ import { newGame, applyAction, checkAction, legalActions, academyOf, unlimitedPr
 
 let n = 0;
 const unit = (grade, signet = "martial") => ({ id: `U-${++n}`, cardId: `G${grade}-${signet}`, name: `G${grade} ${signet}`, type: "unit", signets: [signet], grade, attack: 500 * grade, defense: 500 * grade });
-// Student, First Year (ARM-010) goes in, Student, Graduate (ARM-012) comes out.
-const student = () => ({ ...unit(1), cardId: "ARM-010", name: "Student, First Year" });
-const graduate = () => ({ ...unit(3), cardId: "ARM-012", name: "Student, Graduate" });
+// Student, First Year (UNT-BOK-001) goes in, Student, Graduate (UNT-BOK-003) comes out.
+const student = () => ({ ...unit(1), cardId: "UNT-BOK-001", name: "Student, First Year" });
+const graduate = () => ({ ...unit(3), cardId: "UNT-BOK-003", name: "Student, Graduate" });
 const academy = () => ({
-  id: `FLD-001#${++n}`, cardId: "FLD-001", name: "Arms Academy", type: "field_spell", signets: ["martial"], cost: 1,
-  academy: { enroll: "ARM-010", enrollName: "Student, First Year", emerge: "ARM-012", turns: 2, capacity: 2 },
+  id: `FLD-MAR-001#${++n}`, cardId: "FLD-MAR-001", name: "Arms Academy", type: "field_spell", signets: ["martial"], cost: 1,
+  academy: { enroll: "UNT-BOK-001", enrollName: "Student, First Year", emerge: "UNT-BOK-003", turns: 2, capacity: 2 },
   unlimitedPromotions: "martial",
 });
 const filler = () => Array.from({ length: 30 }, () => unit(2));
@@ -29,7 +29,7 @@ function start() {
 }
 const idx = (game, pred) => game.players[0].hand.findIndex(pred);
 const playAcademy = (game) => applyAction(game, { type: "setField", player: 0, card: idx(game, (c) => c.type === "field_spell") });
-const enrollOne = (game) => applyAction(game, { type: "enroll", player: 0, card: idx(game, (c) => c.cardId === "ARM-010") });
+const enrollOne = (game) => applyAction(game, { type: "enroll", player: 0, card: idx(game, (c) => c.cardId === "UNT-BOK-001") });
 const passRound = (game) => {
   applyAction(game, { type: "endTurn", player: 0 });
   applyAction(game, { type: "endTurn", player: 1 });
@@ -45,7 +45,7 @@ test("Arms Academy costs 1 Energy and goes into the Field Effect Zone", () => {
 
 test("enrolling costs the Student's Grade, takes only Student, First Year, and holds 2", () => {
   const game = start();
-  assert.match(checkAction(game, { type: "enroll", player: 0, card: idx(game, (c) => c.cardId === "ARM-010") }), /need an Academy/);
+  assert.match(checkAction(game, { type: "enroll", player: 0, card: idx(game, (c) => c.cardId === "UNT-BOK-001") }), /need an Academy/);
   playAcademy(game);
   assert.match(checkAction(game, { type: "enroll", player: 0, card: idx(game, (c) => c.grade === 2) }), /Only Student, First Year/);
   // Another Grade 1 Martial unit isn't a Student, First Year.
@@ -61,7 +61,7 @@ test("only in Preparation Phase I, and only with enough Energy", () => {
   const game = start();
   playAcademy(game);
   game.players[0].energy = 0;
-  assert.match(checkAction(game, { type: "enroll", player: 0, card: idx(game, (c) => c.cardId === "ARM-010") }), /costs 1 Energy/);
+  assert.match(checkAction(game, { type: "enroll", player: 0, card: idx(game, (c) => c.cardId === "UNT-BOK-001") }), /costs 1 Energy/);
   applyAction(game, { type: "nextPhase", player: 0 });
   assert.match(checkAction(game, { type: "enroll", player: 0, card: 0 }), /Preparation Phase I/);
   assert.match(checkAction(game, { type: "setField", player: 0, card: 0 }), /Preparation Phase I/);
@@ -90,7 +90,7 @@ test("sent on turn 1, a Student, Graduate comes out on turn 3 from the deck, fre
   const energy = game.players[0].energy;
   const deckSize = game.players[0].deck.length;
   assert.equal(applyAction(game, { type: "graduate", player: 0, card: choice.id, slot: 4 }).ok, true);
-  assert.equal(game.players[0].ups[4].cardId, "ARM-012");
+  assert.equal(game.players[0].ups[4].cardId, "UNT-BOK-003");
   assert.equal(game.players[0].energy, energy);
   assert.equal(game.players[0].deck.length, deckSize - 1);
   assert.ok(game.players[0].graveyard.some((c) => c.id === student.id));

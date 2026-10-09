@@ -5,7 +5,7 @@ import { newGame, applyAction, checkAction, legalActions, formationStats, attack
 
 let n = 0;
 const unit = (grade, attack, defense) => ({ id: `U-${++n}`, name: `Unit${n}`, type: "unit", grade, attack, defense });
-const frontal = () => ({ id: `FRM-001#${++n}`, cardId: "FRM-001", name: "Frontal Assault", type: "formation", cost: 0, slots: [0, 1, 2], combine: "sum" });
+const frontal = () => ({ id: `FRM-MAR-001#${++n}`, cardId: "FRM-MAR-001", name: "Frontal Assault", type: "formation", cost: 0, slots: [0, 1, 2], combine: "sum" });
 const deckOf = (size = 30) => Array.from({ length: size }, () => unit(1, 500, 500));
 
 function start() {
@@ -280,7 +280,7 @@ test("deckFormation isn't allowed with a Formation in hand, a non-Formation card
 test("Vanguard Charge: the front row plus middle centre, Attack x1.5 and Defense /1.5, rounded down", () => {
   const game = start();
   game.players[0].formationZone = {
-    id: "FRM-002#1", cardId: "FRM-002", name: "Vanguard Charge", type: "formation", cost: 0,
+    id: "FRM-MAR-002#1", cardId: "FRM-MAR-002", name: "Vanguard Charge", type: "formation", cost: 0,
     slots: [0, 1, 2, 4], combine: "scaled", attackMultiplier: 1.5, defenseDivisor: 1.5, damageGrade: 2, defenseGrade: 0,
   };
   place(game, 0, 0, unit(1, 500, 500)); // Student
@@ -294,9 +294,9 @@ test("Vanguard Charge: the front row plus middle centre, Attack x1.5 and Defense
 });
 
 // Line Defense (RULES.md d751b3f): any one full row, Attack 0, Defense = Attack + Defense of that row.
-const lineDefense = () => ({ id: `FRM-003#${++n}`, cardId: "FRM-003", name: "Line Defense", type: "formation", cost: 2,
+const lineDefense = () => ({ id: `FRM-MAR-003#${++n}`, cardId: "FRM-MAR-003", name: "Line Defense", type: "formation", cost: 2,
   slotOptions: [[0, 1, 2], [3, 4, 5], [6, 7, 8]], combine: "wall", damageGrade: 0, defenseGrade: 1 });
-const vanguard = () => ({ id: `FRM-002#${++n}`, cardId: "FRM-002", name: "Vanguard Charge", type: "formation", cost: 1,
+const vanguard = () => ({ id: `FRM-MAR-002#${++n}`, cardId: "FRM-MAR-002", name: "Vanguard Charge", type: "formation", cost: 1,
   slots: [0, 1, 2, 4], combine: "scaled", attackMultiplier: 1.5, defenseDivisor: 1.5, damageGrade: 2, defenseGrade: 0 });
 
 test("Line Defense counts the strongest full row as a wall, can't attack, and its row takes the hit", () => {

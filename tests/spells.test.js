@@ -10,7 +10,7 @@ const cards = JSON.parse(readFileSync(new URL("../data/cards.json", import.meta.
 const byId = Object.fromEntries(cards.map((c) => [c.id, c]));
 let n = 0;
 const copy = (id) => ({ ...byId[id], cardId: id, id: `${id}#${++n}` });
-const filler = () => Array.from({ length: 30 }, () => copy("ARM-010"));
+const filler = () => Array.from({ length: 30 }, () => copy("UNT-BOK-001"));
 const ok = (game, action) => assert.equal(applyAction(game, action).reason, undefined);
 function start() {
   const game = newGame({ seed: 9, decks: [filler(), filler()], startingPlayer: 0 });
@@ -21,15 +21,15 @@ function start() {
 test("Fire Arrow cast from hand deals 1 Damage Counter and goes to the Grave", () => {
   const game = start();
   const [me, them] = game.players;
-  const arrow = copy("SPL-001");
+  const arrow = copy("SPL-MAR-001");
   me.hand.push(arrow);
   ok(game, { type: "cast", player: 0, card: arrow.id });
   assert.equal(them.damage, 1);
   assert.equal(me.energy, 9);
   assert.equal(me.graveyard.at(-1).name, "Fire Arrow");
   assert.match(game.log.at(-1), /1 Damage Counter/);
-  const other = copy("SPL-001");
-  me.hand.push(other, copy("MAG-002"));
+  const other = copy("SPL-MAR-001");
+  me.hand.push(other, copy("SPL-MYS-001"));
   game.phase = "battle";
   assert.match(checkAction(game, { type: "cast", player: 0, card: other.id }), /Preparation Phase/);
   game.phase = "prep2";
@@ -39,7 +39,7 @@ test("Fire Arrow cast from hand deals 1 Damage Counter and goes to the Grave", (
 test("a set Fire Arrow can fire the turn it's set, and the End Phase waits while it's ready", () => {
   const game = start();
   const [me, them] = game.players;
-  const arrow = copy("SPL-001");
+  const arrow = copy("SPL-MAR-001");
   me.hand.push(arrow);
   game.phase = "prep2";
   ok(game, { type: "setTrap", player: 0, card: arrow.id, slot: 6 });
@@ -55,7 +55,7 @@ test("a set Fire Arrow can fire the turn it's set, and the End Phase waits while
 test("a set Fire Arrow kept for later fires in your own phases; the Start Phase waits for it", () => {
   const game = start();
   const [me, them] = game.players;
-  me.ups[6] = { ...copy("SPL-001"), faceDown: true, setTurn: 0 };
+  me.ups[6] = { ...copy("SPL-MAR-001"), faceDown: true, setTurn: 0 };
   ok(game, { type: "endTurn", player: 0 });
   assert.equal(game.activePlayer, 1);
   assert.match(checkAction(game, { type: "activateSet", player: 1, slot: 6 }), /no set card/); // not on their turn
@@ -74,9 +74,9 @@ test("a set Fire Arrow kept for later fires in your own phases; the Start Phase 
 test("the computer casts Fire Arrow and fires set ones", () => {
   const game = start();
   const me = game.players[0];
-  me.hand = [copy("SPL-001")];
-  me.formationZone = copy("FRM-001");
+  me.hand = [copy("SPL-MAR-001")];
+  me.formationZone = copy("FRM-MAR-001");
   assert.deepEqual(chooseAction(game), { type: "cast", player: 0, card: 0 });
-  me.ups[7] = { ...copy("SPL-001"), faceDown: true, setTurn: 0 };
+  me.ups[7] = { ...copy("SPL-MAR-001"), faceDown: true, setTurn: 0 };
   assert.deepEqual(chooseAction(game), { type: "activateSet", player: 0, slot: 7 });
 });

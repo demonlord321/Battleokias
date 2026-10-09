@@ -9,7 +9,7 @@ import { checkCards } from "../src/engine/cardCheck.js";
 const cards = JSON.parse(readFileSync(new URL("../data/cards.json", import.meta.url)));
 const byId = Object.fromEntries(cards.map((c) => [c.id, c]));
 const copy = (id, k = 1) => ({ ...byId[id], cardId: id, id: `${id}#${k}` });
-const filler = () => Array.from({ length: 30 }, (_, i) => copy("ARM-010", i + 10));
+const filler = () => Array.from({ length: 30 }, (_, i) => copy("UNT-BOK-001", i + 10));
 
 function start() {
   const game = newGame({ seed: 2, decks: [filler(), filler()], startingPlayer: 0 });
@@ -20,8 +20,8 @@ function start() {
 test("summoned, Galent has 1000 Attack and 4000 Defense", () => {
   const game = start();
   const p = game.players[0];
-  p.ups[1] = copy("ARM-012");
-  p.hand.push(copy("ARM-GAL-001"));
+  p.ups[1] = copy("UNT-BOK-003");
+  p.hand.push(copy("UNT-MAR-002"));
   assert.equal(applyAction(game, { type: "summon", player: 0, card: p.hand.length - 1, slot: 0 }).ok, true);
   assert.deepEqual(unitStats(game, 0, 0), { attack: 1000, defense: 4000 });
 });
@@ -29,8 +29,8 @@ test("summoned, Galent has 1000 Attack and 4000 Defense", () => {
 test("promoting a Graduate, he takes its printed 2000 Attack", () => {
   const game = start();
   const p = game.players[0];
-  p.ups[0] = { ...copy("ARM-012"), equipment: { ...copy("EQP-001") } }; // the Gear goes to the Grave at Grade 4
-  p.hand.push(copy("ARM-GAL-001"));
+  p.ups[0] = { ...copy("UNT-BOK-003"), equipment: { ...copy("EQP-MAR-001") } }; // the Gear goes to the Grave at Grade 4
+  p.hand.push(copy("UNT-MAR-002"));
   assert.equal(applyAction(game, { type: "promote", player: 0, card: p.hand.length - 1, slot: 0 }).ok, true);
   assert.deepEqual(unitStats(game, 0, 0), { attack: 2000, defense: 4000 });
 });
@@ -38,9 +38,9 @@ test("promoting a Graduate, he takes its printed 2000 Attack", () => {
 test("if the Equipment stays on, he takes the total Attack, and its Attack bonus isn't counted twice", () => {
   const game = start();
   const p = game.players[0];
-  const armour = { ...copy("EQP-001"), id: "ARMOUR#1", maxGrade: undefined, boost: { attack: 300, defense: 400 } };
-  p.ups[0] = { ...copy("ARM-012"), equipment: armour };
-  p.hand.push(copy("ARM-GAL-001"));
+  const armour = { ...copy("EQP-MAR-001"), id: "ARMOUR#1", maxGrade: undefined, boost: { attack: 300, defense: 400 } };
+  p.ups[0] = { ...copy("UNT-BOK-003"), equipment: armour };
+  p.hand.push(copy("UNT-MAR-002"));
   assert.equal(applyAction(game, { type: "promote", player: 0, card: p.hand.length - 1, slot: 0 }).ok, true);
   assert.equal(p.ups[0].attack, 2300);
   assert.deepEqual(unitStats(game, 0, 0), { attack: 2300, defense: 4400 });
@@ -49,12 +49,12 @@ test("if the Equipment stays on, he takes the total Attack, and its Attack bonus
 });
 
 test("the card check accepts his empty Attack only with variableAttack", () => {
-  assert.deepEqual(checkCards([byId["ARM-GAL-001"]]), []);
-  const { variableAttack, ...noRule } = byId["ARM-GAL-001"];
+  assert.deepEqual(checkCards([byId["UNT-MAR-002"]]), []);
+  const { variableAttack, ...noRule } = byId["UNT-MAR-002"];
   assert.ok(checkCards([noRule]).some((m) => /attack/.test(m)));
-  assert.ok(checkCards([{ ...byId["ARM-GAL-001"], attack: 1000 }]).some((m) => /"attack": null/.test(m)));
+  assert.ok(checkCards([{ ...byId["UNT-MAR-002"], attack: 1000 }]).some((m) => /"attack": null/.test(m)));
 });
 
 test("Comment entries in cards.json are skipped", () => {
-  assert.deepEqual(checkCards([{ Comment: "UNITS GRADE 1-3" }, byId["ARM-GAL-001"]]), []);
+  assert.deepEqual(checkCards([{ Comment: "UNITS GRADE 1-3" }, byId["UNT-MAR-002"]]), []);
 });

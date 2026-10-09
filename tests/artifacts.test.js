@@ -11,7 +11,7 @@ const cards = JSON.parse(readFileSync(new URL("../data/cards.json", import.meta.
 const byId = Object.fromEntries(cards.map((c) => [c.id, c]));
 let n = 0;
 const copy = (id) => ({ ...byId[id], cardId: id, id: `${id}#${++n}` });
-const filler = () => Array.from({ length: 30 }, () => copy("ARM-010"));
+const filler = () => Array.from({ length: 30 }, () => copy("UNT-BOK-001"));
 const ok = (game, action) => assert.equal(applyAction(game, action).reason, undefined);
 
 // Player 0: Frontal Assault with Students (too weak to get through). Player 1: Frontal Assault with Graduates.
@@ -19,13 +19,13 @@ function board() {
   const game = newGame({ seed: 3, decks: [filler(), filler()], startingPlayer: 0 });
   game.players.forEach((p) => (p.energy = 10));
   const [me, them] = game.players;
-  me.formationZone = copy("FRM-001");
-  them.formationZone = copy("FRM-001");
-  [0, 1, 2].forEach((s) => { me.ups[s] = copy("ARM-010"); them.ups[s] = copy("ARM-012"); });
+  me.formationZone = copy("FRM-MAR-001");
+  them.formationZone = copy("FRM-MAR-001");
+  [0, 1, 2].forEach((s) => { me.ups[s] = copy("UNT-BOK-001"); them.ups[s] = copy("UNT-BOK-003"); });
   return game;
 }
 const beacon = (game, slot = 0) => {
-  const card = copy("ART-001");
+  const card = copy("ART-MAR-001");
   game.players[0].hand.push(card);
   ok(game, { type: "attach", player: 0, card: card.id, slot });
   return card;
@@ -39,17 +39,17 @@ test("Blinding Beacon attaches to a unit with a shared Signet in a Preparation P
   assert.equal(me.ups[0].artifact.chargesLeft, 2);
   assert.equal(me.energy, 9);
   // One per unit, one per Formation, but another can go outside the Formation.
-  const second = copy("ART-001");
+  const second = copy("ART-MAR-001");
   me.hand.push(second);
   assert.match(checkAction(game, { type: "attach", player: 0, card: second.id, slot: 0 }), /already has/);
   assert.match(checkAction(game, { type: "attach", player: 0, card: second.id, slot: 1 }), /Only one Blinding Beacon/);
-  me.ups[4] = copy("ARM-010");
+  me.ups[4] = copy("UNT-BOK-001");
   ok(game, { type: "attach", player: 0, card: second.id, slot: 4 });
   assert.match(checkAction(game, { type: "move", player: 0, from: 4, to: 1 }), /Only one/);
   // Not on a unit without a shared Signet, and not in the Battle Phase.
-  const third = { ...copy("ART-001", 3), signets: ["mystic"] }; // a Mystic-only Artifact on a Martial unit
+  const third = { ...copy("ART-MAR-001", 3), signets: ["mystic"] }; // a Mystic-only Artifact on a Martial unit
   me.hand.push(third);
-  me.ups[5] = { ...copy("ARM-010", 5), signets: ["martial"] }; // a Martial-only unit (the real Students are Battle'O'Kias and share with anything)
+  me.ups[5] = { ...copy("UNT-BOK-001", 5), signets: ["martial"] }; // a Martial-only unit (the real Students are Battle'O'Kias and share with anything)
   assert.match(checkAction(game, { type: "attach", player: 0, card: third.id, slot: 5 }), /same Signet/);
   game.phase = "battle";
   assert.match(checkAction(game, { type: "attach", player: 0, card: third.id, slot: 3 }), /Preparation Phase/);
@@ -100,7 +100,7 @@ test("two-turn cooldown, then the second activation sends it to the Grave", () =
 test("it only works from a Formation unit, waits a turn when attached in Phase II, and goes to the Grave with its unit", () => {
   const game = board();
   const me = game.players[0];
-  me.ups[4] = copy("ARM-010");
+  me.ups[4] = copy("UNT-BOK-001");
   beacon(game, 4);
   game.phase = "battle";
   assert.match(checkAction(game, { type: "attack", player: 0, artifact: 4 }), /has to be in your Formation/);
@@ -117,7 +117,7 @@ test("the Beacon stays on through promotion", () => {
   const game = board();
   const me = game.players[0];
   beacon(game, 0);
-  const apprentice = copy("ARM-011");
+  const apprentice = copy("UNT-BOK-002");
   me.hand.push(apprentice);
   ok(game, { type: "promote", player: 0, card: apprentice.id, slot: 0 });
   assert.equal(me.ups[0].artifact.name, "Blinding Beacon");

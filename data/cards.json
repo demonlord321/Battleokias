@@ -1,7 +1,7 @@
 [
   {"Comment": "UNITS GRADE 1-3"},
   {
-    "id": "ARM-010",
+    "id": "UNT-BOK-001",
     "name": "Student, First Year",
     "type": "unit",
     "signets": [
@@ -15,14 +15,14 @@
     "image": "images/arm-010.png"
   },
   {
-    "id": "ARM-011",
+    "id": "UNT-BOK-002",
     "name": "Student, Second Year",
     "type": "unit",
     "signets": [
       "battleokias"
     ],
     "promotesFrom": [
-      "ARM-010"
+      "UNT-BOK-001"
     ],
     "grade": 2,
     "attack": 1500,
@@ -32,14 +32,14 @@
     "image": "images/arm-011.png"
   },
   {
-    "id": "ARM-012",
+    "id": "UNT-BOK-003",
     "name": "Student, Graduate",
     "type": "unit",
     "signets": [
       "battleokias"
     ],
     "promotesFrom": [
-      "ARM-011"
+      "UNT-BOK-002"
     ],
     "grade": 3,
     "attack": 2000,
@@ -51,7 +51,7 @@
 
   {"Comment": "UNITS GRADE 4-6"},
   {
-    "id": "ARM-DRA-001",
+    "id": "UNT-MAR-001",
     "name": "Drazel, Instructor of the Blade",
     "type": "unit",
     "signets": [
@@ -72,7 +72,7 @@
     "image": "images/arm-mer-001.png"
   },
   {
-    "id": "ARM-GAL-001",
+    "id": "UNT-MAR-002",
     "name": "Galent, The Unbreakable Shield",
     "type": "unit",
     "signets": [
@@ -93,7 +93,7 @@
     "image": "images/arm-mer-002.png"
   },
   {
-    "id": "ARM-SEN-001",
+    "id": "UNT-MAR-003",
     "name": "Sena, Mistress of the shadows",
     "type": "unit",
     "signets": [
@@ -111,7 +111,7 @@
     "image": "images/arm-mer-001.png"
   },
   {
-    "id": "FRM-001",
+    "id": "FRM-MAR-001",
     "name": "Frontal Assault",
     "type": "formation",
     "signets": [
@@ -130,7 +130,7 @@
     "image": "images/frm-001.png"
   },
   {
-    "id": "FRM-002",
+    "id": "FRM-MAR-002",
     "name": "Vanguard Charge",
     "type": "formation",
     "signets": [
@@ -152,7 +152,7 @@
     "image": "images/frm-002.png"
   },
   {
-    "id": "FLD-001",
+    "id": "FLD-MAR-001",
     "name": "Arms Academy",
     "type": "field_spell",
     "signets": [
@@ -160,9 +160,9 @@
     ],
     "cost": 1,
     "academy": {
-      "enroll": "ARM-010",
+      "enroll": "UNT-BOK-001",
       "enrollName": "Student of Arms",
-      "emerge": "ARM-012",
+      "emerge": "UNT-BOK-003",
       "turns": 2,
       "capacity": 2
     },
@@ -171,7 +171,7 @@
     "image": "images/fld-001.png"
   },
   {
-    "id": "EQP-001",
+    "id": "EQP-MAR-001",
     "name": "Practice Gear",
     "type": "equipment",
     "signets": [
@@ -187,7 +187,7 @@
     "maxGrade": 3
   },
   {
-    "id": "MAG-002",
+    "id": "SPL-MYS-001",
     "name": "Arcane Bolt",
     "type": "spell",
     "signets": [
@@ -198,7 +198,7 @@
     "image": "images/mag-002.png"
   },
   {
-    "id": "ALC-002",
+    "id": "TRP-ALC-001",
     "name": "Caustic Snare",
     "type": "trap",
     "signets": [
@@ -209,7 +209,7 @@
     "image": "images/alc-002.png"
   },
   {
-    "id": "EQP-002",
+    "id": "EQP-MAR-002",
     "name": "Drazel's Katana",
     "type": "equipment",
     "signets": [
@@ -220,14 +220,14 @@
       "attack": 500
     },
     "onlyOn": [
-      "ARM-DRA-001"
+      "UNT-MAR-001"
     ],
     "hitRule": "highestTotal",
     "text": "Equip to Drazel, Instructor of the Blade only. He gets +500 Attack. Drazel does not conform to slaying the weak: while he is in your attacking Formation and its attack lands, the opponent's unit destroyed is the one with the highest Attack plus Defense.",
     "image": "images/eqp-002.png"
   },
   {
-    "id": "TRP-001",
+    "id": "TRP-MAR-001",
     "name": "Stand Strong",
     "type": "trap",
     "signets": [
@@ -239,7 +239,7 @@
     "image": "images/trp-001.png"
   },
   {
-    "id": "ART-001",
+    "id": "ART-MAR-001",
     "name": "Blinding Beacon",
     "type": "artifact",
     "signets": [
@@ -256,7 +256,7 @@
     "image": "images/art-001.png"
   },
   {
-    "id": "FRM-003",
+    "id": "FRM-MAR-003",
     "name": "Line Defense",
     "type": "formation",
     "signets": [
@@ -287,7 +287,7 @@
     "image": "images/frm-003.png"
   },
   {
-    "id": "SPL-001",
+    "id": "SPL-MAR-001",
     "name": "Fire Arrow",
     "type": "spell",
     "signets": [

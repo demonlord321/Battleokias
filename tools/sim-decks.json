@@ -8,8 +8,8 @@
     "from": "martial",
     "swap": [
       [
-        "FRM-001",
-        "FRM-002",
+        "FRM-MAR-001",
+        "FRM-MAR-002",
         3
       ]
     ]
@@ -18,8 +18,8 @@
     "from": "martial",
     "swap": [
       [
-        "ARM-010",
-        "EQP-001",
+        "UNT-BOK-001",
+        "EQP-MAR-001",
         3
       ]
     ]
@@ -28,8 +28,8 @@
     "from": "martial",
     "swap": [
       [
-        "ARM-011",
-        "FLD-001",
+        "UNT-BOK-002",
+        "FLD-MAR-001",
         3
       ]
     ]
@@ -38,8 +38,8 @@
     "from": "martial",
     "swap": [
       [
-        "ARM-012",
-        "ARM-DRA-001",
+        "UNT-BOK-003",
+        "UNT-MAR-001",
         3
       ]
     ]
@@ -48,8 +48,8 @@
     "from": "martial",
     "swap": [
       [
-        "ARM-012",
-        "ARM-DRA-001",
+        "UNT-BOK-003",
+        "UNT-MAR-001",
         3
       ]
     ],
@@ -57,9 +57,9 @@
       {
         "type": "equipment",
         "cards": [
-          "EQP-002",
-          "EQP-002",
-          "EQP-002"
+          "EQP-MAR-002",
+          "EQP-MAR-002",
+          "EQP-MAR-002"
         ]
       }
     ]

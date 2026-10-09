@@ -5,7 +5,7 @@ import { newGame, applyAction, checkAction, legalActions, unitStats, formationSt
 
 let n = 0;
 const unit = (grade, attack, defense, signet = "martial") => ({ id: `U-${++n}`, name: `Unit${n}`, type: "unit", signets: [signet], grade, attack, defense });
-const gear = () => ({ id: `EQP-001#${++n}`, cardId: "EQP-001", name: "Practice Gear", type: "equipment", signets: ["martial"], cost: 1, boost: { attack: 500, defense: 500 } });
+const gear = () => ({ id: `EQP-MAR-001#${++n}`, cardId: "EQP-MAR-001", name: "Practice Gear", type: "equipment", signets: ["martial"], cost: 1, boost: { attack: 500, defense: 500 } });
 const pctGear = () => ({ ...gear(), name: "Percent Gear", boost: { attackPercent: 25, defensePercent: 25 } });
 const deckOf = () => Array.from({ length: 30 }, () => unit(1, 500, 500));
 
@@ -100,19 +100,19 @@ const realCards = Object.fromEntries(JSON.parse(readCards(new URL("../data/cards
 
 test("Practice Gear can't go on a Grade 4, and falls off into the Grave when its unit promotes to Grade 4", () => {
   const card = (id, k) => ({ ...realCards[id], cardId: id, id: `${id}#${k}` });
-  const filler = Array.from({ length: 30 }, (_, i) => card("ARM-010", i + 10));
+  const filler = Array.from({ length: 30 }, (_, i) => card("UNT-BOK-001", i + 10));
   const game = newGame({ seed: 3, decks: [filler, [...filler]], startingPlayer: 0 });
   const p = game.players[0];
   p.energy = 20;
-  p.ups[0] = card("ARM-DRA-001", 1);
-  p.ups[1] = card("ARM-012", 1);
-  p.hand.push(card("EQP-001", 1), card("EQP-001", 2), card("ARM-DRA-001", 2));
-  const gear = () => p.hand.findIndex((c) => c.cardId === "EQP-001");
+  p.ups[0] = card("UNT-MAR-001", 1);
+  p.ups[1] = card("UNT-BOK-003", 1);
+  p.hand.push(card("EQP-MAR-001", 1), card("EQP-MAR-001", 2), card("UNT-MAR-001", 2));
+  const gear = () => p.hand.findIndex((c) => c.cardId === "EQP-MAR-001");
   assert.match(checkAction(game, { type: "equip", player: 0, card: gear(), slot: 0 }), /Grade 3 or lower/);
   assert.equal(applyAction(game, { type: "equip", player: 0, card: gear(), slot: 1 }).ok, true);
-  const drazel = p.hand.findIndex((c) => c.cardId === "ARM-DRA-001");
+  const drazel = p.hand.findIndex((c) => c.cardId === "UNT-MAR-001");
   assert.equal(applyAction(game, { type: "promote", player: 0, card: drazel, slot: 1 }).ok, true);
   assert.equal(p.ups[1].equipment, undefined);
-  assert.equal(p.graveyard.at(-1).cardId, "EQP-001");
+  assert.equal(p.graveyard.at(-1).cardId, "EQP-MAR-001");
   assert.deepEqual(unitStats(game, 0, 1), { attack: 4000, defense: 1500 });
 });

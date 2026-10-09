@@ -12,7 +12,7 @@ const cards = JSON.parse(readFileSync(new URL("../data/cards.json", import.meta.
 const byId = Object.fromEntries(cards.map((c) => [c.id, c]));
 let n = 0;
 const copy = (id) => ({ ...byId[id], cardId: id, id: `${id}#${++n}` });
-const filler = () => Array.from({ length: 30 }, () => copy("ARM-010"));
+const filler = () => Array.from({ length: 30 }, () => copy("UNT-BOK-001"));
 const ok = (game, action) => assert.equal(applyAction(game, action).reason, undefined);
 
 function start() {
@@ -26,14 +26,14 @@ function start() {
 function attackReady() {
   const game = start();
   const [me, them] = game.players;
-  me.formationZone = copy("FRM-001");
-  them.formationZone = copy("FRM-001");
+  me.formationZone = copy("FRM-MAR-001");
+  them.formationZone = copy("FRM-MAR-001");
   // Their lowest Grade is the one Student in slot 0, so it's the only target.
-  [0, 1, 2].forEach((s) => (me.ups[s] = copy("ARM-012")));
-  them.ups[0] = copy("ARM-010");
-  them.ups[1] = copy("ARM-011");
-  them.ups[2] = copy("ARM-011");
-  them.ups[4] = { ...copy("TRP-001"), faceDown: true };
+  [0, 1, 2].forEach((s) => (me.ups[s] = copy("UNT-BOK-003")));
+  them.ups[0] = copy("UNT-BOK-001");
+  them.ups[1] = copy("UNT-BOK-002");
+  them.ups[2] = copy("UNT-BOK-002");
+  them.ups[4] = { ...copy("TRP-MAR-001"), faceDown: true };
   game.phase = "battle";
   return game;
 }
@@ -41,20 +41,20 @@ function attackReady() {
 test("Stand Strong is set face-down in an empty slot in either Preparation Phase, paying its cost", () => {
   const game = start();
   const p = game.players[0];
-  const trap = copy("TRP-001");
+  const trap = copy("TRP-MAR-001");
   p.hand.push(trap);
   ok(game, { type: "setTrap", player: 0, card: trap.id, slot: 4 });
   assert.equal(p.ups[4].faceDown, true);
   assert.equal(p.ups[4].name, "Stand Strong");
   assert.equal(p.energy, 9);
   assert.match(game.log.at(-1), /sets a card face-down/);
-  p.hand.push(copy("ARM-010"));
+  p.hand.push(copy("UNT-BOK-001"));
   assert.match(checkAction(game, { type: "summon", player: 0, card: p.hand.length - 1, slot: 4 }), /taken/);
   // It isn't a unit: no promoting, equipping, retiring, moving it, and it doesn't count for Player Grade.
   assert.match(checkAction(game, { type: "retire", player: 0, slot: 4 }), /no unit there/);
   assert.match(checkAction(game, { type: "move", player: 0, from: 4, to: 5 }), /no unit there/);
   assert.equal(playerGrade(game, 0), 0);
-  const other = copy("TRP-001");
+  const other = copy("TRP-MAR-001");
   p.hand.push(other);
   game.phase = "battle";
   assert.match(checkAction(game, { type: "setTrap", player: 0, card: other.id, slot: 5 }), /Preparation Phase/);
@@ -63,9 +63,9 @@ test("Stand Strong is set face-down in an empty slot in either Preparation Phase
 test("Spells are set face-down in a slot too, but Field Spells aren't", () => {
   const game = start();
   const p = game.players[0];
-  const spell = copy("MAG-002");
-  const field = copy("FLD-001");
-  const unit = copy("ARM-010");
+  const spell = copy("SPL-MYS-001");
+  const field = copy("FLD-MAR-001");
+  const unit = copy("UNT-BOK-001");
   p.hand.push(spell, field, unit);
   assert.match(checkAction(game, { type: "setTrap", player: 0, card: field.id, slot: 3 }), /Only Traps and Spells/);
   assert.match(checkAction(game, { type: "setTrap", player: 0, card: unit.id, slot: 3 }), /Only Traps and Spells/);
@@ -77,10 +77,10 @@ test("Spells are set face-down in a slot too, but Field Spells aren't", () => {
 test("a Trap in a Formation slot leaves the Formation inactive", () => {
   const game = start();
   const p = game.players[0];
-  p.formationZone = copy("FRM-001");
-  p.ups[0] = copy("ARM-010");
-  p.ups[1] = copy("ARM-010");
-  p.ups[2] = { ...copy("TRP-001"), faceDown: true };
+  p.formationZone = copy("FRM-MAR-001");
+  p.ups[0] = copy("UNT-BOK-001");
+  p.ups[1] = copy("UNT-BOK-001");
+  p.ups[2] = { ...copy("TRP-MAR-001"), faceDown: true };
   assert.equal(formationStats(game, 0).complete, false);
   assert.equal(formationStats(game, 0).missing, 1);
 });
@@ -116,7 +116,7 @@ test("passing lets the unit be destroyed as usual", () => {
 test("with tied targets, passing goes on to the attacker's choice", () => {
   const game = attackReady();
   const them = game.players[1];
-  them.ups[1] = copy("ARM-010");
+  them.ups[1] = copy("UNT-BOK-001");
   ok(game, { type: "attack", player: 0 });
   assert.deepEqual(game.pending.targets, [0, 1]);
   ok(game, { type: "trapResponse", player: 1, slot: null });

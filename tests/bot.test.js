@@ -10,7 +10,7 @@ const decks = JSON.parse(readFileSync(new URL("../data/decks.json", import.meta.
 const byId = Object.fromEntries(cards.map((c) => [c.id, c]));
 const build = (ids) => ids.map((id, i) => ({ ...byId[id], cardId: id, id: `${id}#${i}` }));
 const arms = () => build(decks.martial);
-const special = () => [{ type: "equipment", cards: build(["EQP-001", "EQP-001", "EQP-001"]) }, null, null, null];
+const special = () => [{ type: "equipment", cards: build(["EQP-MAR-001", "EQP-MAR-001", "EQP-MAR-001"]) }, null, null, null];
 
 test("the computer plays whole games against itself with only legal moves", () => {
   for (let seed = 0; seed < 30; seed++) {
@@ -30,8 +30,8 @@ test("it only acts for the player who has to act", () => {
   assert.equal(chooseAction(game, 1), null);
   assert.ok(chooseAction(game, 0));
   game.pending = { type: "chooseLoss", player: 1, owner: 0, slots: [0, 2] };
-  game.players[0].ups[0] = { ...byId["ARM-010"], id: "x" };
-  game.players[0].ups[2] = { ...byId["ARM-010"], id: "y", attack: byId["ARM-010"].attack + 500 };
+  game.players[0].ups[0] = { ...byId["UNT-BOK-001"], id: "x" };
+  game.players[0].ups[2] = { ...byId["UNT-BOK-001"], id: "y", attack: byId["UNT-BOK-001"].attack + 500 };
   assert.equal(actingPlayer(game), 1);
   // The attacker takes out the stronger of the tied units.
   assert.deepEqual(chooseAction(game, 1), { type: "chooseLoss", player: 1, slot: 2 });

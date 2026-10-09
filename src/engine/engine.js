@@ -62,7 +62,7 @@ const isSlot = (p, slot) => Number.isInteger(slot) && slot >= 0 && slot < p.ups.
 export const unitAt = (p, slot) => (p.ups[slot] && !p.ups[slot].faceDown ? p.ups[slot] : null);
 
 // The summon action names a hand card either by its hand index (a number) or by
-// its instance id (a string like "ARM-001#2"). Returns the hand index, or -1.
+// its instance id (a string like "UNT-BOK-001#2"). Returns the hand index, or -1.
 // What a card costs to play: a unit's Grade, or another card's cost.
 export function cardCost(card) {
   return card.grade ?? card.cost ?? 0;
@@ -305,8 +305,8 @@ export function lowestGradeSlots(game, playerIndex) {
 
 // Arms Academy (RULES.md, Field Spells). An Academy Field Spell card carries
 //   academy: { enroll, emerge, turns, capacity }
-// where enroll and emerge are card ids (RULES.md: Student of Arms ARM-010 goes in,
-// Graduate of Arms ARM-012 comes out; no other card and no other promotion).
+// where enroll and emerge are card ids (RULES.md: Student, First Year UNT-BOK-001 goes in,
+// Student, Graduate UNT-BOK-003 comes out; no other card and no other promotion).
 // While it sits in your Field Effect Zone, fieldEffect.enrolled lists the units
 // in it as { card, ready }, where ready is the turn number they graduate on
 // (sent on your turn 3 with turns: 2 means ready on your turn 5).
@@ -324,12 +324,12 @@ export function unlimitedPromotion(game, playerIndex, base) {
   return !!signet && sharesSignet({ signets: [signet] }, base);
 }
 
-// The catalogue id of a card (deck copies are "ARM-010#2" with cardId "ARM-010").
+// The catalogue id of a card (deck copies are "UNT-BOK-001#2" with cardId "UNT-BOK-001").
 const catalogueId = (c) => c.cardId ?? c.id;
 
 // Promotion lines (RULES.md): a unit's line is its first Signet; later Signets are
 // sub-Signets and don't count. A card with "promotesFrom" (like Student, Second Year,
-// promotesFrom ["ARM-010"]) only goes on those cards. Placeholder until Dyllan says how
+// promotesFrom ["UNT-BOK-001"]) only goes on those cards. Placeholder until Dyllan says how
 // named units fit: a card without it goes on any unit one Grade lower in the same line.
 export const promotionLine = (card) => card.signets?.[0] ?? null;
 
