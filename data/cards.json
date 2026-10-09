@@ -95,10 +95,7 @@
     "flavor": "Drazel found himself gifted with a blade. Upon graduation he chose to share that knowledge with the new recruits. When war came his unit was decimated, and Drazel joined the mercenaries to get stronger and make some money.",
     "formation": "Formation effect text",
     "text": "Drazel chose to halt his study of Defense and put it all into Attack. His Defense is 1000 when summoned, or equal to the Defense of the unit he promotes.",
-    "image": "images/arm-mer-001.png",
-    "promotesFrom": [
-      "UNT-MAR-005"
-    ]
+    "image": "images/arm-mer-001.png"
   },
   {
     "id": "UNT-MAR-002",
